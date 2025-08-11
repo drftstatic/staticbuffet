@@ -118,7 +118,7 @@ export function Footer() {
         <div className="flex items-center space-x-4">
           <span className="text-right">AUDIO: {buildInfo.audio}</span>
           <span>VIDEO: {buildInfo.video}</span>
-          <span className="text-xs opacity-70">
+          <span className="text-xs opacity-70 text-center">
             Trash Team × <a 
               href="https://twitter.com/nulltonetv" 
               target="_blank" 
