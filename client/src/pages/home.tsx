@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { EmergencyMix } from '@/components/EmergencyMix';
 import { AudioReactive } from '@/components/AudioReactive';
 import { Player } from '@/components/Player';
+import { Footer } from '@/components/Footer';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
@@ -192,7 +193,7 @@ export default function Home() {
       </header>
 
       {/* Professional Media Workstation Layout */}
-      <div className="h-[calc(100vh-140px)] grid grid-cols-12 grid-rows-12 gap-1 p-1">
+      <div className="h-[calc(100vh-180px)] grid grid-cols-12 grid-rows-12 gap-1 p-1">
         {/* Search/Results Panel - Left Column */}
         <div className={`col-span-4 row-span-8 rounded-lg border-2 ${
           brandSkin === 'waffle' 
@@ -304,6 +305,9 @@ export default function Home() {
 
       {/* Effect Preset Notifications */}
       <EffectPresetNotification />
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

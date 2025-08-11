@@ -477,14 +477,14 @@ export function Player() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="h-full flex flex-col">
       {/* Video Display */}
       <div 
         ref={playerContainerRef}
         className={`relative bg-black overflow-hidden transition-all duration-300 ${
           isFullscreen 
             ? 'fixed inset-0 z-50 cursor-none' 
-            : 'rounded-lg aspect-video'
+            : 'flex-1 w-full h-full'
         }`}
         onDoubleClick={toggleFullscreen}
       >
@@ -495,7 +495,9 @@ export function Player() {
             display: isAudioReactive ? 'none' : 'block',
             filter: generateFilterString(),
             transform: generateTransformString(),
-            willChange: 'filter, transform'
+            willChange: 'filter, transform',
+            maxHeight: '100%',
+            maxWidth: '100%'
           }}
         />
         <canvas
