@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'react';
-import { Tv, Info } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Tv, Info, Layout, Maximize2 } from 'lucide-react';
 import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { SearchBar } from '@/components/SearchBar';
@@ -28,6 +28,8 @@ import { MarioButton } from '@/components/MarioButton';
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { LiveVideoMode } from '@/components/LiveVideoMode';
 import { WorkspaceLayoutSaver } from '@/components/WorkspaceLayoutSaver';
+import { ResizablePanels } from '@/components/ResizablePanels';
+import { DockingGuides } from '@/components/DockingGuides';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
@@ -51,6 +53,10 @@ export default function Home() {
     isMarioMode,
     isAsciiMode,
   } = useStore();
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null);
+  const [isResizableMode, setIsResizableMode] = useState(true);
 
   // Perform search when filters change
   const { data: searchData, error, isLoading } = useQuery({
@@ -208,12 +214,37 @@ export default function Home() {
             {/* Controls */}
             <div className="flex items-center space-x-2">
               <WorkspaceLayoutSaver />
+              
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsResizableMode(!isResizableMode)}
+                data-testid="button-toggle-resizable-mode"
+                className={`flex items-center space-x-1 ${
+                  isResizableMode
+                    ? (brandSkin === 'testcard' ? 'text-blue-300 bg-blue-400/20' :
+                       brandSkin === 'waffle' ? 'text-amber-800 bg-yellow-100/50' :
+                       brandSkin === 'ebn' ? 'text-yellow-300 bg-purple-900/50' :
+                       brandSkin === 'ozzy' ? 'text-red-300 bg-red-900/30' :
+                       'text-yellow-300 bg-gray-800/50')
+                    : (brandSkin === 'testcard' ? 'text-blue-400 hover:bg-blue-400/10' :
+                       brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' :
+                       brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
+                       brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
+                       'text-yellow-300 hover:bg-gray-800/50')
+                }`}
+              >
+                {isResizableMode ? <Maximize2 size={14} /> : <Layout size={14} />}
+                <span>{isResizableMode ? 'Panels' : 'Grid'}</span>
+              </Button>
+              
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={resetPanels}
                 data-testid="button-reset-panels"
                 className={`flex items-center space-x-1 ${
+                  brandSkin === 'testcard' ? 'text-blue-400 hover:bg-blue-400/10' :
                   brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 
                   brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
                   brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
@@ -258,8 +289,21 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Dominant Player with Sidebar Layout */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-1 p-1 overflow-hidden">
+      {/* Main Content */}
+      {isResizableMode ? (
+        <>
+          <DockingGuides isDragging={isDragging} dragPosition={dragPosition} />
+          <ResizablePanels
+            searchResults={searchData ? (searchData as any).docs || [] : []}
+            totalResults={searchData ? (searchData as any).numFound || 0 : 0}
+            isLoading={isLoading}
+            onSearch={handleSearch}
+            onVideoSelect={handleVideoSelect}
+          />
+        </>
+      ) : (
+        /* Dominant Player with Sidebar Layout */
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-1 p-1 overflow-hidden">
         {/* Large Preview/Player Panel - Left Side (9 columns) */}
         <div className={`col-span-1 lg:col-span-9 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
           panelStates.playerCollapsed ? 'h-12' : 'h-full'
@@ -368,7 +412,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Detail Drawer */}
       <DetailDrawer />
