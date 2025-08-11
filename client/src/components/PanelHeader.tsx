@@ -7,9 +7,10 @@ interface PanelHeaderProps {
   isCollapsed: boolean;
   onToggleCollapse: () => void;
   children?: React.ReactNode;
+  statusClassName?: string;
 }
 
-export function PanelHeader({ title, status, isCollapsed, onToggleCollapse, children }: PanelHeaderProps) {
+export function PanelHeader({ title, status, isCollapsed, onToggleCollapse, children, statusClassName }: PanelHeaderProps) {
   const { brandSkin } = useStore();
   
   return (
