@@ -26,8 +26,7 @@ import { OzzyButton } from '@/components/OzzyButton';
 import { EBNButton } from '@/components/EBNButton';
 import { MaxButton } from '@/components/MaxButton';
 import { MarioButton } from '@/components/MarioButton';
-import { DakotaButton } from '@/components/DakotaButton';
-import { BlondieButton } from '@/components/BlondieButton';
+
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { LiveVideoMode } from '@/components/LiveVideoMode';
 import { WorkspaceLayoutSaver } from '@/components/WorkspaceLayoutSaver';
@@ -301,8 +300,6 @@ export default function Home() {
               <EBNButton />
               <MaxButton />
               <MarioButton />
-              <DakotaButton />
-              <BlondieButton />
               <GroupedControls />
             </div>
           </div>
