@@ -640,6 +640,66 @@ export function Player() {
           brightness: 80,
         });
         break;
+      case 'vortex':
+        setVideoEffects({
+          ...videoEffects,
+          rotate: 180,
+          scaleX: 120,
+          scaleY: 80,
+          blur: 2,
+          brightness: 130,
+          contrast: 160,
+          saturation: 200,
+          hue: 120,
+          chromaticAberration: 40,
+          pixelate: 15,
+        });
+        break;
+      case 'portal':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 80,
+          contrast: 200,
+          saturation: 50,
+          hue: -60,
+          invert: 30,
+          sepia: 20,
+          chromaticAberration: 80,
+          glitchIntensity: 60,
+          scaleX: 150,
+          scaleY: 150,
+        });
+        break;
+      case 'fractal':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 140,
+          contrast: 180,
+          saturation: 250,
+          hue: 240,
+          blur: 1,
+          scaleX: 110,
+          scaleY: 110,
+          rotate: 45,
+          chromaticAberration: 25,
+          pixelate: 8,
+        });
+        break;
+      case 'timewarp':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 110,
+          contrast: 130,
+          saturation: 120,
+          hue: 30,
+          blur: 3,
+          sepia: 40,
+          scaleX: 95,
+          scaleY: 105,
+          rotate: -15,
+          glitchIntensity: 35,
+        });
+        break;
     }
   };
 

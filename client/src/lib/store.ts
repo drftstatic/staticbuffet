@@ -216,12 +216,6 @@ export const useStore = create<AppStore>((set, get) => ({
     scanlines: false,
     datamosh: false,
     pixelate: 0,
-    intensity: 0,
-    colorShift: 0,
-    kaleidoscope: false,
-    plasma: false,
-    strobe: false,
-    chromatic: false,
   },
   audioEffects: {
     gain: 100,

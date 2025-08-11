@@ -55,6 +55,22 @@ export function EffectsPanel() {
           e.preventDefault();
           applyPreset('noir');
           break;
+        case 'Digit5':
+          e.preventDefault();
+          applyPreset('vortex');
+          break;
+        case 'Digit6':
+          e.preventDefault();
+          applyPreset('portal');
+          break;
+        case 'Digit7':
+          e.preventDefault();
+          applyPreset('fractal');
+          break;
+        case 'Digit8':
+          e.preventDefault();
+          applyPreset('timewarp');
+          break;
       }
     };
 
@@ -89,12 +105,6 @@ export function EffectsPanel() {
       scanlines: false,
       datamosh: false,
       pixelate: 0,
-      intensity: 0,
-      colorShift: 0,
-      kaleidoscope: false,
-      plasma: false,
-      strobe: false,
-      chromatic: false,
     });
   };
 
@@ -155,21 +165,64 @@ export function EffectsPanel() {
           brightness: 80,
         });
         break;
-      case 'acidTrip':
+      case 'vortex':
         setVideoEffects({
           ...videoEffects,
-          intensity: 100,
-          colorShift: 100,
-          kaleidoscope: true,
-          plasma: true,
-          strobe: true,
-          chromatic: true,
-          brightness: 150,
+          rotate: 180,
+          scaleX: 120,
+          scaleY: 80,
+          blur: 2,
+          brightness: 130,
+          contrast: 160,
+          saturation: 200,
+          hue: 120,
+          chromaticAberration: 40,
+          pixelate: 15,
+        });
+        break;
+      case 'portal':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 80,
           contrast: 200,
-          saturation: 300,
-          hue: 180,
-          chromaticAberration: 100,
-          glitchIntensity: 80,
+          saturation: 50,
+          hue: -60,
+          invert: 30,
+          sepia: 20,
+          chromaticAberration: 80,
+          glitchIntensity: 60,
+          scaleX: 150,
+          scaleY: 150,
+        });
+        break;
+      case 'fractal':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 140,
+          contrast: 180,
+          saturation: 250,
+          hue: 240,
+          blur: 1,
+          scaleX: 110,
+          scaleY: 110,
+          rotate: 45,
+          chromaticAberration: 25,
+          pixelate: 8,
+        });
+        break;
+      case 'timewarp':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 110,
+          contrast: 130,
+          saturation: 120,
+          hue: 30,
+          blur: 3,
+          sepia: 40,
+          scaleX: 95,
+          scaleY: 105,
+          rotate: -15,
+          glitchIntensity: 35,
         });
         break;
     }
@@ -206,17 +259,21 @@ export function EffectsPanel() {
           </Button>
         </div>
         
-        {/* Special Acid Trip Button (unlocked by Easter egg) */}
-        {(videoEffects.kaleidoscope || videoEffects.plasma || videoEffects.strobe) && (
-          <Button
-            size="sm"
-            onClick={() => applyPreset('acidTrip')}
-            className="w-full text-xs bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold animate-pulse border-2 border-yellow-400"
-            title="Easter Egg Unlocked!"
-          >
-            🌀 ACID TRIP MODE 🌀
+        {/* New Advanced Effects Row */}
+        <div className="grid grid-cols-2 gap-2">
+          <Button size="sm" variant="outline" onClick={() => applyPreset('vortex')} title="Keyboard: 5">
+            <span className="mr-1 text-xs opacity-70">5</span> Video Vortex
           </Button>
-        )}
+          <Button size="sm" variant="outline" onClick={() => applyPreset('portal')} title="Keyboard: 6">
+            <span className="mr-1 text-xs opacity-70">6</span> Demonic Portal
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('fractal')} title="Keyboard: 7">
+            <span className="mr-1 text-xs opacity-70">7</span> Fractal Storm
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('timewarp')} title="Keyboard: 8">
+            <span className="mr-1 text-xs opacity-70">8</span> Time Warp
+          </Button>
+        </div>
       </div>
       <Accordion type="multiple" className="w-full">
         {/* Video Effects */}
