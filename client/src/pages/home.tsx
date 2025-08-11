@@ -35,6 +35,7 @@ export default function Home() {
     togglePanelCollapse,
     resetPanels,
     queueItems,
+    isHulksterMode,
   } = useStore();
 
   // Perform search when filters change
@@ -94,14 +95,16 @@ export default function Home() {
   }, [brandSkin]);
 
   return (
-    <div className={`h-screen flex flex-col overflow-hidden transition-all duration-300 ${
+    <div className={`h-screen flex flex-col overflow-hidden transition-all duration-300 relative ${
       brandSkin === 'waffle' 
         ? 'waffle-gradient' 
         : brandSkin === 'ebn'
-        ? 'ebn-gradient'
+        ? 'ebn-gradient scanlines'
         : brandSkin === 'ozzy'
-        ? 'ozzy-gradient'
-        : 'hogan-gradient'
+        ? 'ozzy-gradient metal-texture'
+        : brandSkin === 'hogan' && isHulksterMode
+        ? 'hogan-gradient nwo-stripes hulkster-mode'
+        : 'hogan-gradient nwo-stripes'
     }`}>
       {/* Top Bar */}
       <header className={`flex-shrink-0 border-b transition-all duration-300 ${
@@ -110,8 +113,8 @@ export default function Home() {
           : brandSkin === 'ebn'
           ? 'glass-dark border-lime-500/30'
           : brandSkin === 'ozzy'
-          ? 'glass-dark border-red-500/50'
-          : 'glass-dark border-yellow-400/50'
+          ? 'glass-ozzy border-red-500/50'
+          : 'glass-hogan border-yellow-400/50'
       }`}>
         <div className="max-w-full px-4 py-2 space-y-3">
           {/* Top Row - Compact Brand + Controls */}
@@ -131,7 +134,7 @@ export default function Home() {
                   brandSkin === 'ozzy' ? 'text-red-200' :
                   'text-yellow-300'
                 }`}>
-                  STATIC BUFFET
+{brandSkin === 'hogan' && isHulksterMode ? 'HULKSTER BUFFET' : 'STATIC BUFFET'}
                 </h1>
               </div>
               <div className="flex items-center space-x-1 text-xs opacity-75">

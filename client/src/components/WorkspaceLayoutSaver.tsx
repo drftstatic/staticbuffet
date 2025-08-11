@@ -113,7 +113,11 @@ export function WorkspaceLayoutSaver() {
             className={`p-2 ${
               brandSkin === 'waffle' 
                 ? 'text-amber-800 hover:bg-yellow-100/50' 
-                : 'text-yellow-300 hover:bg-purple-900/50'
+                : brandSkin === 'ebn'
+                ? 'text-yellow-300 hover:bg-purple-900/50'
+                : brandSkin === 'ozzy'
+                ? 'text-red-300 hover:bg-red-900/30'
+                : 'text-yellow-300 hover:bg-gray-800/50'
             }`}
             onClick={openNewLayoutDialog}
             data-testid="button-save-layout"
@@ -125,10 +129,19 @@ export function WorkspaceLayoutSaver() {
         <DialogContent className={`sm:max-w-md ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50 border-yellow-400' 
-            : 'bg-purple-950 border-yellow-400'
+            : brandSkin === 'ebn'
+            ? 'bg-purple-950 border-yellow-400'
+            : brandSkin === 'ozzy'
+            ? 'bg-black border-red-500'
+            : 'bg-gray-900 border-yellow-400'
         }`}>
           <DialogHeader>
-            <DialogTitle className={brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'}>
+            <DialogTitle className={
+            brandSkin === 'waffle' ? 'text-amber-900' : 
+            brandSkin === 'ebn' ? 'text-yellow-300' :
+            brandSkin === 'ozzy' ? 'text-red-300' :
+            'text-yellow-300'
+          }>
               {editingLayout ? 'Edit Workspace Layout' : 'Save Workspace Layout'}
             </DialogTitle>
           </DialogHeader>
