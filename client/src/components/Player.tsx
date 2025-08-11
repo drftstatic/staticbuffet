@@ -2,15 +2,17 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
-import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize } from 'lucide-react';
 
 export function Player() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const playerContainerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState([75]);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const { 
     queueItems, 
@@ -84,6 +86,61 @@ export function Player() {
     };
   }, [isAudioReactive, isPlaying]);
 
+  // Fullscreen handling
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!currentVideo) return;
+
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          togglePlay();
+          break;
+        case 'KeyF':
+          e.preventDefault();
+          toggleFullscreen();
+          break;
+        case 'Escape':
+          if (isFullscreen) {
+            exitFullscreen();
+          }
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          seekRelative(-10);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          seekRelative(10);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          adjustVolume(10);
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          adjustVolume(-10);
+          break;
+      }
+    };
+
+    if (isFullscreen || currentVideo) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen, currentVideo, isPlaying]);
+
   const togglePlay = () => {
     if (!videoRef.current) return;
 
@@ -141,6 +198,46 @@ export function Player() {
     return transforms.join(' ');
   };
 
+  const toggleFullscreen = async () => {
+    if (!playerContainerRef.current) return;
+
+    try {
+      if (!isFullscreen) {
+        await playerContainerRef.current.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      console.error('Fullscreen error:', error);
+    }
+  };
+
+  const exitFullscreen = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      console.error('Exit fullscreen error:', error);
+    }
+  };
+
+  const seekRelative = (seconds: number) => {
+    if (videoRef.current) {
+      const newTime = Math.max(0, Math.min(duration, currentTime + seconds));
+      videoRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+  };
+
+  const adjustVolume = (delta: number) => {
+    const newVolume = Math.max(0, Math.min(100, volume[0] + delta));
+    setVolume([newVolume]);
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume / 100;
+    }
+  };
+
   if (!currentVideo) {
     return (
       <div className="bg-black rounded-lg p-8 text-center text-gray-400">
@@ -153,7 +250,15 @@ export function Player() {
   return (
     <div className="space-y-4">
       {/* Video Display */}
-      <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
+      <div 
+        ref={playerContainerRef}
+        className={`relative bg-black overflow-hidden transition-all duration-300 ${
+          isFullscreen 
+            ? 'fixed inset-0 z-50 cursor-none' 
+            : 'rounded-lg aspect-video'
+        }`}
+        onDoubleClick={toggleFullscreen}
+      >
         <video
           ref={videoRef}
           className="w-full h-full object-contain"
@@ -221,66 +326,172 @@ export function Player() {
           />
         )}
         
-        {/* Video Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-          <h3 className="text-white font-semibold">{currentVideo.title}</h3>
-          <p className="text-gray-300 text-sm">{currentVideo.creator}</p>
-        </div>
+        {/* Fullscreen Controls Overlay */}
+        {isFullscreen && (
+          <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+            {/* Top Controls */}
+            <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-white font-semibold text-xl">{currentVideo.title}</h3>
+                  <p className="text-gray-300">{currentVideo.creator}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={exitFullscreen}
+                  className="text-white hover:bg-white/20"
+                >
+                  <Minimize className="h-6 w-6" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Bottom Controls */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+              <div className="space-y-4">
+                {/* Progress Slider */}
+                <Slider
+                  value={[currentTime]}
+                  max={duration || 100}
+                  step={1}
+                  onValueChange={handleSeek}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm text-gray-300">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+
+                {/* Control Buttons */}
+                <div className="flex items-center justify-center space-x-4">
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    onClick={previousTrack}
+                    disabled={currentQueueIndex === 0}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <SkipBack className="h-8 w-8" />
+                  </Button>
+                  
+                  <Button 
+                    onClick={togglePlay} 
+                    size="lg"
+                    className="bg-white/20 hover:bg-white/30 text-white"
+                  >
+                    {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    onClick={nextTrack}
+                    disabled={currentQueueIndex >= queueItems.length - 1}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <SkipForward className="h-8 w-8" />
+                  </Button>
+                </div>
+
+                {/* Volume Control */}
+                <div className="flex items-center justify-center space-x-4">
+                  <Volume2 className="h-6 w-6 text-white" />
+                  <Slider
+                    value={volume}
+                    max={100}
+                    step={1}
+                    onValueChange={handleVolumeChange}
+                    className="w-48"
+                  />
+                  <span className="text-white text-sm w-12">{volume[0]}%</span>
+                </div>
+
+                {/* Keyboard Shortcuts Hint */}
+                <div className="text-center text-gray-400 text-sm">
+                  Press F for fullscreen • Space to play/pause • ← → to seek • ↑ ↓ for volume • ESC to exit
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Regular Video Info Overlay (non-fullscreen) */}
+        {!isFullscreen && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+            <h3 className="text-white font-semibold">{currentVideo.title}</h3>
+            <p className="text-gray-300 text-sm">{currentVideo.creator}</p>
+          </div>
+        )}
       </div>
 
-      {/* Progress Slider */}
-      <div className="space-y-2">
-        <Slider
-          value={[currentTime]}
-          max={duration || 100}
-          step={1}
-          onValueChange={handleSeek}
-          className="w-full"
-        />
-        <div className="flex justify-between text-sm text-gray-500">
-          <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(duration)}</span>
-        </div>
-      </div>
+      {/* Regular Controls (non-fullscreen) */}
+      {!isFullscreen && (
+        <>
+          {/* Progress Slider */}
+          <div className="space-y-2">
+            <Slider
+              value={[currentTime]}
+              max={duration || 100}
+              step={1}
+              onValueChange={handleSeek}
+              className="w-full"
+            />
+            <div className="flex justify-between text-sm text-gray-500">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration)}</span>
+            </div>
+          </div>
 
-      {/* Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={previousTrack}
-            disabled={currentQueueIndex === 0}
-          >
-            <SkipBack className="h-4 w-4" />
-          </Button>
-          
-          <Button onClick={togglePlay} size="sm">
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={nextTrack}
-            disabled={currentQueueIndex >= queueItems.length - 1}
-          >
-            <SkipForward className="h-4 w-4" />
-          </Button>
-        </div>
+          {/* Controls */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={previousTrack}
+                disabled={currentQueueIndex === 0}
+              >
+                <SkipBack className="h-4 w-4" />
+              </Button>
+              
+              <Button onClick={togglePlay} size="sm">
+                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={nextTrack}
+                disabled={currentQueueIndex >= queueItems.length - 1}
+              >
+                <SkipForward className="h-4 w-4" />
+              </Button>
 
-        {/* Volume Control */}
-        <div className="flex items-center space-x-2">
-          <Volume2 className="h-4 w-4" />
-          <Slider
-            value={volume}
-            max={100}
-            step={1}
-            onValueChange={handleVolumeChange}
-            className="w-20"
-          />
-        </div>
-      </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleFullscreen}
+                title="Fullscreen (F)"
+              >
+                <Maximize className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Volume Control */}
+            <div className="flex items-center space-x-2">
+              <Volume2 className="h-4 w-4" />
+              <Slider
+                value={volume}
+                max={100}
+                step={1}
+                onValueChange={handleVolumeChange}
+                className="w-20"
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Track Info */}
       <div className="text-center text-sm text-gray-500">
