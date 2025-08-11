@@ -4,9 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useStore } from '@/lib/store';
-// Import components that should exist
-// import { Player } from './Player';
-// import { ExportMenu } from './ExportMenu';
+import { Player } from './Player';
+import { ExportMenu } from './ExportMenu';
 
 export function QueuePanel() {
   const { 
@@ -73,8 +72,8 @@ export function QueuePanel() {
           </div>
         </div>
 
-        {/* Export Controls - Temporarily disabled */}
-        {/* <ExportMenu /> */}
+        {/* Export Controls */}
+        <ExportMenu />
 
         {/* Queue Items */}
         {queueItems.length === 0 ? (
@@ -192,8 +191,8 @@ export function QueuePanel() {
           </DragDropContext>
         )}
 
-        {/* Player Controls - Temporarily disabled */}
-        {/* <Player /> */}
+        {/* Player Controls */}
+        <Player />
       </div>
     </div>
   );

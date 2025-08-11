@@ -1,179 +1,209 @@
-import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
+import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 
 export function Player() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState([75]);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
   const { 
     queueItems, 
     currentQueueIndex, 
-    isPlaying, 
-    setPlaying, 
-    nextTrack, 
+    setCurrentQueueIndex,
+    nextTrack,
     previousTrack,
-    setCurrentQueueIndex 
+    isAudioReactive
   } = useStore();
-  
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
-  const currentItem = queueItems[currentQueueIndex];
+  const currentVideo = queueItems[currentQueueIndex];
 
   useEffect(() => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.play();
-      } else {
-        videoRef.current.pause();
-      }
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (videoRef.current && currentItem) {
-      videoRef.current.src = currentItem.videoUrl;
+    if (videoRef.current && currentVideo) {
+      videoRef.current.src = currentVideo.videoUrl;
       videoRef.current.load();
     }
-  }, [currentItem]);
+  }, [currentVideo]);
 
-  const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      const time = videoRef.current.currentTime;
-      setCurrentTime(time);
-      
-      // Check for trim out point
-      if (currentItem) {
-        const trimOutSeconds = parseTimeToSeconds(currentItem.trimOut);
-        if (time >= trimOutSeconds) {
-          if (currentItem.loop) {
-            const trimInSeconds = parseTimeToSeconds(currentItem.trimIn);
-            videoRef.current.currentTime = trimInSeconds;
-          } else {
-            nextTrack();
-          }
-        }
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const updateTime = () => setCurrentTime(video.currentTime);
+    const updateDuration = () => setDuration(video.duration);
+
+    video.addEventListener('timeupdate', updateTime);
+    video.addEventListener('loadedmetadata', updateDuration);
+    video.addEventListener('ended', nextTrack);
+
+    return () => {
+      video.removeEventListener('timeupdate', updateTime);
+      video.removeEventListener('loadedmetadata', updateDuration);
+      video.removeEventListener('ended', nextTrack);
+    };
+  }, [nextTrack]);
+
+  // Audio-reactive visualization
+  useEffect(() => {
+    if (!isAudioReactive || !canvasRef.current || !videoRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const video = videoRef.current;
+
+    let animationFrame: number;
+
+    const drawVisualization = () => {
+      if (!ctx || !video) return;
+
+      // Draw video frame
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Add audio-reactive overlay (simplified - would need Web Audio API for real implementation)
+      ctx.fillStyle = `rgba(0, 255, 0, ${Math.random() * 0.3})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      animationFrame = requestAnimationFrame(drawVisualization);
+    };
+
+    if (isPlaying) {
+      drawVisualization();
+    }
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
       }
+    };
+  }, [isAudioReactive, isPlaying]);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleSeek = (value: number[]) => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = value[0];
+      setCurrentTime(value[0]);
     }
   };
 
-  const handleLoadedMetadata = () => {
-    if (videoRef.current && currentItem) {
-      setDuration(videoRef.current.duration);
-      const trimInSeconds = parseTimeToSeconds(currentItem.trimIn);
-      videoRef.current.currentTime = trimInSeconds;
+  const handleVolumeChange = (value: number[]) => {
+    setVolume(value);
+    if (videoRef.current) {
+      videoRef.current.volume = value[0] / 100;
     }
   };
 
-  const handlePlayPause = () => {
-    setPlaying(!isPlaying);
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const parseTimeToSeconds = (time: string): number => {
-    const parts = time.split(':').map(Number);
-    if (parts.length === 2) {
-      return parts[0] * 60 + parts[1];
-    } else if (parts.length === 3) {
-      return parts[0] * 3600 + parts[1] * 60 + parts[2];
-    }
-    return 0;
-  };
-
-  if (queueItems.length === 0) {
-    return null;
+  if (!currentVideo) {
+    return (
+      <div className="bg-black rounded-lg p-8 text-center text-gray-400">
+        <p>No video in queue</p>
+        <p className="text-sm mt-2">Add videos from search results to start mixing</p>
+      </div>
+    );
   }
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
-
   return (
-    <div className="mt-6 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-800 dark:text-gray-100 font-inter">
-          Now Playing
-        </span>
-        <div className="flex items-center space-x-1 text-xs text-gray-600 dark:text-gray-400">
+    <div className="space-y-4">
+      {/* Video Display */}
+      <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-contain"
+          style={{ display: isAudioReactive ? 'none' : 'block' }}
+        />
+        <canvas
+          ref={canvasRef}
+          width={640}
+          height={360}
+          className="w-full h-full object-contain"
+          style={{ display: isAudioReactive ? 'block' : 'none' }}
+        />
+        
+        {/* Video Info Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+          <h3 className="text-white font-semibold">{currentVideo.title}</h3>
+          <p className="text-gray-300 text-sm">{currentVideo.creator}</p>
+        </div>
+      </div>
+
+      {/* Progress Slider */}
+      <div className="space-y-2">
+        <Slider
+          value={[currentTime]}
+          max={duration || 100}
+          step={1}
+          onValueChange={handleSeek}
+          className="w-full"
+        />
+        <div className="flex justify-between text-sm text-gray-500">
           <span>{formatTime(currentTime)}</span>
-          <span>/</span>
           <span>{formatTime(duration)}</span>
         </div>
       </div>
-      
-      {/* Hidden Video Element */}
-      <video
-        ref={videoRef}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onEnded={nextTrack}
-        className="hidden"
-        data-testid="video-player"
-      />
 
-      {/* Current Track Info */}
-      {currentItem && (
-        <div className="mb-2">
-          <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-            {currentItem.title}
-          </p>
+      {/* Controls */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={previousTrack}
+            disabled={currentQueueIndex === 0}
+          >
+            <SkipBack className="h-4 w-4" />
+          </Button>
+          
+          <Button onClick={togglePlay} size="sm">
+            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={nextTrack}
+            disabled={currentQueueIndex >= queueItems.length - 1}
+          >
+            <SkipForward className="h-4 w-4" />
+          </Button>
         </div>
-      )}
-      
-      {/* Progress Bar */}
-      <div className="mb-3">
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-          <div 
-            className="bg-red-600 dark:bg-lime-500 h-1 rounded-full transition-all duration-100" 
-            style={{ width: `${progress}%` }}
+
+        {/* Volume Control */}
+        <div className="flex items-center space-x-2">
+          <Volume2 className="h-4 w-4" />
+          <Slider
+            value={volume}
+            max={100}
+            step={1}
+            onValueChange={handleVolumeChange}
+            className="w-20"
           />
         </div>
       </div>
 
-      {/* Playback Controls */}
-      <div className="flex items-center justify-center space-x-4">
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={previousTrack}
-          disabled={queueItems.length <= 1}
-          data-testid="button-previous"
-          className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-lime-500"
-        >
-          <SkipBack size={16} />
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handlePlayPause}
-          data-testid="button-play-pause"
-          className="p-3 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-lime-500"
-        >
-          {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={nextTrack}
-          disabled={queueItems.length <= 1}
-          data-testid="button-next"
-          className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-lime-500"
-        >
-          <SkipForward size={16} />
-        </Button>
+      {/* Track Info */}
+      <div className="text-center text-sm text-gray-500">
+        Track {currentQueueIndex + 1} of {queueItems.length}
       </div>
-
-      {/* Queue Navigation */}
-      {queueItems.length > 1 && (
-        <div className="mt-2 text-center">
-          <span className="text-xs text-gray-600 dark:text-gray-400">
-            {currentQueueIndex + 1} of {queueItems.length}
-          </span>
-        </div>
-      )}
     </div>
   );
 }
