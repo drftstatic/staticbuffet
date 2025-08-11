@@ -1,0 +1,92 @@
+
+Project: Trash Team × Nulltone.TV — Static Buffet
+Tagline: All-you-can-eat video chaos, straight from the public domain.
+Vibe: VHS public access + EBN hijack terminal (timecode burns, “LIVE” stamps, news crawls, glitch overlays).
+
+Goal (MVP): A web app for VJs to instantly search, preview, and queue free-to-use footage (Archive.org first), generate audio‑reactive cuts, and export a loop playlist (m3u/json) or downloadable clip pack.
+
+Tech Stack (opinionated):
+- Frontend: React + Vite + TypeScript.
+  - State: Zustand.
+  - Player: react-player or native <video> with MSE; use HLS.js if needed.
+  - UI: TailwindCSS.
+- Backend: Node + Express (or FastAPI if you prefer Python).
+  - Simple proxy endpoints to IA APIs + rate limiting.
+- Build Targets:
+  - One-click Replit run.
+  - .env support.
+  - Deployed preview.
+
+MVP Features:
+1. Search Archive.org with filters for PD/CC-BY/CC0 only.
+   - Query, media type (movies), duration range, year range, sort (downloads, date).
+2. Results Grid with: thumbnail, title, year, license badge, duration, source.
+3. Detail Drawer with playable sources (MP4/H.264 or OGV), description, tags, and Add to Queue.
+4. Queue Panel (right rail): reorder, trim in/out points, set loop, crossfade.
+5. “Emergency Mix” button: auto-assemble a 2–3 minute cut from current results (beat-length jump cuts).
+6. Audio-Reactive Mode: if mic permission granted, switch on beat-detected jump cuts (simple energy/BPM).
+7. Export:
+   - JSON playlist with clip urls + trims.
+   - M3U playlist.
+8. Brand Skin Toggle: “Diner” (buffet) vs “EBN Hijack” (tactical UI overlay).
+
+Core Constraints:
+- Respect licensing: only show Public Domain, CC0, CC-BY (and variants that allow remix).
+- Surface attribution fields (creator, collection, license url).
+- Make all network calls cancellable; show skeleton loaders.
+- No server-side downloads of files (MVP). We only proxy metadata and stream previews.
+
+Key APIs (Internet Archive):
+- Search: https://archive.org/advancedsearch.php?q=<query>&output=json&fl[]=identifier&fl[]=title&fl[]=creator&fl[]=year&fl[]=mediatype&fl[]=licenseurl&fl[]=downloads&fl[]=date&fl[]=description&rows=50&page=1
+- Metadata: https://archive.org/metadata/<identifier> (yields file list; choose MP4/H.264 first)
+- File streaming is at: https://archive.org/download/<identifier>/<filename>
+
+License Filter Logic (frontend and backend):
+- Allow if any of:
+  - licenseurl contains publicdomain, cc0, by/ (exclude -nc, -nd by default).
+  - OR collection flagged as public domain.
+- Add a toggle to include NC/ND with disclaimer.
+
+UI Layout:
+- Top Bar: Search + filters, brand toggle (Diner / EBN), Emergency Mix, Audio-Reactive toggle.
+- Left: Results grid (infinite scroll).
+- Right: Queue panel (draggable items).
+- Bottom HUD (EBN mode): faux ticker, “LIVE FEED,” timecode, channel id (NULL-Ø), optional RSS-fed crawl text.
+
+Styling:
+- Tailwind.
+- Diner: off-white, ketchup red accents, menu-card cards, rounded-xl, subtle noise bg.
+- EBN: dark charcoal, monospace, lime status LEDs, 1px scanlines overlay, big “REC • LIVE” chip.
+
+Components to Generate:
+- SearchBar.tsx, Filters.tsx, ResultsGrid.tsx, ResultCard.tsx, DetailDrawer.tsx,
+  QueuePanel.tsx, Player.tsx, EmergencyMix.ts, AudioReactive.ts, ExportMenu.tsx,
+  Ticker.tsx, BrandSkinToggle.tsx, LicenseBadge.tsx.
+- State in useStore.ts (Zustand): results, queue, filters, skin, isReactive, mixSettings.
+- Backend routes:
+  - GET /api/search?query=&page=&fromYear=&toYear=&durationMin=&durationMax=&sort=
+  - GET /api/metadata/:identifier
+  - All endpoints: 10 req/s throttle, return trimmed JSON.
+
+Algorithm Notes:
+- EmergencyMix:
+  - Pull N clips from results (favor shorter < 30–90s).
+  - Assign 2–5s segments with random in/out; optional crossfade 4–8 frames.
+  - Output as an ordered queue; preview via Player with timed onTimeUpdate switches.
+- AudioReactive:
+  - Use Web Audio API AnalyzerNode (RMS/energy).
+  - Threshold gate triggers nextSegment(); cool-down 250–500ms to avoid strobe.
+
+Export:
+- JSON format: [{src, identifier, title, start, end, license, attribution}]
+- M3U format with #EXTINF:<seconds>,<title> lines.
+- Download via Blob.
+
+Testing:
+- Seed queries: public domain psa, instructional safety, government training, educational film, newsreel, cspan, infomercial.
+- Verify: license badges correct; videos play; queue reorder; export files download.
+
+Deliverables Now:
+1. Working React + Node app with endpoints + UI.
+2. Clear README with setup, env, and IA rate/usage notes.
+3. Sample exports (JSON, M3U) in /samples.
