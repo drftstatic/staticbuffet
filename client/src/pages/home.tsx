@@ -191,25 +191,162 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content Layout */}
-      <div className="flex h-[calc(100vh-120px)] overflow-hidden gap-2 p-2">
-        {/* Results Grid */}
-        <div className={`flex-1 overflow-y-auto rounded-xl shadow-lg ${
-          brandSkin === 'waffle' ? 'glass' : 'glass-dark'
+      {/* Professional Media Workstation Layout */}
+      <div className="h-[calc(100vh-120px)] grid grid-cols-12 grid-rows-12 gap-1 p-1">
+        {/* Search/Results Panel - Left Column */}
+        <div className={`col-span-4 row-span-8 rounded-lg border-2 ${
+          brandSkin === 'waffle' 
+            ? 'bg-yellow-50/80 border-yellow-400/50' 
+            : 'bg-purple-950/80 border-yellow-400/50'
         }`}>
-          <ResultsGrid onVideoSelect={handleVideoSelect} />
+          <div className={`h-full flex flex-col ${
+            brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+          }`}>
+            {/* Panel Header */}
+            <div className={`px-4 py-2 border-b font-mono text-xs uppercase tracking-wide ${
+              brandSkin === 'waffle' 
+                ? 'border-yellow-400/30 bg-yellow-100/50' 
+                : 'border-yellow-400/30 bg-purple-900/50'
+            }`}>
+              Search / Results
+            </div>
+            {/* Results Grid */}
+            <div className="flex-1 overflow-y-auto">
+              <ResultsGrid onVideoSelect={handleVideoSelect} />
+            </div>
+          </div>
         </div>
 
-        {/* Effects Panel */}
-        <div className={`w-80 overflow-y-auto rounded-xl shadow-lg ${
-          brandSkin === 'waffle' ? 'glass' : 'glass-dark'
+        {/* Preview/Player Panel - Center/Right */}
+        <div className={`col-span-8 row-span-8 rounded-lg border-2 ${
+          brandSkin === 'waffle' 
+            ? 'bg-yellow-50/80 border-yellow-400/50' 
+            : 'bg-purple-950/80 border-yellow-400/50'
         }`}>
-          <EffectsPanel />
+          <div className={`h-full flex flex-col ${
+            brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+          }`}>
+            {/* Panel Header */}
+            <div className={`px-4 py-2 border-b font-mono text-xs uppercase tracking-wide flex justify-between items-center ${
+              brandSkin === 'waffle' 
+                ? 'border-yellow-400/30 bg-yellow-100/50' 
+                : 'border-yellow-400/30 bg-purple-900/50'
+            }`}>
+              <span>Preview / Player</span>
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${
+                  brandSkin === 'waffle' ? 'bg-red-500' : 'bg-red-400'
+                } animate-pulse`}></div>
+                <span className="text-xs">LIVE</span>
+              </div>
+            </div>
+            {/* Player Area */}
+            <div className="flex-1 bg-black/90 relative flex items-center justify-center">
+              <div className={`text-center ${
+                brandSkin === 'waffle' ? 'text-amber-200' : 'text-yellow-300'
+              }`}>
+                <div className="text-6xl mb-4">📺</div>
+                <div className="font-mono text-lg">Video Feed</div>
+                <div className="text-sm opacity-70 mt-2">Select a clip to preview</div>
+              </div>
+              {/* Video Controls Overlay */}
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className={`flex items-center justify-between px-4 py-2 rounded border ${
+                  brandSkin === 'waffle' 
+                    ? 'bg-yellow-100/90 border-yellow-400/50' 
+                    : 'bg-purple-900/90 border-yellow-400/50'
+                }`}>
+                  <div className="flex items-center space-x-2">
+                    <button className={`px-2 py-1 rounded text-xs font-mono ${
+                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
+                    }`}>▶</button>
+                    <button className={`px-2 py-1 rounded text-xs font-mono ${
+                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
+                    }`}>⏸</button>
+                    <span className="font-mono text-xs">00:00 / 00:00</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button className={`px-2 py-1 rounded text-xs font-mono ${
+                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
+                    }`}>Loop</button>
+                    <button className={`px-2 py-1 rounded text-xs font-mono ${
+                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
+                    }`}>Mark In</button>
+                    <button className={`px-2 py-1 rounded text-xs font-mono ${
+                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
+                    }`}>Mark Out</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Queue Panel */}
-        <div className="w-80">
-          <QueuePanel />
+        {/* Queue/Timeline Panel - Bottom Row */}
+        <div className={`col-span-8 row-span-4 rounded-lg border-2 ${
+          brandSkin === 'waffle' 
+            ? 'bg-yellow-50/80 border-yellow-400/50' 
+            : 'bg-purple-950/80 border-yellow-400/50'
+        }`}>
+          <div className={`h-full flex flex-col ${
+            brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+          }`}>
+            {/* Panel Header */}
+            <div className={`px-4 py-2 border-b font-mono text-xs uppercase tracking-wide ${
+              brandSkin === 'waffle' 
+                ? 'border-yellow-400/30 bg-yellow-100/50' 
+                : 'border-yellow-400/30 bg-purple-900/50'
+            }`}>
+              Queue / Timeline
+            </div>
+            {/* Timeline Area */}
+            <div className="flex-1 p-4">
+              <div className="flex items-center space-x-2 h-full">
+                {/* Timeline Segments */}
+                {[1, 2, 3, 4, 5].map((clip, index) => (
+                  <div 
+                    key={index}
+                    className={`h-16 w-24 rounded border-2 border-dashed flex items-center justify-center text-xs font-mono cursor-pointer transition-colors ${
+                      brandSkin === 'waffle' 
+                        ? 'border-amber-400/50 bg-yellow-100/30 hover:bg-yellow-200/50' 
+                        : 'border-yellow-400/50 bg-purple-800/30 hover:bg-purple-700/50'
+                    }`}
+                  >
+                    {clip}
+                  </div>
+                ))}
+                <div className={`h-16 w-24 rounded border-2 border-dashed flex items-center justify-center text-xs opacity-50 ${
+                  brandSkin === 'waffle' ? 'border-amber-400/30' : 'border-yellow-400/30'
+                }`}>
+                  + Add
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Effects Panel - Bottom Right */}
+        <div className={`col-span-4 row-span-4 rounded-lg border-2 ${
+          brandSkin === 'waffle' 
+            ? 'bg-yellow-50/80 border-yellow-400/50' 
+            : 'bg-purple-950/80 border-yellow-400/50'
+        }`}>
+          <div className={`h-full flex flex-col ${
+            brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+          }`}>
+            {/* Panel Header */}
+            <div className={`px-4 py-2 border-b font-mono text-xs uppercase tracking-wide ${
+              brandSkin === 'waffle' 
+                ? 'border-yellow-400/30 bg-yellow-100/50' 
+                : 'border-yellow-400/30 bg-purple-900/50'
+            }`}>
+              Effects / Mix
+            </div>
+            {/* Effects Content */}
+            <div className="flex-1 overflow-y-auto">
+              <EffectsPanel />
+            </div>
+          </div>
         </div>
       </div>
 

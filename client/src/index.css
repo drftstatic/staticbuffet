@@ -139,6 +139,32 @@
     color: #FFD300;
   }
   
+  /* Professional media workstation styling */
+  .media-panel {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 211, 0, 0.3);
+    backdrop-filter: blur(8px);
+  }
+
+  .panel-header {
+    background: rgba(255, 211, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 211, 0, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Timeline segment hover effects */
+  .timeline-segment {
+    transition: all 0.2s ease;
+  }
+
+  .timeline-segment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 211, 0, 0.2);
+  }
+
   /* Scanlines for EBN theme */
   .scanlines::before {
     content: '';
