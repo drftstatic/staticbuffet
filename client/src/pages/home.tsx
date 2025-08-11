@@ -20,6 +20,7 @@ import { Footer } from '@/components/Footer';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
+import { PanelHeader } from '@/components/PanelHeader';
 
 export default function Home() {
   const {
@@ -30,6 +31,8 @@ export default function Home() {
     setLoading,
     setSelectedVideo,
     setDetailDrawerOpen,
+    panelStates,
+    togglePanelCollapse,
   } = useStore();
 
   // Perform search when filters change
@@ -205,18 +208,17 @@ export default function Home() {
           <div className={`h-full flex flex-col ${
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
-            {/* Panel Header */}
-            <div className={`px-4 py-2 border-b font-mono text-xs uppercase tracking-wide ${
-              brandSkin === 'waffle' 
-                ? 'border-yellow-400/30 bg-yellow-100/50' 
-                : 'border-yellow-400/30 bg-purple-900/50'
-            }`}>
-              Search / Results
-            </div>
-            {/* Results Grid */}
-            <div className="flex-1 overflow-y-auto">
-              <ResultsGrid onVideoSelect={handleVideoSelect} />
-            </div>
+            <PanelHeader
+              title="SEARCH / RESULTS"
+              status={`${searchData?.numFound || 0} ITEMS`}
+              isCollapsed={panelStates.searchCollapsed}
+              onToggleCollapse={() => togglePanelCollapse('search')}
+            />
+            {!panelStates.searchCollapsed && (
+              <div className="flex-1 overflow-y-auto">
+                <ResultsGrid onVideoSelect={handleVideoSelect} />
+              </div>
+            )}
           </div>
         </div>
 
@@ -229,24 +231,23 @@ export default function Home() {
           <div className={`h-full flex flex-col ${
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
-            {/* Panel Header */}
-            <div className={`px-4 py-2 border-b font-mono text-xs uppercase tracking-wide flex justify-between items-center ${
-              brandSkin === 'waffle' 
-                ? 'border-yellow-400/30 bg-yellow-100/50' 
-                : 'border-yellow-400/30 bg-purple-900/50'
-            }`}>
-              <span>Preview / Player</span>
+            <PanelHeader
+              title="PREVIEW / PLAYER"
+              status="LIVE"
+              isCollapsed={panelStates.playerCollapsed}
+              onToggleCollapse={() => togglePanelCollapse('player')}
+            >
               <div className="flex items-center space-x-2">
                 <div className={`w-2 h-2 rounded-full ${
                   brandSkin === 'waffle' ? 'bg-red-500' : 'bg-red-400'
                 } animate-pulse`}></div>
-                <span className="text-xs">LIVE</span>
               </div>
-            </div>
-            {/* Player Area */}
-            <div className="flex-1 bg-black relative min-h-0">
-              <Player />
-            </div>
+            </PanelHeader>
+            {!panelStates.playerCollapsed && (
+              <div className="flex-1 bg-black relative min-h-0">
+                <Player />
+              </div>
+            )}
           </div>
         </div>
 
@@ -259,18 +260,17 @@ export default function Home() {
           <div className={`h-full flex flex-col ${
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
-            {/* Panel Header */}
-            <div className={`px-4 py-2 border-b font-mono text-xs uppercase tracking-wide ${
-              brandSkin === 'waffle' 
-                ? 'border-yellow-400/30 bg-yellow-100/50' 
-                : 'border-yellow-400/30 bg-purple-900/50'
-            }`}>
-              Queue / Timeline
-            </div>
-            {/* Timeline Area */}
-            <div className="flex-1 p-4">
-              <QueuePanel />
-            </div>
+            <PanelHeader
+              title="QUEUE / TIMELINE"
+              status={`${searchState?.query ? 'ACTIVE' : 'IDLE'}`}
+              isCollapsed={panelStates.queueCollapsed}
+              onToggleCollapse={() => togglePanelCollapse('queue')}
+            />
+            {!panelStates.queueCollapsed && (
+              <div className="flex-1 p-4">
+                <QueuePanel />
+              </div>
+            )}
           </div>
         </div>
 
@@ -283,18 +283,17 @@ export default function Home() {
           <div className={`h-full flex flex-col ${
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
-            {/* Panel Header */}
-            <div className={`px-4 py-2 border-b font-mono text-xs uppercase tracking-wide ${
-              brandSkin === 'waffle' 
-                ? 'border-yellow-400/30 bg-yellow-100/50' 
-                : 'border-yellow-400/30 bg-purple-900/50'
-            }`}>
-              Effects / Mix
-            </div>
-            {/* Effects Content */}
-            <div className="flex-1 overflow-y-auto">
-              <EffectsPanel />
-            </div>
+            <PanelHeader
+              title="EFFECTS / MIX"
+              status="READY"
+              isCollapsed={panelStates.effectsCollapsed}
+              onToggleCollapse={() => togglePanelCollapse('effects')}
+            />
+            {!panelStates.effectsCollapsed && (
+              <div className="flex-1 overflow-y-auto">
+                <EffectsPanel />
+              </div>
+            )}
           </div>
         </div>
       </div>

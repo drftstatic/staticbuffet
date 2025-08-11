@@ -35,6 +35,12 @@ interface AppStore extends AppState {
   // Effects
   setVideoEffects: (effects: VideoEffects) => void;
   setAudioEffects: (effects: AudioEffects) => void;
+  
+  // Panel actions
+  togglePanelCollapse: (panel: 'search' | 'player' | 'queue' | 'effects') => void;
+  
+  // Panel actions
+  togglePanelCollapse: (panel: 'search' | 'player' | 'queue' | 'effects') => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
@@ -58,6 +64,14 @@ export const useStore = create<AppStore>((set, get) => ({
   isAudioReactive: false,
   isLoading: false,
   totalResults: 0,
+  
+  // Panel state
+  panelStates: {
+    searchCollapsed: false,
+    playerCollapsed: false,
+    queueCollapsed: false,
+    effectsCollapsed: false,
+  },
   
   // Effects state
   videoEffects: {
@@ -175,4 +189,12 @@ export const useStore = create<AppStore>((set, get) => ({
   // Effects actions
   setVideoEffects: (effects) => set({ videoEffects: effects }),
   setAudioEffects: (effects) => set({ audioEffects: effects }),
+  
+  // Panel actions
+  togglePanelCollapse: (panel) => set((state) => ({
+    panelStates: {
+      ...state.panelStates,
+      [`${panel}Collapsed`]: !state.panelStates[`${panel}Collapsed` as keyof typeof state.panelStates]
+    }
+  })),
 }));

@@ -71,6 +71,12 @@ export interface AppState {
   totalResults: number;
   videoEffects: VideoEffects;
   audioEffects: AudioEffects;
+  panelStates: {
+    searchCollapsed: boolean;
+    playerCollapsed: boolean;
+    queueCollapsed: boolean;
+    effectsCollapsed: boolean;
+  };
 }
 
 export interface QueueItem {
