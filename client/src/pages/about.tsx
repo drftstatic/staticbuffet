@@ -121,10 +121,10 @@ export default function About() {
                 'Real-time video effects and audio processing',
                 'Fullscreen mode with keyboard shortcuts',
                 'Queue management with drag & drop',
-                'Emergency Mix for instant content',
+                'Emergency Mix button for instant content',
                 'Audio-reactive video effects',
                 'Export playlists with licensing metadata',
-                'Dual themes: Waffle House & EBN Hijack modes'
+                'Dual themes: Waffle House & EBN Hijack'
               ].map((feature, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <div className={`w-2 h-2 rounded-full ${
@@ -154,7 +154,7 @@ export default function About() {
                 <h4 className={`text-lg font-bold mb-3 ${
                   brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
                 }`}>
-                  🧇 Waffle House Mode
+                  🧇 Waffle House
                 </h4>
                 <p className={`${
                   brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
@@ -171,7 +171,7 @@ export default function About() {
                 <h4 className={`text-lg font-bold mb-3 ${
                   brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
                 }`}>
-                  📺 EBN Hijack Mode
+                  📺 EBN Hijack
                 </h4>
                 <p className={`${
                   brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
