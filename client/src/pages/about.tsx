@@ -5,11 +5,19 @@ import { Button } from '@/components/ui/button';
 import DonationCTA from '@/components/DonationCTA';
 
 export default function About() {
-  const { brandSkin } = useStore();
+  const { brandSkin, isHulksterMode } = useStore();
 
   return (
-    <div className={`min-h-screen transition-all duration-300 ${
-      brandSkin === 'waffle' ? 'waffle-gradient' : 'ebn-gradient'
+    <div className={`min-h-screen transition-all duration-300 relative ${
+      brandSkin === 'waffle' 
+        ? 'waffle-gradient' 
+        : brandSkin === 'ebn'
+        ? 'ebn-gradient scanlines'
+        : brandSkin === 'ozzy'
+        ? 'ozzy-gradient metal-texture'
+        : brandSkin === 'hogan' && isHulksterMode
+        ? 'hogan-gradient nwo-stripes hulkster-mode'
+        : 'hogan-gradient nwo-stripes'
     }`}>
       {/* Header */}
       <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${
@@ -140,7 +148,10 @@ export default function About() {
 
           <div className="mb-8">
             <h3 className={`text-2xl font-bold mb-6 ${
-              brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+              brandSkin === 'waffle' ? 'text-amber-900' : 
+              brandSkin === 'ebn' ? 'text-gray-100' :
+              brandSkin === 'ozzy' ? 'text-red-300' :
+              'text-yellow-300'
             }`}>
               Visual Themes
             </h3>
@@ -149,15 +160,25 @@ export default function About() {
               <div className={`p-6 rounded-lg ${
                 brandSkin === 'waffle' 
                   ? 'bg-yellow-50/50 border border-yellow-400/30' 
-                  : 'bg-gray-800/50 border border-lime-500/30'
+                  : brandSkin === 'ebn'
+                  ? 'bg-gray-800/50 border border-lime-500/30'
+                  : brandSkin === 'ozzy'
+                  ? 'bg-red-950/30 border border-red-500/30'
+                  : 'bg-gray-800/50 border border-yellow-400/30'
               }`}>
                 <h4 className={`text-lg font-bold mb-3 ${
-                  brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+                  brandSkin === 'waffle' ? 'text-amber-900' : 
+                  brandSkin === 'ebn' ? 'text-gray-100' :
+                  brandSkin === 'ozzy' ? 'text-red-300' :
+                  'text-yellow-300'
                 }`}>
                   🧇 Waffle House
                 </h4>
                 <p className={`${
-                  brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+                  brandSkin === 'waffle' ? 'text-amber-800' : 
+                  brandSkin === 'ebn' ? 'text-gray-300' :
+                  brandSkin === 'ozzy' ? 'text-red-200' :
+                  'text-yellow-200'
                 } leading-relaxed`}>
                   Inspired by the Waffle House menu, the unofficial after-gig hangout for every VJ. Cozy colors, laminated-menu vibes, late-night comfort.
                 </p>
@@ -166,17 +187,81 @@ export default function About() {
               <div className={`p-6 rounded-lg ${
                 brandSkin === 'waffle' 
                   ? 'bg-yellow-50/50 border border-yellow-400/30' 
-                  : 'bg-gray-800/50 border border-lime-500/30'
+                  : brandSkin === 'ebn'
+                  ? 'bg-gray-800/50 border border-lime-500/30'
+                  : brandSkin === 'ozzy'
+                  ? 'bg-red-950/30 border border-red-500/30'
+                  : 'bg-gray-800/50 border border-yellow-400/30'
               }`}>
                 <h4 className={`text-lg font-bold mb-3 ${
-                  brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+                  brandSkin === 'waffle' ? 'text-amber-900' : 
+                  brandSkin === 'ebn' ? 'text-gray-100' :
+                  brandSkin === 'ozzy' ? 'text-red-300' :
+                  'text-yellow-300'
                 }`}>
                   📺 EBN Hijack
                 </h4>
                 <p className={`${
-                  brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+                  brandSkin === 'waffle' ? 'text-amber-800' : 
+                  brandSkin === 'ebn' ? 'text-gray-300' :
+                  brandSkin === 'ozzy' ? 'text-red-200' :
+                  'text-yellow-200'
                 } leading-relaxed`}>
                   A nod to the pioneers at Emergency Broadcast Network. Tactical overlays, neon alerts, hacked-broadcast energy.
+                </p>
+              </div>
+
+              <div className={`p-6 rounded-lg ${
+                brandSkin === 'waffle' 
+                  ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                  : brandSkin === 'ebn'
+                  ? 'bg-gray-800/50 border border-lime-500/30'
+                  : brandSkin === 'ozzy'
+                  ? 'bg-red-950/30 border border-red-500/30'
+                  : 'bg-gray-800/50 border border-yellow-400/30'
+              }`}>
+                <h4 className={`text-lg font-bold mb-3 ${
+                  brandSkin === 'waffle' ? 'text-amber-900' : 
+                  brandSkin === 'ebn' ? 'text-gray-100' :
+                  brandSkin === 'ozzy' ? 'text-red-300' :
+                  'text-yellow-300'
+                }`}>
+                  🦇 Heavy Metal
+                </h4>
+                <p className={`${
+                  brandSkin === 'waffle' ? 'text-amber-800' : 
+                  brandSkin === 'ebn' ? 'text-gray-300' :
+                  brandSkin === 'ozzy' ? 'text-red-200' :
+                  'text-yellow-200'
+                } leading-relaxed`}>
+                  A tribute to Ozzy Osbourne and the heavy metal aesthetic. Dark metallic textures, blood-red accents, and industrial brutality for the headbanging VJ.
+                </p>
+              </div>
+
+              <div className={`p-6 rounded-lg ${
+                brandSkin === 'waffle' 
+                  ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                  : brandSkin === 'ebn'
+                  ? 'bg-gray-800/50 border border-lime-500/30'
+                  : brandSkin === 'ozzy'
+                  ? 'bg-red-950/30 border border-red-500/30'
+                  : 'bg-gray-800/50 border border-yellow-400/30'
+              }`}>
+                <h4 className={`text-lg font-bold mb-3 ${
+                  brandSkin === 'waffle' ? 'text-amber-900' : 
+                  brandSkin === 'ebn' ? 'text-gray-100' :
+                  brandSkin === 'ozzy' ? 'text-red-300' :
+                  'text-yellow-300'
+                }`}>
+                  💪 NWO Hollywood
+                </h4>
+                <p className={`${
+                  brandSkin === 'waffle' ? 'text-amber-800' : 
+                  brandSkin === 'ebn' ? 'text-gray-300' :
+                  brandSkin === 'ozzy' ? 'text-red-200' :
+                  'text-yellow-200'
+                } leading-relaxed`}>
+                  Channel the Hollywood Hogan era with NWO red, black, and gold. Triple-click the HH button to unlock HULKSTER mode with classic soundboard quotes, brother!
                 </p>
               </div>
             </div>

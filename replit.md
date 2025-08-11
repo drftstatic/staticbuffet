@@ -13,6 +13,28 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 
 ## Recent Changes
 
+### Version 0.4.0 Release (August 11, 2025)
+- **Expanded Theme System**: Added two new complete visual themes with unique styling
+  - **Heavy Metal Theme (🦇)**: Dark Ozzy Osbourne-inspired aesthetic with red accents, metallic textures, and industrial brutality
+  - **NWO Hollywood Theme (💪)**: Hulk Hogan wrestling era with red/black/gold colors and NWO stripes
+- **Hulkster Easter Egg System**: Interactive HH button with triple-click activation
+  - Unlocks "HULKSTER mode" with golden pulsing borders and title transformation
+  - Features 8-button soundboard with classic Hogan quotes and NWO phrases
+  - Only appears when NWO Hollywood theme is active
+- **Customizable Workspace Layout Saver**: Professional layout management system
+  - Save/load/edit/delete custom panel configurations with names and descriptions
+  - LocalStorage persistence across sessions
+  - Three default layouts: Full Interface, Performance Mode, Preparation Mode
+  - Icon-only save/load controls integrated into header
+- **Theme-Specific Visual Effects**: Enhanced immersion with CSS animations
+  - EBN Hijack: Animated scanlines overlay
+  - Heavy Metal: Metallic diagonal texture pattern
+  - NWO Hollywood: Red wrestling stripes with optional HULKSTER pulsing
+- **Complete UI Theme Integration**: All components support all four themes
+  - Updated About page with comprehensive theme descriptions
+  - Consistent color schemes across all interface elements
+  - Professional glass morphism effects for each theme
+
 ### Version 0.3.0 Release (August 11, 2025)
 - **UI Polish and Professional Interface**: Major cleanup of control buttons for cleaner VJ interface
   - Converted Emergency Mix and Audio Reactive buttons to icon-only controls with tooltips
@@ -96,11 +118,15 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 - **Audio Reactive**: Web Audio API with real-time frequency analysis for beat detection
 
 ### Theme System
-- **Dual Brand Themes**: 
-  - Diner Mode: Off-white backgrounds with ketchup red accents and menu-card aesthetics
-  - EBN Hijack Mode: Dark charcoal with lime LEDs, scanlines, and live broadcast styling
+- **Four Complete Visual Themes**: 
+  - **Waffle House**: Off-white backgrounds with ketchup red accents and menu-card aesthetics
+  - **EBN Hijack**: Dark charcoal with lime LEDs, animated scanlines, and live broadcast styling
+  - **Heavy Metal**: Black/red Ozzy-inspired theme with metallic textures and industrial elements
+  - **NWO Hollywood**: Wrestling-inspired red/black/gold with NWO stripes and HULKSTER Easter egg
+- **Interactive Easter Eggs**: HH button system with triple-click activation for HULKSTER mode
 - **CSS Variables**: Theme-aware color system using CSS custom properties
 - **Typography**: Inter font for UI text and JetBrains Mono for technical elements
+- **Visual Effects**: Theme-specific overlays (scanlines, metal textures, wrestling stripes)
 
 ### Licensing and Compliance
 - **License Filtering**: Built-in filtering to show only Public Domain, CC0, and CC-BY content
