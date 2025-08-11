@@ -2,6 +2,7 @@ import { ArrowLeft, ExternalLink, Heart, Tv, Archive, Zap } from 'lucide-react';
 import { Link } from 'wouter';
 import { useStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
+import DonationCTA from '@/components/DonationCTA';
 
 export default function About() {
   const { brandSkin } = useStore();
@@ -41,7 +42,7 @@ export default function About() {
           brandSkin === 'waffle' ? 'glass' : 'glass-dark'
         }`}>
           <div className="text-center mb-8">
-            <h2 className={`text-4xl font-black mb-4 ${
+            <h2 className={`font-black mb-4 text-[30px] ${
               brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
             }`}>
               Trash Team × Nulltone.TV present Static Buffet
@@ -94,9 +95,17 @@ export default function About() {
               </div>
               <p className={`${
                 brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
-              } leading-relaxed`}>
-                Features real-time video mixing, audio-reactive capabilities, fullscreen performance mode, keyboard shortcuts for live use, and comprehensive effects processing. Built by VJs, for VJs.
+              } leading-relaxed mb-4`}>
+                Static Buffet delivers real-time video mixing, audio-reactive performance, fullscreen playback, keyboard shortcuts for live sets, and a full suite of effects. It's built by A/V performance artists, for the community that keeps the screens glowing.
               </p>
+              <p className={`${
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+              } leading-relaxed mb-6`}>
+                The app is free to use, always. If Static Buffet becomes part of your creative ritual and you want to help keep the signal alive, we're set up to accept your digital blessings. Every contribution helps feed the servers and fuel future features.
+              </p>
+              <div className="flex justify-center">
+                <DonationCTA />
+              </div>
             </div>
           </div>
 
