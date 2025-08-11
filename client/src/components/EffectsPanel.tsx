@@ -26,6 +26,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { ScaleTransition } from './AnimatedTransitions';
 
 export function EffectsPanel() {
   const { videoEffects, setVideoEffects, audioEffects, setAudioEffects, brandSkin } = useStore();
@@ -238,17 +239,17 @@ export function EffectsPanel() {
       {/* Ultra-Compact Quick Presets */}
       <div className="space-y-1">
         <div className="grid grid-cols-4 gap-1">
-          <Button size="sm" variant="outline" onClick={() => applyPreset('cyberpunk')} title="Cyberpunk" className="h-6 text-xs p-1">1</Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('vintage')} title="Vintage" className="h-6 text-xs p-1">2</Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('glitch')} title="Glitch" className="h-6 text-xs p-1">3</Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('noir')} title="Film Noir" className="h-6 text-xs p-1">4</Button>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}><Button size="sm" variant="outline" onClick={() => applyPreset('cyberpunk')} title="Cyberpunk" className="h-6 text-xs p-1">1</Button></ScaleTransition>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}><Button size="sm" variant="outline" onClick={() => applyPreset('vintage')} title="Vintage" className="h-6 text-xs p-1">2</Button></ScaleTransition>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}><Button size="sm" variant="outline" onClick={() => applyPreset('glitch')} title="Glitch" className="h-6 text-xs p-1">3</Button></ScaleTransition>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}><Button size="sm" variant="outline" onClick={() => applyPreset('noir')} title="Film Noir" className="h-6 text-xs p-1">4</Button></ScaleTransition>
         </div>
         
         <div className="grid grid-cols-4 gap-1">
-          <Button size="sm" variant="outline" onClick={() => applyPreset('vortex')} title="Video Vortex" className="h-6 text-xs p-1">5</Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('portal')} title="Demonic Portal" className="h-6 text-xs p-1">6</Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('fractal')} title="Fractal Storm" className="h-6 text-xs p-1">7</Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('timewarp')} title="Time Warp" className="h-6 text-xs p-1">8</Button>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}><Button size="sm" variant="outline" onClick={() => applyPreset('vortex')} title="Video Vortex" className="h-6 text-xs p-1">5</Button></ScaleTransition>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}><Button size="sm" variant="outline" onClick={() => applyPreset('portal')} title="Demonic Portal" className="h-6 text-xs p-1">6</Button></ScaleTransition>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}><Button size="sm" variant="outline" onClick={() => applyPreset('fractal')} title="Fractal Storm" className="h-6 text-xs p-1">7</Button></ScaleTransition>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}><Button size="sm" variant="outline" onClick={() => applyPreset('timewarp')} title="Time Warp" className="h-6 text-xs p-1">8</Button></ScaleTransition>
         </div>
       </div>
       <Accordion type="multiple" className="w-full">

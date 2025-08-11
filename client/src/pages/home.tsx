@@ -34,6 +34,7 @@ import { CoreSoundboards } from '@/components/CoreSoundboards';
 import { LayoutControls } from '@/components/LayoutControls';
 import { ResponsiveLayoutHints } from '@/components/ResponsiveLayoutHints';
 import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
+import { FadeTransition, SlideTransition, ThemeTransition } from '@/components/AnimatedTransitions';
 
 export default function Home() {
   const {

@@ -3,6 +3,7 @@ import { Play, Pause, Square, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { ScaleTransition, PulseTransition } from './AnimatedTransitions';
 
 export function MediaControls() {
   const { brandSkin } = useStore();
@@ -152,40 +153,48 @@ export function MediaControls() {
   return (
     <div className="flex items-center space-x-1">
       {/* Play/Pause Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handlePlay}
-        className={`p-2 ${getThemeClasses()}`}
-        title={isPlaying ? "Pause playback" : "Start playback"}
-        data-testid={isPlaying ? "button-pause" : "button-play"}
-      >
-        {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-      </Button>
+      <ScaleTransition hoverScale={1.1} tapScale={0.9}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handlePlay}
+          className={`p-2 ${getThemeClasses()}`}
+          title={isPlaying ? "Pause playback" : "Start playback"}
+          data-testid={isPlaying ? "button-pause" : "button-play"}
+        >
+          {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+        </Button>
+      </ScaleTransition>
 
       {/* Stop Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleStop}
-        className={`p-2 ${getThemeClasses()}`}
-        title="Stop playback"
-        data-testid="button-stop"
-      >
-        <Square size={14} />
-      </Button>
+      <ScaleTransition hoverScale={1.1} tapScale={0.9}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleStop}
+          className={`p-2 ${getThemeClasses()}`}
+          title="Stop playback"
+          data-testid="button-stop"
+        >
+          <Square size={14} />
+        </Button>
+      </ScaleTransition>
 
-      {/* Record Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleRecord}
-        className={`p-2 ${getThemeClasses()} ${isRecording ? 'animate-pulse' : ''}`}
-        title={isRecording ? "Stop recording" : "Start screen recording"}
-        data-testid={isRecording ? "button-stop-record" : "button-start-record"}
-      >
-        <Circle size={14} className={isRecording ? 'fill-current' : ''} />
-      </Button>
+      {/* Record Button with Pulse Animation */}
+      <PulseTransition isActive={isRecording}>
+        <ScaleTransition hoverScale={1.1} tapScale={0.9}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRecord}
+            className={`p-2 ${getThemeClasses()}`}
+            title={isRecording ? "Stop recording" : "Start screen recording"}
+            data-testid={isRecording ? "button-stop-record" : "button-start-record"}
+          >
+            <Circle size={14} className={isRecording ? 'fill-current' : ''} />
+          </Button>
+        </ScaleTransition>
+      </PulseTransition>
     </div>
   );
 }

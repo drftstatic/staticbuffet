@@ -6,6 +6,7 @@ import { type VideoResult } from '@/lib/types';
 import { generateThumbnailUrl, preloadThumbnail } from '@/lib/archive-api';
 import { useStore } from '@/lib/store';
 import { ThumbnailSkeleton } from './SkeletonLoader';
+import { ScaleTransition, FadeTransition } from './AnimatedTransitions';
 
 interface ResultCardProps {
   video: VideoResult;
@@ -90,7 +91,7 @@ export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
     >
       {/* Hover info overlay */}
       {showHoverInfo && (
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10 transition-opacity duration-200">
+        <FadeTransition className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
           <div className="text-center text-white p-4">
             <div className="text-sm font-medium mb-2">Drag to Queue</div>
             <div className="flex items-center justify-center gap-3 text-xs">
@@ -100,7 +101,7 @@ export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
               </span>
             </div>
           </div>
-        </div>
+        </FadeTransition>
       )}
       <div className="relative">
         {!thumbnailLoaded && !thumbnailError ? (
@@ -143,14 +144,16 @@ export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
           <span className="text-gray-600 dark:text-gray-400">
             {video.downloads ? `${(video.downloads / 1000).toFixed(1)}k downloads` : 'No stats'}
           </span>
-          <Button
-            size="sm"
-            onClick={handleAddClick}
-            data-testid={`button-add-${video.identifier}`}
-            className="px-2 py-1 rounded transition-all duration-200 bg-red-600 hover:bg-red-700 dark:bg-lime-500 dark:hover:bg-lime-400 text-white dark:text-black text-xs"
-          >
-            <span className="text-xs">+ Add</span>
-          </Button>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}>
+            <Button
+              size="sm"
+              onClick={handleAddClick}
+              data-testid={`button-add-${video.identifier}`}
+              className="px-2 py-1 rounded transition-all duration-200 bg-red-600 hover:bg-red-700 dark:bg-lime-500 dark:hover:bg-lime-400 text-white dark:text-black text-xs"
+            >
+              <span className="text-xs">+ Add</span>
+            </Button>
+          </ScaleTransition>
         </div>
       </div>
     </div>

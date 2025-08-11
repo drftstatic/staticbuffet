@@ -4,6 +4,7 @@ import { Lock, Unlock, Move, X } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { PanelPosition, FloatingPanelStates, BrandSkin } from '@/lib/types';
 import { getThemeClasses } from '@/lib/theme-utils';
+import { FloatingPanelTransition, ScaleTransition } from './AnimatedTransitions';
 
 interface FloatingPanelProps {
   id: keyof FloatingPanelStates;
@@ -93,23 +94,24 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
   }, [isDragging, isResizing, dragStart, resizeStart, id, position, updatePanelPosition]);
 
   return (
-    <div
-      ref={panelRef}
-      className={`fixed border rounded-lg shadow-2xl backdrop-blur-sm transition-shadow duration-200 ${
-        position.isLocked 
-          ? `${themeClasses.panelBg} border-green-500/50 shadow-green-500/20` 
-          : `${themeClasses.panelBg} ${themeClasses.border} hover:shadow-2xl`
-      } ${isDragging ? 'cursor-grabbing select-none' : ''}`}
-      style={{
-        left: position.x,
-        top: position.y,
-        width: position.width,
-        height: position.height,
-        zIndex: position.zIndex,
-      }}
-      onClick={() => bringPanelToFront(id)}
-      data-testid={`floating-panel-${id}`}
-    >
+    <FloatingPanelTransition isDragging={isDragging}>
+      <div
+        ref={panelRef}
+        className={`fixed border rounded-lg shadow-2xl backdrop-blur-sm transition-shadow duration-200 ${
+          position.isLocked 
+            ? `${themeClasses.panelBg} border-green-500/50 shadow-green-500/20` 
+            : `${themeClasses.panelBg} ${themeClasses.border} hover:shadow-2xl`
+        } ${isDragging ? 'cursor-grabbing select-none' : ''}`}
+        style={{
+          left: position.x,
+          top: position.y,
+          width: position.width,
+          height: position.height,
+          zIndex: position.zIndex,
+        }}
+        onClick={() => bringPanelToFront(id)}
+        data-testid={`floating-panel-${id}`}
+      >
       {/* Panel Header */}
       <div
         className={`flex items-center justify-between px-3 py-2 border-b cursor-move rounded-t-lg ${
@@ -124,18 +126,20 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
         </div>
         
         <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              togglePanelLock(id);
-            }}
-            className={`h-6 w-6 p-0 ${themeClasses.accent}`}
-            data-testid={`button-lock-${id}`}
-          >
-            {position.isLocked ? <Lock size={12} /> : <Unlock size={12} />}
-          </Button>
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePanelLock(id);
+              }}
+              className={`h-6 w-6 p-0 ${themeClasses.accent}`}
+              data-testid={`button-lock-${id}`}
+            >
+              {position.isLocked ? <Lock size={12} /> : <Unlock size={12} />}
+            </Button>
+          </ScaleTransition>
         </div>
       </div>
 
@@ -156,5 +160,6 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
         />
       )}
     </div>
+    </FloatingPanelTransition>
   );
 }

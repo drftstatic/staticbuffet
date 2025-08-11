@@ -6,6 +6,7 @@ import { useStore } from '@/lib/store';
 import { searchVideos, getVideoMetadata, cancelCurrentSearch } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
 import { SearchResultsSkeleton } from './SkeletonLoader';
+import { StaggerContainer, StaggerItem } from './AnimatedTransitions';
 
 interface ResultsGridProps {
   onVideoSelect: (video: VideoResult) => void;
@@ -130,20 +131,22 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {searchResults.map((video, index) => (
-              <div
+              <StaggerItem 
                 key={`${video.identifier}-${index}`}
-                ref={index === searchResults.length - 1 ? lastVideoElementRef : null}
+                className={index === searchResults.length - 1 ? 'ref-element' : ''}
               >
-                <ResultCard
-                  video={video}
-                  onSelect={onVideoSelect}
-                  onAddToQueue={handleAddToQueue}
-                />
-              </div>
+                <div ref={index === searchResults.length - 1 ? lastVideoElementRef : null}>
+                  <ResultCard
+                    video={video}
+                    onSelect={onVideoSelect}
+                    onAddToQueue={handleAddToQueue}
+                  />
+                </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
 
           {isLoading && searchResults.length > 0 && (
             <div className="text-center py-8">
