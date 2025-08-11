@@ -8,6 +8,14 @@ Static Buffet is a VJ-focused web application designed for searching, previewing
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+- Added keyboard shortcuts for effect presets (1-4 keys for instant switching)
+- Implemented fullscreen mode with auto-hiding controls and keyboard shortcuts
+- Fixed audio effects system with proper Web Audio API integration
+- Added branded links to trashteam.tv and nulltone.tv in header
+- Complete professional VJ controls with real-time audio and video processing
+
 ## System Architecture
 
 ### Frontend Architecture

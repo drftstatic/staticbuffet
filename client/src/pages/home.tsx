@@ -112,6 +112,35 @@ export default function Home() {
                   </p>
                 </div>
               </div>
+
+              {/* Brand Links */}
+              <div className="flex items-center space-x-3 text-xs">
+                <a 
+                  href="https://trashteam.tv" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={`hover:underline transition-colors ${
+                    brandSkin === 'diner' 
+                      ? 'text-red-600 hover:text-red-800' 
+                      : 'text-lime-400 hover:text-lime-300'
+                  }`}
+                >
+                  trashteam.tv
+                </a>
+                <span className={brandSkin === 'diner' ? 'text-gray-400' : 'text-gray-500'}>×</span>
+                <a 
+                  href="https://nulltone.tv" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={`hover:underline transition-colors ${
+                    brandSkin === 'diner' 
+                      ? 'text-red-600 hover:text-red-800' 
+                      : 'text-lime-400 hover:text-lime-300'
+                  }`}
+                >
+                  nulltone.tv
+                </a>
+              </div>
             </div>
 
             {/* Search Bar */}
