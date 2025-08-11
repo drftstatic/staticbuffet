@@ -38,7 +38,7 @@ import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
 import { PanelHeader } from '@/components/PanelHeader';
 import { FirstRunTour } from '@/components/FirstRunTour';
-import { ResponsiveLayoutHints } from '@/components/ResponsiveLayoutHints';
+import { ResponsiveLayoutHintsSimple } from '@/components/ResponsiveLayoutHintsSimple';
 import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
 import { ResponsiveBreakpointIndicator } from '@/components/ResponsiveBreakpointIndicator';
 import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
@@ -497,9 +497,7 @@ export default function Home() {
       <WelcomeModal />
       
       {/* Responsive Layout Hints */}
-      <ResponsiveLayoutHints onLayoutChange={(layout) => {
-        console.log('Layout changed to:', layout);
-      }} />
+      <ResponsiveLayoutHintsSimple />
       
       {/* Responsive Breakpoint Indicator */}
       <ResponsiveBreakpointIndicator />

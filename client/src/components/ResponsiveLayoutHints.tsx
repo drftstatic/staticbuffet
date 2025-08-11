@@ -174,19 +174,19 @@ export function ResponsiveLayoutHints({ onLayoutChange }: ResponsiveLayoutHintsP
 
   return (
     <div 
-      className={`fixed bottom-4 right-4 z-50 p-4 rounded-lg border shadow-lg backdrop-blur-sm ${theme.bg} ${
+      className={`fixed bottom-4 right-4 z-50 p-6 rounded-xl border-2 shadow-xl backdrop-blur-md ${theme.bg} ${
         animationState === 'transitioning' ? 'animate-pulse scale-105' : 'animate-fade-in'
-      }`}
+      } min-w-[280px] max-w-[320px]`}
       data-testid="responsive-layout-hints"
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-3">
           <IconComponent 
-            size={20} 
+            size={24} 
             className={`${theme.accent} ${animationState === 'transitioning' ? currentConfig.animations : ''}`} 
           />
-          <h3 className={`font-bold text-sm ${theme.text}`}>
+          <h3 className={`font-bold text-lg ${theme.text}`}>
             {currentConfig.title}
           </h3>
         </div>
@@ -202,18 +202,18 @@ export function ResponsiveLayoutHints({ onLayoutChange }: ResponsiveLayoutHintsP
       </div>
 
       {/* Current Layout Info */}
-      <div className="space-y-3">
-        <p className={`text-xs ${theme.text} opacity-80`}>
+      <div className="space-y-4">
+        <p className={`text-sm font-medium ${theme.text} opacity-90`}>
           {currentConfig.description}
         </p>
 
         {/* Features */}
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-2">
           {currentConfig.features.map((feature, index) => (
             <Badge 
               key={index}
               variant="outline" 
-              className={`text-xs ${theme.badge} ${
+              className={`text-sm font-medium px-3 py-1 ${theme.badge} ${
                 animationState === 'transitioning' ? 'animate-bounce' : ''
               }`}
               style={{ animationDelay: `${index * 100}ms` }}
@@ -224,10 +224,10 @@ export function ResponsiveLayoutHints({ onLayoutChange }: ResponsiveLayoutHintsP
         </div>
 
         {/* Layout Preview */}
-        <div className="mt-3 p-2 rounded border border-dashed border-gray-400/30">
-          <div className="flex items-center space-x-2 mb-2">
-            <Layers size={14} className={theme.accent} />
-            <span className={`text-xs ${theme.text}`}>Panel Layout</span>
+        <div className="mt-4 p-3 rounded-lg border border-dashed border-gray-400/40">
+          <div className="flex items-center space-x-2 mb-3">
+            <Layers size={16} className={theme.accent} />
+            <span className={`text-sm font-medium ${theme.text}`}>Panel Layout</span>
           </div>
           
           <div className="grid gap-1" style={{
@@ -236,22 +236,22 @@ export function ResponsiveLayoutHints({ onLayoutChange }: ResponsiveLayoutHintsP
           }}>
             {currentLayout === 'mobile' && (
               <>
-                <div className={`h-4 ${theme.bg} rounded border`} />
-                <div className={`h-6 ${theme.bg} rounded border`} />
-                <div className={`h-4 ${theme.bg} rounded border`} />
+                <div className={`h-6 ${theme.bg} rounded-md border-2 border-opacity-50`} />
+                <div className={`h-8 ${theme.bg} rounded-md border-2 border-opacity-50`} />
+                <div className={`h-5 ${theme.bg} rounded-md border-2 border-opacity-50`} />
               </>
             )}
             {currentLayout === 'tablet' && (
               <>
-                <div className={`h-8 ${theme.bg} rounded border`} />
-                <div className={`h-8 ${theme.bg} rounded border`} />
+                <div className={`h-10 ${theme.bg} rounded-md border-2 border-opacity-50`} />
+                <div className={`h-10 ${theme.bg} rounded-md border-2 border-opacity-50`} />
               </>
             )}
             {currentLayout === 'desktop' && (
               <>
-                <div className={`h-6 ${theme.bg} rounded border`} />
-                <div className={`h-6 ${theme.bg} rounded border`} />
-                <div className={`h-6 ${theme.bg} rounded border`} />
+                <div className={`h-8 ${theme.bg} rounded-md border-2 border-opacity-50`} />
+                <div className={`h-8 ${theme.bg} rounded-md border-2 border-opacity-50`} />
+                <div className={`h-8 ${theme.bg} rounded-md border-2 border-opacity-50`} />
               </>
             )}
           </div>
@@ -259,24 +259,24 @@ export function ResponsiveLayoutHints({ onLayoutChange }: ResponsiveLayoutHintsP
 
         {/* Resize Hints */}
         {currentLayout === 'desktop' && (
-          <div className="flex items-center space-x-2 text-xs opacity-70">
-            <ArrowLeftRight size={12} className={theme.accent} />
-            <span className={theme.text}>Drag panel edges to resize</span>
+          <div className="flex items-center space-x-2 text-sm opacity-80">
+            <ArrowLeftRight size={14} className={theme.accent} />
+            <span className={`${theme.text} font-medium`}>Drag panel edges to resize</span>
           </div>
         )}
 
         {currentLayout === 'tablet' && (
-          <div className="flex items-center space-x-2 text-xs opacity-70">
-            <ArrowUpDown size={12} className={theme.accent} />
-            <span className={theme.text}>Swipe to navigate panels</span>
+          <div className="flex items-center space-x-2 text-sm opacity-80">
+            <ArrowUpDown size={14} className={theme.accent} />
+            <span className={`${theme.text} font-medium`}>Swipe to navigate panels</span>
           </div>
         )}
 
         {/* Animation State Indicator */}
         {animationState === 'transitioning' && (
-          <div className="flex items-center space-x-2 mt-2">
-            <div className={`w-2 h-2 rounded-full ${theme.accent} animate-pulse`} />
-            <span className={`text-xs ${theme.text} opacity-60`}>
+          <div className="flex items-center space-x-3 mt-3 p-2 rounded-md bg-opacity-20 bg-white">
+            <div className={`w-3 h-3 rounded-full ${theme.accent} animate-pulse`} />
+            <span className={`text-sm font-medium ${theme.text} opacity-80`}>
               Adapting layout...
             </span>
           </div>
