@@ -10,25 +10,18 @@ export function ThemeSwitcher() {
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <span className={`text-sm font-medium ${
-        brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-400'
+    <Select value={brandSkin} onValueChange={handleThemeChange}>
+      <SelectTrigger className={`w-56 ${
+        brandSkin === 'waffle' 
+          ? 'border-yellow-400/50 bg-yellow-50/50' 
+          : 'border-lime-500/30 bg-gray-800/50'
       }`}>
-        Theme:
-      </span>
-      <Select value={brandSkin} onValueChange={handleThemeChange}>
-        <SelectTrigger className={`w-48 ${
-          brandSkin === 'waffle' 
-            ? 'border-yellow-400/50 bg-yellow-50/50' 
-            : 'border-lime-500/30 bg-gray-800/50'
-        }`}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="waffle">🧇 Waffle House Mode</SelectItem>
-          <SelectItem value="ebn">📺 EBN Hijack Mode</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="waffle">🧇 Waffle House Mode</SelectItem>
+        <SelectItem value="ebn">📺 EBN Hijack Mode</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
