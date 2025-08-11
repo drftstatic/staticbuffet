@@ -36,6 +36,7 @@ import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
 import { PanelHeader } from '@/components/PanelHeader';
+import { FirstRunTour } from '@/components/FirstRunTour';
 
 export default function Home() {
   const {
@@ -123,6 +124,9 @@ export default function Home() {
 
   return (
     <>
+      {/* First Run Tour */}
+      <FirstRunTour />
+      
       {/* Mario Pipe Effect Overlay */}
       <MarioPipeEffect />
       
@@ -335,7 +339,9 @@ export default function Home() {
             /* Grid Layout - Top Row Only (Search, Player, Effects) */
             <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-1 p-1 overflow-hidden">
               {/* Large Preview/Player Panel - Left Side (8 columns) */}
-              <div className={`col-span-1 lg:col-span-8 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+              <div 
+                data-tour-target="player-section"
+                className={`col-span-1 lg:col-span-8 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
                 panelStates.playerCollapsed ? 'h-12' : 'h-full'
               } ${
                 brandSkin === 'waffle' 
@@ -368,7 +374,9 @@ export default function Home() {
               {/* Right Sidebar - 4 columns */}
               <div className="col-span-1 lg:col-span-4 flex flex-col gap-1">
                 {/* Search/Results Panel */}
-                <div className={`rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+                <div 
+                  data-tour-target="search-section"
+                  className={`rounded-lg border-2 overflow-hidden transition-all duration-300 ${
                   panelStates.searchCollapsed ? 'h-12' : 'flex-1'
                 } ${
                   brandSkin === 'waffle' 
@@ -422,7 +430,9 @@ export default function Home() {
         </div>
 
         {/* Bottom Timeline Panel - Full Width */}
-        <div className={`${panelStates.queueCollapsed ? 'h-16' : 'h-64'} rounded-lg border-2 mx-1 mb-1 overflow-hidden transition-all duration-300 ${
+        <div 
+          data-tour-target="queue-section"
+          className={`${panelStates.queueCollapsed ? 'h-16' : 'h-64'} rounded-lg border-2 mx-1 mb-1 overflow-hidden transition-all duration-300 ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'

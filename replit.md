@@ -30,6 +30,8 @@ Preferred communication style: Simple, everyday language.
 - **Queue Management**: In-memory queue with drag-and-drop, trim points, and loop settings.
 - **Video Metadata**: Cached using React Query with Archive.org API responses.
 - **Audio Reactive**: Web Audio API with real-time frequency analysis.
+- **EDL Recording**: Professional Edit Decision List system for capturing every cut, effect, and timing during live sets.
+- **First-Run Tour**: 4-step guided workflow tour for new users covering Search → Preview/Trim → Add to Queue → Emergency Mix.
 
 ### Theme System
 - **Ten Complete Visual Themes**: Test Card (Default), Waffle House, EBN Hijack, Heavy Metal, NWO Hollywood, D-Generation X, Max Headroom, Mario Plumber, Dodge Dakota, and Blondie. Each theme has distinct visual effects, gradients, and animations.
@@ -44,6 +46,11 @@ Preferred communication style: Simple, everyday language.
 - **License Filtering**: Filters for Public Domain, CC0, and CC-BY content.
 - **Attribution Tracking**: Automatic attribution data extraction for exports.
 - **Export Formats**: JSON and M3U playlists with licensing metadata.
+
+### Professional VJ Features
+- **EDL Recording System**: Complete session recording with event logging for professional set documentation and reconstruction.
+- **First-Run Tour**: Guided 4-step onboarding covering essential VJ workflow (Search → Preview/Trim → Queue → Emergency Mix).
+- **Session Management**: Persistent storage of recording sessions with venue info, statistics, and export capabilities.
 
 ### Performance Optimizations
 - **Debounced Search**: Reduces API calls.
