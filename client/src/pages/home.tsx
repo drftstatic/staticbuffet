@@ -198,9 +198,19 @@ export default function Home() {
       </header>
 
       {/* Professional Media Workstation Layout */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-12 gap-1 p-1 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-1 p-1 overflow-hidden" style={{
+        gridTemplateRows: `repeat(${
+          12 - 
+          (panelStates.searchCollapsed ? 7 : 0) - 
+          (panelStates.playerCollapsed ? 7 : 0) - 
+          (panelStates.queueCollapsed ? 3 : 0) - 
+          (panelStates.effectsCollapsed ? 3 : 0)
+        }, minmax(0, 1fr))`
+      }}>
         {/* Search/Results Panel - Left Column */}
-        <div className={`col-span-1 lg:col-span-4 lg:row-span-8 rounded-lg border-2 overflow-hidden ${
+        <div className={`col-span-1 lg:col-span-4 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+          panelStates.searchCollapsed ? 'lg:row-span-1' : 'lg:row-span-8'
+        } ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
@@ -223,7 +233,9 @@ export default function Home() {
         </div>
 
         {/* Preview/Player Panel - Center/Right */}
-        <div className={`col-span-1 lg:col-span-8 lg:row-span-8 rounded-lg border-2 overflow-hidden ${
+        <div className={`col-span-1 lg:col-span-8 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+          panelStates.playerCollapsed ? 'lg:row-span-1' : 'lg:row-span-8'
+        } ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
@@ -252,7 +264,9 @@ export default function Home() {
         </div>
 
         {/* Queue/Timeline Panel - Bottom Row */}
-        <div className={`col-span-1 lg:col-span-8 lg:row-span-4 rounded-lg border-2 overflow-hidden ${
+        <div className={`col-span-1 lg:col-span-8 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+          panelStates.queueCollapsed ? 'lg:row-span-1' : 'lg:row-span-4'
+        } ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
@@ -275,7 +289,9 @@ export default function Home() {
         </div>
 
         {/* Effects Panel - Bottom Right */}
-        <div className={`col-span-1 lg:col-span-4 lg:row-span-4 rounded-lg border-2 overflow-hidden ${
+        <div className={`col-span-1 lg:col-span-4 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+          panelStates.effectsCollapsed ? 'lg:row-span-1' : 'lg:row-span-4'
+        } ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
