@@ -144,6 +144,23 @@ export function EffectsPanel() {
           brightness: 80,
         });
         break;
+      case 'acidTrip':
+        setVideoEffects({
+          ...videoEffects,
+          intensity: 100,
+          colorShift: 100,
+          kaleidoscope: true,
+          plasma: true,
+          strobe: true,
+          chromatic: true,
+          brightness: 150,
+          contrast: 200,
+          saturation: 300,
+          hue: 180,
+          chromaticAberration: 100,
+          glitchIntensity: 80,
+        });
+        break;
     }
   };
 
@@ -165,19 +182,33 @@ export function EffectsPanel() {
       </div>
 
       {/* Quick Presets */}
-      <div className="grid grid-cols-2 gap-2">
-        <Button size="sm" variant="outline" onClick={() => applyPreset('cyberpunk')} title="Keyboard: 1">
-          <span className="mr-1 text-xs opacity-70">1</span> Cyberpunk
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => applyPreset('vintage')} title="Keyboard: 2">
-          <span className="mr-1 text-xs opacity-70">2</span> Vintage
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => applyPreset('glitch')} title="Keyboard: 3">
-          <span className="mr-1 text-xs opacity-70">3</span> Glitch
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => applyPreset('noir')} title="Keyboard: 4">
-          <span className="mr-1 text-xs opacity-70">4</span> Film Noir
-        </Button>
+      <div className="space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <Button size="sm" variant="outline" onClick={() => applyPreset('cyberpunk')} title="Keyboard: 1">
+            <span className="mr-1 text-xs opacity-70">1</span> Cyberpunk
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('vintage')} title="Keyboard: 2">
+            <span className="mr-1 text-xs opacity-70">2</span> Vintage
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('glitch')} title="Keyboard: 3">
+            <span className="mr-1 text-xs opacity-70">3</span> Glitch
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('noir')} title="Keyboard: 4">
+            <span className="mr-1 text-xs opacity-70">4</span> Film Noir
+          </Button>
+        </div>
+        
+        {/* Special Acid Trip Button (unlocked by Easter egg) */}
+        {(videoEffects.kaleidoscope || videoEffects.plasma || videoEffects.strobe) && (
+          <Button
+            size="sm"
+            onClick={() => applyPreset('acidTrip')}
+            className="w-full text-xs bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold animate-pulse border-2 border-yellow-400"
+            title="Easter Egg Unlocked!"
+          >
+            🌀 ACID TRIP MODE 🌀
+          </Button>
+        )}
       </div>
 
       <Accordion type="multiple" className="w-full">

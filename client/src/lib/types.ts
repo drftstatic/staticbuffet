@@ -41,6 +41,12 @@ export interface VideoEffects {
   scanlines: boolean;
   datamosh: boolean;
   pixelate: number;
+  intensity: number;
+  colorShift: number;
+  kaleidoscope: boolean;
+  plasma: boolean;
+  strobe: boolean;
+  chromatic: boolean;
 }
 
 export interface AudioEffects {
