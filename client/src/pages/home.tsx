@@ -101,88 +101,37 @@ export default function Home() {
           ? 'glass border-yellow-400/50' 
           : 'glass-dark border-lime-500/30'
       }`}>
-        <div className="max-w-full px-4 py-3">
-          <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-4 lg:gap-8 items-center">
-            {/* Brand Information */}
-            <div className="flex flex-col space-y-3">
-              {/* Attribution Links */}
-              <div className="flex items-center space-x-2 text-sm">
-                <a 
-                  href="https://trashteam.tv" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={`hover:underline transition-colors ${
-                    brandSkin === 'waffle' 
-                      ? 'text-amber-800 hover:text-red-700' 
-                      : ''
-                  }`}
-                  style={brandSkin !== 'waffle' ? { 
-                    color: '#FFD300'
-                  } : {}}
-                >
+        <div className="max-w-full px-4 py-2 space-y-3">
+          {/* Top Row - Compact Brand + Controls */}
+          <div className="flex items-center justify-between">
+            {/* Compact Brand */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Tv size={20} className={brandSkin === 'waffle' ? 'text-amber-600' : 'text-yellow-300'} />
+                <h1 className={`font-bold text-lg ${brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'}`}>
+                  STATIC BUFFET
+                </h1>
+              </div>
+              <div className="flex items-center space-x-1 text-xs opacity-75">
+                <a href="https://trashteam.tv" target="_blank" rel="noopener noreferrer" 
+                   className={`hover:underline ${brandSkin === 'waffle' ? 'text-amber-700' : 'text-yellow-200'}`}>
                   TRASH TEAM
                 </a>
-                <span className={brandSkin === 'waffle' ? 'text-amber-600' : ''} style={brandSkin !== 'waffle' ? { color: '#FFD300' } : {}}>×</span>
-                <a 
-                  href="https://nulltone.tv" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={`hover:underline transition-colors ${
-                    brandSkin === 'waffle' 
-                      ? 'text-amber-800 hover:text-red-700' 
-                      : ''
-                  }`}
-                  style={brandSkin !== 'waffle' ? { 
-                    color: '#FFD300'
-                  } : {}}
-                >
+                <span>×</span>
+                <a href="https://nulltone.tv" target="_blank" rel="noopener noreferrer"
+                   className={`hover:underline ${brandSkin === 'waffle' ? 'text-amber-700' : 'text-yellow-200'}`}>
                   NULLTONE.TV
                 </a>
               </div>
-              
-              {/* Main Logo */}
-              <div className="flex items-center space-x-3">
-                <div className={`${brandSkin === 'waffle' ? 'text-amber-600' : 'text-yellow-400'}`} style={brandSkin !== 'waffle' ? { color: '#FFD300' } : {}}>
-                  <Tv size={28} />
-                </div>
-                <div>
-                  <h1 className={`font-black text-2xl font-inter tracking-tight leading-none ${
-                    brandSkin === 'waffle' ? 'text-amber-900 logo-text' : 'text-gray-100 logo-text-dark'
-                  }`}>
-                    STATIC<br/>BUFFET
-                  </h1>
-                </div>
-              </div>
-              
-              {/* Tagline */}
-              <p className={`text-sm font-medium ${
-                brandSkin === 'waffle' ? 'text-amber-800' : ''
-              }`} style={brandSkin !== 'waffle' ? { color: '#B6FF00' } : {}}>
-                All-you-can-eat video chaos, straight from the public domain.
-              </p>
             </div>
 
-            {/* Search Bar - Center, Much Bigger */}
-            <div className="w-full">
-              <SearchBar onSearch={handleSearch} />
-            </div>
-
-            {/* Action Buttons */}
+            {/* Controls */}
             <div className="flex items-center space-x-2">
               <Link href="/about">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  className={`flex items-center space-x-1 ${
-                    brandSkin === 'waffle' 
-                      ? 'text-amber-800 hover:text-amber-900 hover:bg-yellow-100/50' 
-                      : 'hover:bg-purple-900/50'
-                  }`}
-                  style={brandSkin !== 'waffle' ? { 
-                    color: '#FFD300'
-                  } : {}}
-                >
-                  <Info size={16} />
+                <Button variant="ghost" size="sm" className={`flex items-center space-x-1 ${
+                  brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 'text-yellow-300 hover:bg-purple-900/50'
+                }`}>
+                  <Info size={14} />
                   <span>About</span>
                 </Button>
               </Link>
@@ -192,8 +141,13 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Search Bar Row - Full Width */}
+          <div>
+            <SearchBar onSearch={handleSearch} />
+          </div>
+
           {/* Filters Row */}
-          <div className="mt-4">
+          <div>
             <Filters onFiltersChange={handleFiltersChange} />
           </div>
         </div>
