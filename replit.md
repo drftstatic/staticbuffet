@@ -1,4 +1,5 @@
 # Static Buffet - Trash Team × Nulltone.TV
+**Version: 0.1.0**
 
 ## Overview
 
@@ -12,6 +13,7 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 
 ## Recent Changes
 
+### Version 0.1.0 Release (January 11, 2025)
 - **Professional Media Workstation Layout**: Transformed interface to panel-based layout inspired by Adobe Premiere and Resolume
 - **Distinct Work Zones**: Clear panels for Search/Results, Preview/Player, Queue/Timeline, and Effects/Mix
 - **Professional Player Interface**: Added LIVE indicator, timecode display, and professional media deck controls

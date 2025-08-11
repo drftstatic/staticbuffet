@@ -62,8 +62,8 @@ export function Footer() {
   };
 
   const buildInfo = {
-    version: '1.0.0',
-    build: '2024.01.11.001',
+    version: '0.1.0',
+    build: '2025.01.11.001',
     engine: 'Static Buffet VJ Engine',
     audio: 'Web Audio API',
     video: 'HTML5 + CSS Filters'
