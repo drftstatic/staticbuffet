@@ -109,12 +109,15 @@ export default function Home() {
                   className={`hover:underline transition-colors ${
                     brandSkin === 'waffle' 
                       ? 'text-amber-800 hover:text-red-700' 
-                      : 'text-gray-400 hover:text-lime-400'
+                      : ''
                   }`}
+                  style={brandSkin !== 'waffle' ? { 
+                    color: '#FFD300'
+                  } : {}}
                 >
                   TRASH TEAM
                 </a>
-                <span className={brandSkin === 'waffle' ? 'text-amber-600' : 'text-gray-500'}>×</span>
+                <span className={brandSkin === 'waffle' ? 'text-amber-600' : ''} style={brandSkin !== 'waffle' ? { color: '#FFD300' } : {}}>×</span>
                 <a 
                   href="https://nulltone.tv" 
                   target="_blank" 
@@ -122,8 +125,11 @@ export default function Home() {
                   className={`hover:underline transition-colors ${
                     brandSkin === 'waffle' 
                       ? 'text-amber-800 hover:text-red-700' 
-                      : 'text-gray-400 hover:text-lime-400'
+                      : ''
                   }`}
+                  style={brandSkin !== 'waffle' ? { 
+                    color: '#FFD300'
+                  } : {}}
                 >
                   NULLTONE.TV
                 </a>
@@ -131,7 +137,7 @@ export default function Home() {
               
               {/* Main Logo */}
               <div className="flex items-center space-x-3">
-                <div className={`${brandSkin === 'waffle' ? 'text-amber-600' : 'text-lime-500'}`}>
+                <div className={`${brandSkin === 'waffle' ? 'text-amber-600' : 'text-yellow-400'}`} style={brandSkin !== 'waffle' ? { color: '#FFD300' } : {}}>
                   <Tv size={28} />
                 </div>
                 <div>
@@ -145,8 +151,8 @@ export default function Home() {
               
               {/* Tagline */}
               <p className={`text-sm font-medium ${
-                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-400'
-              }`}>
+                brandSkin === 'waffle' ? 'text-amber-800' : ''
+              }`} style={brandSkin !== 'waffle' ? { color: '#B6FF00' } : {}}>
                 All-you-can-eat video chaos, straight from the public domain.
               </p>
             </div>
@@ -163,8 +169,12 @@ export default function Home() {
                   className={`flex items-center space-x-1 ${
                     brandSkin === 'waffle' 
                       ? 'text-amber-800 hover:text-amber-900 hover:bg-yellow-100/50' 
-                      : 'text-gray-400 hover:text-lime-400 hover:bg-gray-800/50'
+                      : 'hover:bg-purple-900/50'
                   }`}
+                  style={brandSkin !== 'waffle' ? { 
+                    color: '#FFD300',
+                    '--hover-color': '#B6FF00'
+                  } : {}}
                 >
                   <Info size={16} />
                   <span>About</span>

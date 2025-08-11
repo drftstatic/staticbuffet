@@ -25,10 +25,10 @@ export default function About() {
           </Link>
           
           <div className="flex items-center space-x-2">
-            <Tv className={brandSkin === 'waffle' ? 'text-amber-600' : 'text-lime-500'} size={24} />
+            <Tv className={brandSkin === 'waffle' ? 'text-amber-600' : ''} style={brandSkin !== 'waffle' ? { color: '#FFD300' } : {}} size={24} />
             <h1 className={`font-black text-xl ${
-              brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
-            }`}>
+              brandSkin === 'waffle' ? 'text-amber-900' : ''
+            }`} style={brandSkin !== 'waffle' ? { color: '#FFD300' } : {}}>
               About Static Buffet
             </h1>
           </div>
@@ -60,7 +60,7 @@ export default function About() {
                 : 'bg-gray-800/50 border border-lime-500/30'
             }`}>
               <div className="flex items-center space-x-3 mb-4">
-                <Archive className={brandSkin === 'waffle' ? 'text-amber-600' : 'text-lime-500'} size={24} />
+                <Archive className={brandSkin === 'waffle' ? 'text-amber-600' : ''} style={brandSkin !== 'waffle' ? { color: '#FFD300' } : {}} size={24} />
                 <h3 className={`text-xl font-bold ${
                   brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
                 }`}>
@@ -85,7 +85,7 @@ export default function About() {
                 : 'bg-gray-800/50 border border-lime-500/30'
             }`}>
               <div className="flex items-center space-x-3 mb-4">
-                <Zap className={brandSkin === 'waffle' ? 'text-amber-600' : 'text-lime-500'} size={24} />
+                <Zap className={brandSkin === 'waffle' ? 'text-amber-600' : ''} style={brandSkin !== 'waffle' ? { color: '#B6FF00' } : {}} size={24} />
                 <h3 className={`text-xl font-bold ${
                   brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
                 }`}>
