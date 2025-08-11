@@ -125,7 +125,7 @@ export default function Home() {
                 </a>
                 <span className={brandSkin === 'waffle' ? 'text-amber-600' : ''} style={brandSkin !== 'waffle' ? { color: '#FFD300' } : {}}>×</span>
                 <a 
-                  href="https://twitter.com/nulltonetv" 
+                  href="https://nulltone.tv" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className={`hover:underline transition-colors ${
