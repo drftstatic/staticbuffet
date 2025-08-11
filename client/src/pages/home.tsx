@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Tv, Info, Layout, Maximize2 } from 'lucide-react';
+import { Tv, Info, Layout, Maximize2, Move } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
@@ -224,19 +224,20 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Compact Media Controls */}
-            <div className="flex items-center">
-              <MediaControls />
-            </div>
+            {/* Media Controls moved to avoid menu overlap */}
           </div>
 
-          {/* Ultra-compact Search Row */}
-          <div className="flex gap-1 items-center text-sm">
+          {/* Ultra-compact Search Row with Media Controls */}
+          <div className="flex gap-2 items-center text-sm">
             <div className="flex-1 max-w-sm">
               <SearchBar onSearch={handleSearch} />
             </div>
             <SavedSearches />
             <Filters onFiltersChange={handleFiltersChange} />
+            {/* Media Controls repositioned here to avoid menu overlap */}
+            <div className="flex items-center ml-2">
+              <MediaControls />
+            </div>
           </div>
         </div>
       </header>
