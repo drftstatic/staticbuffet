@@ -33,9 +33,11 @@ Preferred communication style: Simple, everyday language.
 
 ### Theme System
 - **Ten Complete Visual Themes**: Test Card (Default), Waffle House, EBN Hijack, Heavy Metal, NWO Hollywood, D-Generation X, Max Headroom, Mario Plumber, Dodge Dakota, and Blondie. Each theme has distinct visual effects, gradients, and animations.
+- **Theme Consistency**: All 10 themes have equal visual treatment across all pages (Home, About) with comprehensive styling for headers, panels, text, icons, and interactive elements.
+- **Theme Access**: Dakota and Blondie themes accessible only via dropdown theme selector (not main UI buttons) for cleaner interface.
 - **Interactive Easter Eggs**: Triple-click activations for theme-specific soundboards and visual transformations.
 - **Complete Soundboard System**: Seven themes feature fully implemented soundboards with 8 sounds each, using toast notification feedback and triple-click activation pattern.
-- **Styling**: CSS Variables for theming, Inter and JetBrains Mono fonts, and theme-specific CSS overlays.
+- **Styling**: CSS Variables for theming, Inter and JetBrains Mono fonts, theme-specific CSS overlays, and comprehensive theme function for consistent styling across components.
 - **UI/UX Decisions**: Panel-based layout inspired by professional media workstations (e.g., Adobe Premiere, Resolume), distinct work zones (Search/Results, Preview/Player, Queue/Timeline, Effects/Mix), professional player interface with LIVE indicator and timecode, and timeline-based queue.
 
 ### Licensing and Compliance

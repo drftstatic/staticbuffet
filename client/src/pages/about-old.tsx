@@ -265,7 +265,7 @@ export default function About() {
                 'Emergency Mix button for instant content',
                 'Audio-reactive video effects',
                 'Export playlists with licensing metadata',
-                'Ten visual themes with unique soundboards and easter eggs'
+                'Seven visual themes with unique soundboards and easter eggs'
               ].map((feature, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <div className={`w-2 h-2 rounded-full`} style={{ backgroundColor: theme.accentColor }} />
@@ -284,20 +284,36 @@ export default function About() {
               About the Creators
             </h3>
             
-            <div className={`p-6 rounded-lg mb-6 ${theme.panelBg}`}>
-              <h4 className={`text-lg font-bold mb-3 ${theme.titleText}`}>
+            <div className={`p-6 rounded-lg mb-6 ${
+              brandSkin === 'waffle' 
+                ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                : 'bg-gray-800/50 border border-lime-500/30'
+            }`}>
+              <h4 className={`text-lg font-bold mb-3 ${
+                brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+              }`}>
                 Trash Team
               </h4>
-              <p className={`${theme.bodyText} leading-relaxed`}>
+              <p className={`${
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+              } leading-relaxed`}>
                 Trash Team is an audio/visual collaboration dedicated to turning discarded culture into something worth watching again. We dig in the bins, crack open dusty archives, and rewire forgotten media until it makes you feel something weird and new.
               </p>
             </div>
 
-            <div className={`p-6 rounded-lg mb-6 ${theme.panelBg}`}>
-              <h4 className={`text-lg font-bold mb-3 ${theme.titleText}`}>
+            <div className={`p-6 rounded-lg mb-6 ${
+              brandSkin === 'waffle' 
+                ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                : 'bg-gray-800/50 border border-lime-500/30'
+            }`}>
+              <h4 className={`text-lg font-bold mb-3 ${
+                brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+              }`}>
                 Nulltone.TV
               </h4>
-              <p className={`${theme.bodyText} leading-relaxed`}>
+              <p className={`${
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+              } leading-relaxed`}>
                 Nulltone.TV is the broadcast arm of the resistance — a streaming experiment for alternative programming, glitch aesthetics, and strange transmissions that don't fit anywhere else. It's a place for signal-jammers, dreamers, and anyone who thinks "technical difficulties" should last forever.
               </p>
             </div>
@@ -307,7 +323,11 @@ export default function About() {
                 href="https://trashteam.tv" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${theme.linkStyle}`}
+                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${
+                  brandSkin === 'waffle'
+                    ? 'border-yellow-400/50 bg-yellow-50/50 text-amber-800 hover:bg-yellow-100/50'
+                    : 'border-lime-500/30 bg-gray-800/50 text-lime-400 hover:bg-gray-700/50'
+                }`}
               >
                 <span>Visit Trash Team</span>
                 <ExternalLink size={16} />
@@ -316,7 +336,11 @@ export default function About() {
                 href="https://nulltone.tv" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${theme.linkStyle}`}
+                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${
+                  brandSkin === 'waffle'
+                    ? 'border-yellow-400/50 bg-yellow-50/50 text-amber-800 hover:bg-yellow-100/50'
+                    : 'border-lime-500/30 bg-gray-800/50 text-lime-400 hover:bg-gray-700/50'
+                }`}
               >
                 <span>Visit Nulltone.TV</span>
                 <ExternalLink size={16} />
@@ -325,18 +349,30 @@ export default function About() {
           </div>
 
           <div className="mb-8">
-            <div className={`p-6 rounded-lg ${theme.panelBg}`}>
-              <h4 className={`text-lg font-bold mb-3 ${theme.titleText}`}>
+            <div className={`p-6 rounded-lg ${
+              brandSkin === 'waffle' 
+                ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                : 'bg-gray-800/50 border border-lime-500/30'
+            }`}>
+              <h4 className={`text-lg font-bold mb-3 ${
+                brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+              }`}>
                 Built by Fladry Creative
               </h4>
-              <p className={`${theme.bodyText} leading-relaxed mb-3`}>
+              <p className={`${
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+              } leading-relaxed mb-3`}>
                 Static Buffet was designed and developed by Fladry Creative, bringing together technical expertise and creative vision to build tools for the underground media community.
               </p>
               <a 
                 href="https://fladrycreative.co" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${theme.linkStyle}`}
+                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${
+                  brandSkin === 'waffle'
+                    ? 'border-yellow-400/50 bg-yellow-50/50 text-amber-800 hover:bg-yellow-100/50'
+                    : 'border-lime-500/30 bg-gray-800/50 text-lime-400 hover:bg-gray-700/50'
+                }`}
               >
                 <span>Visit Fladry Creative</span>
                 <ExternalLink size={16} />
@@ -344,11 +380,19 @@ export default function About() {
             </div>
           </div>
 
-          <div className={`p-6 rounded-lg border-2 border-dashed ${theme.borderColor} ${theme.panelBg.replace('border ', '').replace(/border-[^\s]+/g, '')}`}>
-            <h4 className={`text-lg font-bold mb-2 ${theme.titleText}`}>
+          <div className={`p-6 rounded-lg border-2 border-dashed ${
+            brandSkin === 'waffle' 
+              ? 'border-yellow-400/50 bg-yellow-50/30' 
+              : 'border-lime-500/30 bg-gray-800/30'
+          }`}>
+            <h4 className={`text-lg font-bold mb-2 ${
+              brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+            }`}>
               Legal & Licensing
             </h4>
-            <p className={`text-sm ${theme.bodyText} leading-relaxed`}>
+            <p className={`text-sm ${
+              brandSkin === 'waffle' ? 'text-amber-700' : 'text-gray-300'
+            } leading-relaxed`}>
               Static Buffet exclusively works with Public Domain, CC0, and CC-BY licensed content from Archive.org. 
               All content is properly attributed and licensing information is preserved in exports. 
               We respect creators' rights and make it easy to use content legally and ethically.
