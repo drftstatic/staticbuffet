@@ -76,9 +76,23 @@ export function QueuePanel() {
                         <div className="truncate w-full text-center px-1">
                           {item.title.slice(0, 10)}
                         </div>
-                        <div className="text-xs opacity-70">
-                          {item.duration}
+                        <div className="flex items-center justify-center space-x-1">
+                          <div className="text-xs opacity-70">
+                            {item.duration}
+                          </div>
+                          {item.loop && (
+                            <div className="text-xs bg-primary text-primary-foreground px-1 rounded">
+                              🔄
+                            </div>
+                          )}
                         </div>
+                        <button
+                          onClick={() => updateQueueItem(item.id, { loop: !item.loop })}
+                          className="absolute -top-1 -left-1 w-4 h-4 bg-blue-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                          title={item.loop ? "Disable loop" : "Enable loop"}
+                        >
+                          🔄
+                        </button>
                         <button
                           onClick={() => removeFromQueue(item.id)}
                           className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity"

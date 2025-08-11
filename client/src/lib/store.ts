@@ -32,6 +32,9 @@ interface AppStore extends AppState {
   setAudioReactive: (reactive: boolean) => void;
   setQueueItems: (items: QueueItem[]) => void;
   
+  // Timeline loop control
+  setTimelineLoop: (loop: boolean) => void;
+  
   // Effects
   setVideoEffects: (effects: VideoEffects) => void;
   setAudioEffects: (effects: AudioEffects) => void;
@@ -72,6 +75,7 @@ export const useStore = create<AppStore>((set, get) => ({
   isAudioReactive: false,
   isLoading: false,
   totalResults: 0,
+  timelineLoop: false,
   
   // Panel state
   panelStates: {
@@ -155,6 +159,7 @@ export const useStore = create<AppStore>((set, get) => ({
       trimIn: '00:00',
       trimOut: video.duration || '0:00',
       loop: false,
+      loopCount: 0, // 0 = infinite loops
       crossfade: false,
       license: video.licenseurl,
       attribution: video.creator,
@@ -220,6 +225,9 @@ export const useStore = create<AppStore>((set, get) => ({
   
   // Set entire queue
   setQueueItems: (items) => set({ queueItems: items }),
+  
+  // Timeline loop control
+  setTimelineLoop: (loop) => set({ timelineLoop: loop }),
   
   // Effects actions
   setVideoEffects: (effects) => set({ videoEffects: effects }),

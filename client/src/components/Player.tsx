@@ -31,6 +31,7 @@ export function Player() {
     nextTrack,
     previousTrack,
     isAudioReactive,
+    timelineLoop,
     videoEffects,
     audioEffects,
     setVideoEffects
@@ -136,14 +137,40 @@ export function Player() {
 
     video.addEventListener('timeupdate', updateTime);
     video.addEventListener('loadedmetadata', updateDuration);
-    video.addEventListener('ended', nextTrack);
+    const handleEnded = () => {
+      const currentItem = queueItems[currentQueueIndex];
+      
+      // Check if current clip should loop
+      if (currentItem?.loop) {
+        console.log('🔄 Looping current clip');
+        video.currentTime = 0;
+        video.play();
+        return;
+      }
+      
+      // Check if we're at the end and timeline loop is enabled
+      if (currentQueueIndex === queueItems.length - 1 && timelineLoop) {
+        console.log('🔄 Looping entire timeline');
+        setCurrentQueueIndex(0);
+        return;
+      }
+      
+      // Normal progression to next track
+      if (currentQueueIndex < queueItems.length - 1) {
+        nextTrack();
+      } else {
+        setIsPlaying(false);
+      }
+    };
+    
+    video.addEventListener('ended', handleEnded);
 
     return () => {
       video.removeEventListener('timeupdate', updateTime);
       video.removeEventListener('loadedmetadata', updateDuration);
-      video.removeEventListener('ended', nextTrack);
+      video.removeEventListener('ended', handleEnded);
     };
-  }, [nextTrack]);
+  }, [nextTrack, timelineLoop, queueItems, currentQueueIndex, setCurrentQueueIndex]);
 
   // Initialize audio context and effects chain
   const initializeAudioEffects = async () => {

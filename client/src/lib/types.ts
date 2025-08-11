@@ -78,6 +78,7 @@ export interface AppState {
   isAudioReactive: boolean;
   isLoading: boolean;
   totalResults: number;
+  timelineLoop: boolean; // Loop entire timeline
   videoEffects: VideoEffects;
   audioEffects: AudioEffects;
   panelStates: {
@@ -99,6 +100,7 @@ export interface QueueItem {
   trimIn: string;
   trimOut: string;
   loop: boolean;
+  loopCount?: number; // Number of times to loop (0 = infinite)
   crossfade: boolean;
   license?: string;
   attribution?: string;

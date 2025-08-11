@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AdaptiveColorControls } from '@/components/AdaptiveColorControls';
+import { LoopControls } from '@/components/LoopControls';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -506,6 +507,19 @@ export function EffectsPanel() {
           </AccordionContent>
         </AccordionItem>
         
+        {/* Loop Controls */}
+        <AccordionItem value="loop-controls">
+          <AccordionTrigger className="text-sm">
+            <div className="flex items-center space-x-2">
+              <RotateCw className="w-4 h-4" />
+              <span>Loop Controls</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <LoopControls />
+          </AccordionContent>
+        </AccordionItem>
+
         {/* Adaptive Color Scheme */}
         <AccordionItem value="adaptive-colors">
           <AccordionTrigger className="text-sm">
