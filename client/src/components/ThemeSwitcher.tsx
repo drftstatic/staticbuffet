@@ -29,6 +29,7 @@ export function ThemeSwitcher() {
         <SelectItem value="hogan">💪 NWO Hollywood</SelectItem>
         <SelectItem value="dx">🤘 D-Generation X</SelectItem>
         <SelectItem value="maxheadroom">📺 Max Headroom</SelectItem>
+        <SelectItem value="mario">🍄 Mario Plumber</SelectItem>
       </SelectContent>
     </Select>
   );

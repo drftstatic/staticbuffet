@@ -24,6 +24,8 @@ import { WaffleButton } from '@/components/WaffleButton';
 import { OzzyButton } from '@/components/OzzyButton';
 import { EBNButton } from '@/components/EBNButton';
 import { MaxButton } from '@/components/MaxButton';
+import { MarioButton } from '@/components/MarioButton';
+import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
@@ -44,6 +46,7 @@ export default function Home() {
     queueItems,
     isHulksterMode,
     isDXMode,
+    isMarioMode,
   } = useStore();
 
   // Perform search when filters change
@@ -103,7 +106,11 @@ export default function Home() {
   }, [brandSkin]);
 
   return (
-    <div className={`h-screen flex flex-col overflow-hidden transition-all duration-300 relative ${
+    <>
+      {/* Mario Pipe Effect Overlay */}
+      <MarioPipeEffect />
+      
+      <div className={`h-screen flex flex-col overflow-hidden transition-all duration-300 relative ${
       brandSkin === 'waffle' 
         ? 'waffle-gradient' 
         : brandSkin === 'ebn'
@@ -114,6 +121,10 @@ export default function Home() {
         ? 'hogan-gradient nwo-stripes hulkster-mode'
         : brandSkin === 'hogan'
         ? 'hogan-gradient nwo-stripes'
+        : brandSkin === 'mario' && isMarioMode
+        ? 'mario-gradient mario-powerup mario-mode mario-pipe-effect'
+        : brandSkin === 'mario'
+        ? 'mario-gradient mario-powerup'
         : brandSkin === 'dx' && isDXMode
         ? 'dx-gradient dx-mode'
         : brandSkin === 'dx'
@@ -128,6 +139,8 @@ export default function Home() {
           ? 'glass-dark border-lime-500/30'
           : brandSkin === 'ozzy'
           ? 'glass-ozzy border-red-500/50'
+          : brandSkin === 'mario'
+          ? 'glass-mario border-yellow-400/50'
           : 'glass-hogan border-yellow-400/50'
       }`}>
         <div className="max-w-full px-4 py-2 space-y-3">
@@ -140,16 +153,19 @@ export default function Home() {
                   brandSkin === 'waffle' ? 'text-amber-600' : 
                   brandSkin === 'ebn' ? 'text-yellow-300' :
                   brandSkin === 'ozzy' ? 'text-red-400' :
+                  brandSkin === 'mario' ? 'text-red-500' :
                   'text-yellow-400'
                 } />
                 <h1 className={`font-bold text-lg ${
                   brandSkin === 'waffle' ? 'text-amber-900' : 
                   brandSkin === 'ebn' ? 'text-yellow-300' :
                   brandSkin === 'ozzy' ? 'text-red-200' :
+                  brandSkin === 'mario' ? 'text-yellow-200' :
                   'text-yellow-300'
                 }`}>
 {brandSkin === 'hogan' && isHulksterMode ? 'HULKSTER BUFFET' : 
                 brandSkin === 'dx' && isDXMode ? 'DX BUFFET' : 
+                brandSkin === 'mario' && isMarioMode ? 'SEXY MARIO BUFFET' :
                 'STATIC BUFFET'}
                 </h1>
               </div>
@@ -211,6 +227,7 @@ export default function Home() {
               <OzzyButton />
               <EBNButton />
               <MaxButton />
+              <MarioButton />
               <GroupedControls />
             </div>
           </div>
@@ -359,5 +376,6 @@ export default function Home() {
       {/* DX Soundboard */}
       <DXSoundboard />
     </div>
+    </>
   );
 }

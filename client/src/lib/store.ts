@@ -60,6 +60,8 @@ interface AppStore extends AppState {
   setDXMode: (enabled: boolean) => void;
   isAsciiMode: boolean;
   setAsciiMode: (enabled: boolean) => void;
+  isMarioMode: boolean;
+  setMarioMode: (enabled: boolean) => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
@@ -68,6 +70,7 @@ export const useStore = create<AppStore>((set, get) => ({
   isHulksterMode: false,
   isDXMode: false,
   isAsciiMode: false,
+  isMarioMode: false,
   
   // Adaptive colors state
   adaptiveColorsEnabled: false,
@@ -202,6 +205,8 @@ export const useStore = create<AppStore>((set, get) => ({
 
   // Theme actions
   setBrandSkin: (skin) => set({ brandSkin: skin }),
+  
+  // Easter Egg actions
   setHulksterMode: (enabled) => set({ isHulksterMode: enabled }),
   setDXMode: (enabled) => set({ isDXMode: enabled }),
   setAsciiMode: (enabled) => set({ isAsciiMode: enabled }),
@@ -387,4 +392,7 @@ export const useStore = create<AppStore>((set, get) => ({
       return { savedWorkspaceLayouts: updatedLayouts };
     });
   },
+
+  // Mario Mode implementation
+  setMarioMode: (enabled) => set({ isMarioMode: enabled }),
 }));

@@ -1,4 +1,4 @@
-export type BrandSkin = 'waffle' | 'ebn' | 'ozzy' | 'hogan' | 'dx' | 'maxheadroom';
+export type BrandSkin = 'waffle' | 'ebn' | 'ozzy' | 'hogan' | 'dx' | 'maxheadroom' | 'mario';
 
 export interface SearchState {
   query: string;
