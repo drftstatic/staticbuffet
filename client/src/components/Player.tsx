@@ -64,7 +64,8 @@ export function Player() {
           duration: video.duration,
           videoWidth: video.videoWidth,
           videoHeight: video.videoHeight,
-          readyState: video.readyState
+          readyState: video.readyState,
+          currentSrc: video.currentSrc
         });
       };
       
@@ -91,6 +92,12 @@ export function Player() {
         // 0 = NETWORK_EMPTY, 1 = NETWORK_IDLE, 2 = NETWORK_LOADING, 3 = NETWORK_NO_SOURCE
         if (video.networkState === 3) {
           console.error('❌ NETWORK_NO_SOURCE - Video source cannot be loaded');
+        }
+        
+        // Error code meanings:
+        // 1 = MEDIA_ERR_ABORTED, 2 = MEDIA_ERR_NETWORK, 3 = MEDIA_ERR_DECODE, 4 = MEDIA_ERR_SRC_NOT_SUPPORTED
+        if (video.error?.code === 4) {
+          console.error('❌ MEDIA_ERR_SRC_NOT_SUPPORTED - Browser cannot play this video format');
         }
       };
       

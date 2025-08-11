@@ -127,27 +127,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error(`Failed to fetch video: ${response.status}`);
       }
       
-      // Set appropriate headers
+      // Set appropriate headers based on file extension
+      const contentType = filename.toLowerCase().endsWith('.mp4') ? 'video/mp4' : 
+                         filename.toLowerCase().endsWith('.avi') ? 'video/x-msvideo' :
+                         filename.toLowerCase().endsWith('.mov') ? 'video/quicktime' :
+                         'video/mp4';
+      
       res.set({
-        'Content-Type': 'video/mp4',
+        'Content-Type': contentType,
         'Accept-Ranges': 'bytes',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=3600'
+        'Cache-Control': 'public, max-age=3600',
+        'Content-Length': response.headers.get('content-length') || ''
       });
       
       // Stream the video through our server
       if (response.body) {
         const reader = response.body.getReader();
-        const pump = () => {
-          return reader.read().then(({ done, value }) => {
+        
+        const pump = async (): Promise<void> => {
+          try {
+            const { done, value } = await reader.read();
             if (done) {
               res.end();
               return;
             }
-            res.write(value);
+            res.write(Buffer.from(value));
             return pump();
-          });
+          } catch (error) {
+            console.error('Streaming error:', error);
+            res.end();
+          }
         };
+        
         return pump();
       } else {
         res.status(500).json({ error: "No response body" });
@@ -172,24 +184,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const data = await response.json();
       
-      // Find best video file (prefer MP4, H.264, or any video format)
+      // Find only browser-compatible video files (MP4, WebM, MOV)
       const videoFiles = data.files?.filter((file: any) => 
         file.format === 'MPEG4' || 
         file.format === 'h.264' || 
         file.format === 'MPEG-4' ||
-        file.format === 'QuickTime' ||
         file.name?.endsWith('.mp4') ||
-        file.name?.endsWith('.mov') ||
-        file.name?.endsWith('.avi') ||
-        file.name?.match(/\.(mp4|mov|avi|mkv|webm)$/i)
+        file.name?.endsWith('.webm') ||
+        (file.name?.endsWith('.mov') && file.format !== 'JPEG')
       ) || [];
       
-      // Sort by quality preference: full resolution first, then 512kb, then others
+      console.log(`📁 Found ${videoFiles.length} browser-compatible video files for ${identifier}:`, 
+        videoFiles.map(f => `${f.name} (${f.format})`));
+      
+      // Sort by format compatibility and quality preference
       const sortedVideoFiles = videoFiles.sort((a: any, b: any) => {
         const aName = a.name?.toLowerCase() || '';
         const bName = b.name?.toLowerCase() || '';
         
-        // Prefer files without quality suffixes (original)
+        // Strongly prefer MP4 for best browser compatibility
+        const aIsMp4 = aName.endsWith('.mp4') || a.format === 'MPEG4' || a.format === 'h.264';
+        const bIsMp4 = bName.endsWith('.mp4') || b.format === 'MPEG4' || b.format === 'h.264';
+        
+        if (aIsMp4 && !bIsMp4) return -1;
+        if (!aIsMp4 && bIsMp4) return 1;
+        
+        // Then prefer files without quality suffixes (original/full resolution)
         const aHasQuality = aName.includes('_512kb') || aName.includes('_256kb') || aName.includes('_thumb');
         const bHasQuality = bName.includes('_512kb') || bName.includes('_256kb') || bName.includes('_thumb');
         
@@ -209,7 +229,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (bestVideoFile) {
         // Use our server as a proxy for video files to avoid CORS issues
         streamUrl = `/api/video/${identifier}/${encodeURIComponent(bestVideoFile.name)}`;
+        console.log(`🎥 Selected best video: ${bestVideoFile.name} (format: ${bestVideoFile.format})`);
         console.log(`🎥 Using proxy URL: ${streamUrl}`);
+      } else {
+        console.warn(`⚠️ No browser-compatible video files found for ${identifier}`);
       }
       
       res.json({
