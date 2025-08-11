@@ -102,7 +102,7 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
       </div>
 
       {searchResults.length === 0 && isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {Array(8).fill(0).map((_, i) => (
             <div key={i} className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm animate-pulse">
               <div className="w-full h-32 bg-gray-200 dark:bg-gray-700"></div>
@@ -121,7 +121,7 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {searchResults.map((video, index) => (
               <div
                 key={`${video.identifier}-${index}`}

@@ -172,8 +172,7 @@ export default function Home() {
                       : 'hover:bg-purple-900/50'
                   }`}
                   style={brandSkin !== 'waffle' ? { 
-                    color: '#FFD300',
-                    '--hover-color': '#B6FF00'
+                    color: '#FFD300'
                   } : {}}
                 >
                   <Info size={16} />
@@ -192,7 +191,7 @@ export default function Home() {
       </header>
 
       {/* Professional Media Workstation Layout */}
-      <div className="h-[calc(100vh-120px)] grid grid-cols-12 grid-rows-12 gap-1 p-1">
+      <div className="h-[calc(100vh-140px)] grid grid-cols-12 grid-rows-12 gap-1 p-1">
         {/* Search/Results Panel - Left Column */}
         <div className={`col-span-4 row-span-8 rounded-lg border-2 ${
           brandSkin === 'waffle' 
@@ -301,26 +300,7 @@ export default function Home() {
             </div>
             {/* Timeline Area */}
             <div className="flex-1 p-4">
-              <div className="flex items-center space-x-2 h-full">
-                {/* Timeline Segments */}
-                {[1, 2, 3, 4, 5].map((clip, index) => (
-                  <div 
-                    key={index}
-                    className={`h-16 w-24 rounded border-2 border-dashed flex items-center justify-center text-xs font-mono cursor-pointer transition-colors ${
-                      brandSkin === 'waffle' 
-                        ? 'border-amber-400/50 bg-yellow-100/30 hover:bg-yellow-200/50' 
-                        : 'border-yellow-400/50 bg-purple-800/30 hover:bg-purple-700/50'
-                    }`}
-                  >
-                    {clip}
-                  </div>
-                ))}
-                <div className={`h-16 w-24 rounded border-2 border-dashed flex items-center justify-center text-xs opacity-50 ${
-                  brandSkin === 'waffle' ? 'border-amber-400/30' : 'border-yellow-400/30'
-                }`}>
-                  + Add
-                </div>
-              </div>
+              <QueuePanel />
             </div>
           </div>
         </div>
