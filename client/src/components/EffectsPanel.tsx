@@ -176,13 +176,10 @@ export function EffectsPanel() {
         }`}>
           <Zap className="h-5 w-5" />
         </div>
-        <h3 className={`text-xl font-bold ${
-          brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
-        }`}>
+        <h3 className="font-bold text-amber-900 text-[15px]">
           Effects Studio
         </h3>
       </div>
-
       {/* Quick Presets */}
       <div className="space-y-2">
         <div className="grid grid-cols-2 gap-2">
@@ -212,7 +209,6 @@ export function EffectsPanel() {
           </Button>
         )}
       </div>
-
       <Accordion type="multiple" className="w-full">
         {/* Video Effects */}
         <AccordionItem value="video">
