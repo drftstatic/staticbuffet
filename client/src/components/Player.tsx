@@ -218,13 +218,13 @@ export function Player() {
 
       // Update EQ
       if (bassNodeRef.current) {
-        bassNodeRef.current.gain.value = (audioEffects.bassEQ - 50) * 0.3; // -15 to +15 dB
+        bassNodeRef.current.gain.value = (audioEffects.bass - 50) * 0.3; // -15 to +15 dB
       }
       if (midNodeRef.current) {
-        midNodeRef.current.gain.value = (audioEffects.midEQ - 50) * 0.3;
+        midNodeRef.current.gain.value = (audioEffects.mid - 50) * 0.3;
       }
       if (trebleNodeRef.current) {
-        trebleNodeRef.current.gain.value = (audioEffects.trebleEQ - 50) * 0.3;
+        trebleNodeRef.current.gain.value = (audioEffects.treble - 50) * 0.3;
       }
 
       // Update distortion

@@ -15,6 +15,7 @@ import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Button } from '@/components/ui/button';
 import { EmergencyMix } from '@/components/EmergencyMix';
 import { AudioReactive } from '@/components/AudioReactive';
+import { Player } from '@/components/Player';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
@@ -240,43 +241,8 @@ export default function Home() {
               </div>
             </div>
             {/* Player Area */}
-            <div className="flex-1 bg-black/90 relative flex items-center justify-center">
-              <div className={`text-center ${
-                brandSkin === 'waffle' ? 'text-amber-200' : 'text-yellow-300'
-              }`}>
-                <div className="text-6xl mb-4">📺</div>
-                <div className="font-mono text-lg">Video Feed</div>
-                <div className="text-sm opacity-70 mt-2">Select a clip to preview</div>
-              </div>
-              {/* Video Controls Overlay */}
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className={`flex items-center justify-between px-4 py-2 rounded border ${
-                  brandSkin === 'waffle' 
-                    ? 'bg-yellow-100/90 border-yellow-400/50' 
-                    : 'bg-purple-900/90 border-yellow-400/50'
-                }`}>
-                  <div className="flex items-center space-x-2">
-                    <button className={`px-2 py-1 rounded text-xs font-mono ${
-                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
-                    }`}>▶</button>
-                    <button className={`px-2 py-1 rounded text-xs font-mono ${
-                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
-                    }`}>⏸</button>
-                    <span className="font-mono text-xs">00:00 / 00:00</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button className={`px-2 py-1 rounded text-xs font-mono ${
-                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
-                    }`}>Loop</button>
-                    <button className={`px-2 py-1 rounded text-xs font-mono ${
-                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
-                    }`}>Mark In</button>
-                    <button className={`px-2 py-1 rounded text-xs font-mono ${
-                      brandSkin === 'waffle' ? 'bg-amber-600 text-white' : 'bg-yellow-400 text-black'
-                    }`}>Mark Out</button>
-                  </div>
-                </div>
-              </div>
+            <div className="flex-1 bg-black relative">
+              <Player />
             </div>
           </div>
         </div>
