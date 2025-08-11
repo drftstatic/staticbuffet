@@ -47,7 +47,7 @@ export function Player() {
       
       // Add event listeners for debugging
       const video = videoRef.current;
-      const handleCanPlay = () => console.log('Video can play, has audio tracks:', video.audioTracks?.length || 'unknown');
+      const handleCanPlay = () => console.log('Video can play');
       const handleLoadedData = () => console.log('Video loaded, duration:', video.duration, 'muted:', video.muted, 'volume:', video.volume);
       const handleError = (e: any) => console.error('Video error:', e);
       
@@ -339,29 +339,43 @@ export function Player() {
       setIsPlaying(false);
     } else {
       try {
-        // Ensure volume is set
+        // Ensure video is properly configured
         videoRef.current.volume = volume[0] / 100;
+        videoRef.current.muted = false;
         
-        // Initialize audio effects on first play (but don't block playback)
-        if (!audioContextRef.current) {
-          initializeAudioEffects().catch(console.warn);
-        }
+        console.log('Attempting to play video:', {
+          src: videoRef.current.src,
+          volume: videoRef.current.volume,
+          muted: videoRef.current.muted,
+          readyState: videoRef.current.readyState
+        });
         
         await videoRef.current.play();
         setIsPlaying(true);
         
-        console.log('Video playing with volume:', videoRef.current.volume);
-      } catch (error) {
-        console.error('Play error:', error);
-        // Try to resume audio context if suspended
-        if (audioContextRef.current?.state === 'suspended') {
-          try {
-            await audioContextRef.current.resume();
-            await videoRef.current.play();
-            setIsPlaying(true);
-          } catch (resumeError) {
-            console.error('Resume error:', resumeError);
-          }
+        console.log('✓ Video started playing successfully');
+        
+        // Initialize audio effects after successful play (non-blocking)
+        if (!audioContextRef.current) {
+          initializeAudioEffects().catch(console.warn);
+        }
+        
+      } catch (error: any) {
+        console.error('❌ Play error:', error);
+        
+        // Common browser autoplay issues
+        if (error.name === 'NotAllowedError') {
+          console.log('Autoplay blocked - user interaction required');
+        }
+        
+        // Try without audio effects first
+        try {
+          console.log('Retrying without audio effects...');
+          await videoRef.current.play();
+          setIsPlaying(true);
+          console.log('✓ Video playing without audio effects');
+        } catch (retryError) {
+          console.error('❌ Retry failed:', retryError);
         }
       }
     }
@@ -507,9 +521,15 @@ export function Player() {
 
   if (!currentVideo) {
     return (
-      <div className="bg-black rounded-lg p-8 text-center text-gray-400">
-        <p>No video in queue</p>
-        <p className="text-sm mt-2">Add videos from search results to start mixing</p>
+      <div className="h-full flex items-center justify-center bg-gray-900 text-gray-400">
+        <div className="text-center space-y-4">
+          <div className="text-6xl">📺</div>
+          <div>
+            <p className="text-lg font-medium text-white">No video loaded</p>
+            <p className="text-sm">Search and add videos to your queue to start playing</p>
+            <p className="text-xs mt-2 text-gray-500">Queue has {queueItems.length} items, current index: {currentQueueIndex}</p>
+          </div>
+        </div>
       </div>
     );
   }
