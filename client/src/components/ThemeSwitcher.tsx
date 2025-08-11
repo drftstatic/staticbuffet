@@ -27,6 +27,8 @@ export function ThemeSwitcher() {
         <SelectItem value="ebn">📺 EBN Hijack</SelectItem>
         <SelectItem value="ozzy">🦇 Heavy Metal</SelectItem>
         <SelectItem value="hogan">💪 NWO Hollywood</SelectItem>
+        <SelectItem value="dx">🤘 D-Generation X</SelectItem>
+        <SelectItem value="maxheadroom">📺 Max Headroom</SelectItem>
       </SelectContent>
     </Select>
   );

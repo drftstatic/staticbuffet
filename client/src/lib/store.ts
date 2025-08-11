@@ -56,12 +56,18 @@ interface AppStore extends AppState {
   
   // Easter Egg actions
   setHulksterMode: (enabled: boolean) => void;
+  isDXMode: boolean;
+  setDXMode: (enabled: boolean) => void;
+  isAsciiMode: boolean;
+  setAsciiMode: (enabled: boolean) => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
   // Initial state
   brandSkin: 'waffle',
   isHulksterMode: false,
+  isDXMode: false,
+  isAsciiMode: false,
   
   // Adaptive colors state
   adaptiveColorsEnabled: false,
@@ -197,6 +203,8 @@ export const useStore = create<AppStore>((set, get) => ({
   // Theme actions
   setBrandSkin: (skin) => set({ brandSkin: skin }),
   setHulksterMode: (enabled) => set({ isHulksterMode: enabled }),
+  setDXMode: (enabled) => set({ isDXMode: enabled }),
+  setAsciiMode: (enabled) => set({ isAsciiMode: enabled }),
 
   // Search actions
   setSearchState: (updates) => set((state) => ({

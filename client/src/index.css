@@ -172,6 +172,24 @@
       #2D2D2D 100%);
   }
 
+  .dx-gradient {
+    background: linear-gradient(135deg, 
+      #0a0a0a 0%, 
+      #1a1a2e 25%, 
+      #16213e 50%, 
+      #0f3460 75%, 
+      #e94560 100%);
+  }
+
+  .maxheadroom-gradient {
+    background: linear-gradient(135deg, 
+      #000000 0%, 
+      #1a1a1a 25%, 
+      #333333 50%, 
+      #4d4d4d 75%, 
+      #00ff00 100%);
+  }
+
   /* Glass effects for all themes */
   .glass-ozzy {
     backdrop-filter: blur(16px) saturate(180%);
@@ -299,6 +317,24 @@
     50% { 
       box-shadow: 0 0 40px rgba(255, 215, 0, 0.7);
       border-color: rgba(255, 215, 0, 1);
+    }
+  }
+
+  /* DX mode special effects */
+  .dx-mode {
+    animation: dxPulse 1.5s ease-in-out infinite;
+    border: 2px solid #e94560;
+    box-shadow: 0 0 25px rgba(233, 69, 96, 0.6);
+  }
+
+  @keyframes dxPulse {
+    0%, 100% { 
+      box-shadow: 0 0 25px rgba(233, 69, 96, 0.4);
+      border-color: rgba(233, 69, 96, 0.8);
+    }
+    50% { 
+      box-shadow: 0 0 50px rgba(233, 69, 96, 0.8);
+      border-color: rgba(233, 69, 96, 1);
     }
   }
   

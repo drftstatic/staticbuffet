@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/button';
 import { GroupedControls } from '@/components/GroupedControls';
 import { Player } from '@/components/Player';
 import { Footer } from '@/components/Footer';
+import { DXButton } from '@/components/DXButton';
+import { DXSoundboard } from '@/components/DXSoundboard';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
@@ -36,6 +38,7 @@ export default function Home() {
     resetPanels,
     queueItems,
     isHulksterMode,
+    isDXMode,
   } = useStore();
 
   // Perform search when filters change
@@ -104,7 +107,13 @@ export default function Home() {
         ? 'ozzy-gradient metal-texture'
         : brandSkin === 'hogan' && isHulksterMode
         ? 'hogan-gradient nwo-stripes hulkster-mode'
-        : 'hogan-gradient nwo-stripes'
+        : brandSkin === 'hogan'
+        ? 'hogan-gradient nwo-stripes'
+        : brandSkin === 'dx' && isDXMode
+        ? 'dx-gradient dx-mode'
+        : brandSkin === 'dx'
+        ? 'dx-gradient'
+        : 'maxheadroom-gradient'
     }`}>
       {/* Top Bar */}
       <header className={`flex-shrink-0 border-b transition-all duration-300 ${
@@ -134,7 +143,9 @@ export default function Home() {
                   brandSkin === 'ozzy' ? 'text-red-200' :
                   'text-yellow-300'
                 }`}>
-{brandSkin === 'hogan' && isHulksterMode ? 'HULKSTER BUFFET' : 'STATIC BUFFET'}
+{brandSkin === 'hogan' && isHulksterMode ? 'HULKSTER BUFFET' : 
+                brandSkin === 'dx' && isDXMode ? 'DX BUFFET' : 
+                'STATIC BUFFET'}
                 </h1>
               </div>
               <div className="flex items-center space-x-1 text-xs opacity-75">
@@ -189,6 +200,7 @@ export default function Home() {
                 </Button>
               </Link>
               <ThemeSwitcher />
+              <DXButton />
               <GroupedControls />
             </div>
           </div>
@@ -333,6 +345,9 @@ export default function Home() {
       <div className="flex-shrink-0">
         <Footer />
       </div>
+
+      {/* DX Soundboard */}
+      <DXSoundboard />
     </div>
   );
 }
