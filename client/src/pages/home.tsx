@@ -52,11 +52,12 @@ export default function Home() {
     isDXMode,
     isMarioMode,
     isAsciiMode,
+    isResizableMode,
+    setResizableMode,
   } = useStore();
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null);
-  const [isResizableMode, setIsResizableMode] = useState(true);
 
   // Perform search when filters change
   const { data: searchData, error, isLoading } = useQuery({
@@ -218,7 +219,7 @@ export default function Home() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={() => setIsResizableMode(!isResizableMode)}
+                onClick={() => setResizableMode(!isResizableMode)}
                 data-testid="button-toggle-resizable-mode"
                 className={`flex items-center space-x-1 ${
                   isResizableMode

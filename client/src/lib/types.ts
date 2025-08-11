@@ -77,6 +77,8 @@ export interface WorkspaceLayout {
   panelStates: PanelStates;
   createdAt: string;
   updatedAt: string;
+  layoutMode: 'panels' | 'grid';
+  panelSizes?: number[]; // For resizable panels mode [leftWidth, centerWidth, rightWidth]
 }
 
 export interface AppState {
@@ -100,6 +102,8 @@ export interface AppState {
   audioEffects: AudioEffects;
   panelStates: PanelStates;
   savedWorkspaceLayouts: WorkspaceLayout[];
+  isResizableMode: boolean;
+  panelSizes: number[];
 }
 
 export interface QueueItem {

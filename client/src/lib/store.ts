@@ -52,7 +52,11 @@ interface AppStore extends AppState {
   saveWorkspaceLayout: (name: string, description?: string) => void;
   loadWorkspaceLayout: (layoutId: string) => void;
   deleteWorkspaceLayout: (layoutId: string) => void;
-  updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates'>>) => void;
+  updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates' | 'layoutMode' | 'panelSizes'>>) => void;
+  
+  // Layout mode state
+  setResizableMode: (mode: boolean) => void;
+  setPanelSizes: (sizes: number[]) => void;
   
   // Easter Egg actions
   setHulksterMode: (enabled: boolean) => void;
@@ -71,6 +75,8 @@ export const useStore = create<AppStore>((set, get) => ({
   isDXMode: false,
   isAsciiMode: false,
   isMarioMode: false,
+  isResizableMode: true,
+  panelSizes: [30, 40, 30],
   
   // Adaptive colors state
   adaptiveColorsEnabled: false,
@@ -124,6 +130,8 @@ export const useStore = create<AppStore>((set, get) => ({
             queueCollapsed: false,
             effectsCollapsed: false,
           },
+          layoutMode: 'panels',
+          panelSizes: [30, 40, 30],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -137,6 +145,8 @@ export const useStore = create<AppStore>((set, get) => ({
             queueCollapsed: true,
             effectsCollapsed: false,
           },
+          layoutMode: 'panels',
+          panelSizes: [20, 60, 20],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -150,6 +160,22 @@ export const useStore = create<AppStore>((set, get) => ({
             queueCollapsed: false,
             effectsCollapsed: true,
           },
+          layoutMode: 'panels',
+          panelSizes: [40, 30, 30],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          id: 'default_grid_layout',
+          name: '⌗ Grid Layout',
+          description: 'Traditional grid-based layout for classic workflow',
+          panelStates: {
+            searchCollapsed: false,
+            playerCollapsed: false,
+            queueCollapsed: false,
+            effectsCollapsed: false,
+          },
+          layoutMode: 'grid',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -338,6 +364,10 @@ export const useStore = create<AppStore>((set, get) => ({
   setAdaptiveIntensity: (intensity: number) => set({ adaptiveIntensity: intensity }),
   setCurrentVideoPalette: (palette: any) => set({ currentVideoPalette: palette }),
 
+  // Layout mode actions
+  setResizableMode: (mode: boolean) => set({ isResizableMode: mode }),
+  setPanelSizes: (sizes: number[]) => set({ panelSizes: sizes }),
+
   // Workspace Layout actions
   saveWorkspaceLayout: (name: string, description?: string) => {
     const currentState = get();
@@ -346,6 +376,8 @@ export const useStore = create<AppStore>((set, get) => ({
       name,
       description,
       panelStates: { ...currentState.panelStates },
+      layoutMode: currentState.isResizableMode ? 'panels' : 'grid',
+      panelSizes: currentState.isResizableMode ? [...currentState.panelSizes] : undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -363,7 +395,11 @@ export const useStore = create<AppStore>((set, get) => ({
     const currentState = get();
     const layout = currentState.savedWorkspaceLayouts.find(l => l.id === layoutId);
     if (layout) {
-      set({ panelStates: { ...layout.panelStates } });
+      set({ 
+        panelStates: { ...layout.panelStates },
+        isResizableMode: layout.layoutMode === 'panels',
+        panelSizes: layout.panelSizes || [30, 40, 30]
+      });
     }
   },
 
@@ -378,7 +414,7 @@ export const useStore = create<AppStore>((set, get) => ({
     });
   },
 
-  updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates'>>) => {
+  updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates' | 'layoutMode' | 'panelSizes'>>) => {
     set((state) => {
       const updatedLayouts = state.savedWorkspaceLayouts.map(layout => 
         layout.id === layoutId 

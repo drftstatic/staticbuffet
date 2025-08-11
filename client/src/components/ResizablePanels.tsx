@@ -26,12 +26,11 @@ export function ResizablePanels({
   onSearch, 
   onVideoSelect 
 }: ResizablePanelsProps) {
-  const { brandSkin } = useStore();
-  const [layout, setLayout] = useState<number[]>([30, 40, 30]);
-
+  const { brandSkin, queueItems, panelSizes, setPanelSizes } = useStore();
+  
   const handleLayoutChange = useCallback((sizes: number[]) => {
-    setLayout(sizes);
-  }, []);
+    setPanelSizes(sizes);
+  }, [setPanelSizes]);
 
   const panelHeaderClass = `sticky top-0 z-10 ${
     brandSkin === 'testcard'
@@ -70,7 +69,7 @@ export function ResizablePanels({
       >
         {/* Search & Results Panel */}
         <Panel 
-          defaultSize={layout[0]} 
+          defaultSize={panelSizes[0]} 
           minSize={20}
           className="flex flex-col"
         >
@@ -90,11 +89,7 @@ export function ResizablePanels({
             </div>
             
             <div className="flex-1 overflow-hidden">
-              <ResultsGrid 
-                searchResults={searchResults}
-                isLoading={isLoading}
-                onVideoSelect={onVideoSelect}
-              />
+              <ResultsGrid onVideoSelect={onVideoSelect} />
             </div>
           </div>
         </Panel>
@@ -132,7 +127,7 @@ export function ResizablePanels({
 
         {/* Preview Panel */}
         <Panel 
-          defaultSize={layout[1]} 
+          defaultSize={panelSizes[1]} 
           minSize={25}
           className="flex flex-col"
         >
@@ -171,7 +166,7 @@ export function ResizablePanels({
 
         {/* Queue & Effects Panel */}
         <Panel 
-          defaultSize={layout[2]} 
+          defaultSize={panelSizes[2]} 
           minSize={20}
           className="flex flex-col"
         >
