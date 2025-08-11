@@ -67,7 +67,7 @@ export function ResponsiveLayoutHints() {
         onClick={toggleVisibility}
         variant="outline"
         size="sm"
-        className="fixed bottom-20 right-4 z-50 bg-background/90 backdrop-blur-sm border-2"
+        className="fixed bottom-20 left-4 z-50 bg-background/90 backdrop-blur-sm border-2"
         data-testid="button-show-layout-hints"
       >
         <Monitor className="w-4 h-4 mr-2" />
@@ -81,7 +81,7 @@ export function ResponsiveLayoutHints() {
 
   return (
     <div 
-      className="fixed bottom-4 right-4 z-50 bg-background/95 backdrop-blur-sm border-2 rounded-lg p-4 shadow-lg"
+      className="fixed bottom-4 left-4 z-50 bg-background/95 backdrop-blur-sm border-2 rounded-lg p-4 shadow-lg"
       style={{
         borderColor: `var(--${brandSkin}-accent)`,
         maxWidth: '320px'
