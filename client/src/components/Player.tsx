@@ -80,10 +80,18 @@ export function Player() {
       const handleError = (e: any) => {
         console.error('❌ Video error:', {
           error: e,
+          errorCode: video.error?.code,
+          errorMessage: video.error?.message,
           networkState: video.networkState,
           readyState: video.readyState,
           src: video.src
         });
+        
+        // Network state meanings:
+        // 0 = NETWORK_EMPTY, 1 = NETWORK_IDLE, 2 = NETWORK_LOADING, 3 = NETWORK_NO_SOURCE
+        if (video.networkState === 3) {
+          console.error('❌ NETWORK_NO_SOURCE - Video source cannot be loaded');
+        }
       };
       
       const handleLoadStart = () => console.log('🔄 Video load started');
@@ -597,6 +605,7 @@ export function Player() {
           controls={false}
           preload="metadata"
           crossOrigin="anonymous"
+          playsInline
           style={{ 
             display: isAudioReactive ? 'none' : 'block',
             filter: generateFilterString(),

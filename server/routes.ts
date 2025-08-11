@@ -159,9 +159,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       const bestVideoFile = sortedVideoFiles[0];
-      const streamUrl = bestVideoFile ? 
-        `https://archive.org/download/${identifier}/${bestVideoFile.name}` : 
-        null;
+      let streamUrl = null;
+      
+      if (bestVideoFile) {
+        // Get the redirected URL from Archive.org
+        const directUrl = `https://archive.org/download/${identifier}/${encodeURIComponent(bestVideoFile.name)}`;
+        try {
+          const headResponse = await fetch(directUrl, { method: 'HEAD' });
+          if (headResponse.redirected) {
+            streamUrl = headResponse.url;
+            console.log(`🔗 Redirect resolved: ${directUrl} -> ${streamUrl}`);
+          } else {
+            streamUrl = directUrl;
+          }
+        } catch (redirectError) {
+          console.warn('Failed to resolve redirect, using direct URL:', redirectError);
+          streamUrl = directUrl;
+        }
+      }
       
       res.json({
         metadata: data.metadata,
