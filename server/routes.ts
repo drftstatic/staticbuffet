@@ -114,6 +114,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get metadata for specific video
+  // Proxy video files through our server
+  app.get("/api/video/:identifier/:filename", apiLimiter, async (req, res) => {
+    try {
+      const { identifier, filename } = req.params;
+      const videoUrl = `https://archive.org/download/${identifier}/${decodeURIComponent(filename)}`;
+      
+      console.log(`🎥 Proxying video: ${videoUrl}`);
+      
+      const response = await fetch(videoUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch video: ${response.status}`);
+      }
+      
+      // Set appropriate headers
+      res.set({
+        'Content-Type': 'video/mp4',
+        'Accept-Ranges': 'bytes',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=3600'
+      });
+      
+      // Stream the video through our server
+      if (response.body) {
+        const reader = response.body.getReader();
+        const pump = () => {
+          return reader.read().then(({ done, value }) => {
+            if (done) {
+              res.end();
+              return;
+            }
+            res.write(value);
+            return pump();
+          });
+        };
+        return pump();
+      } else {
+        res.status(500).json({ error: "No response body" });
+      }
+      
+    } catch (error) {
+      console.error("Video proxy error:", error);
+      res.status(500).json({ error: "Failed to proxy video" });
+    }
+  });
+
   app.get("/api/metadata/:identifier", apiLimiter, async (req, res) => {
     try {
       const { identifier } = req.params;
@@ -162,20 +207,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let streamUrl = null;
       
       if (bestVideoFile) {
-        // Get the redirected URL from Archive.org
-        const directUrl = `https://archive.org/download/${identifier}/${encodeURIComponent(bestVideoFile.name)}`;
-        try {
-          const headResponse = await fetch(directUrl, { method: 'HEAD' });
-          if (headResponse.redirected) {
-            streamUrl = headResponse.url;
-            console.log(`🔗 Redirect resolved: ${directUrl} -> ${streamUrl}`);
-          } else {
-            streamUrl = directUrl;
-          }
-        } catch (redirectError) {
-          console.warn('Failed to resolve redirect, using direct URL:', redirectError);
-          streamUrl = directUrl;
-        }
+        // Use our server as a proxy for video files to avoid CORS issues
+        streamUrl = `/api/video/${identifier}/${encodeURIComponent(bestVideoFile.name)}`;
+        console.log(`🎥 Using proxy URL: ${streamUrl}`);
       }
       
       res.json({

@@ -604,7 +604,6 @@ export function Player() {
           className="w-full h-full object-contain"
           controls={false}
           preload="metadata"
-          crossOrigin="anonymous"
           playsInline
           style={{ 
             display: isAudioReactive ? 'none' : 'block',
