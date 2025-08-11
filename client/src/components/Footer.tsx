@@ -66,7 +66,7 @@ export function Footer() {
     build: '2025.08.11',
     engine: 'FS9000',
     audio: 'web.A.ap1',
-    video: 'HTML5 + CSS Filters'
+    video: 'htmlcsskewl.run'
   };
 
   return (
