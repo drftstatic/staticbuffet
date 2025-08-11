@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { useStore } from '@/lib/store';
+import { useToast } from '@/hooks/use-toast';
+import { generateEmergencyMix } from '@/lib/emergency-mix';
 import { 
   Palette, 
   Volume2, 
@@ -29,7 +31,8 @@ import {
 import { ScaleTransition } from './AnimatedTransitions';
 
 export function EffectsPanel() {
-  const { videoEffects, setVideoEffects, audioEffects, setAudioEffects, brandSkin } = useStore();
+  const { videoEffects, setVideoEffects, audioEffects, setAudioEffects, brandSkin, searchResults, setQueueItems } = useStore();
+  const { toast } = useToast();
 
   // Global keyboard shortcuts for presets
   React.useEffect(() => {
@@ -240,10 +243,40 @@ export function EffectsPanel() {
           size="sm" 
           variant="outline"
           onClick={() => {
-            // Simple emergency mix - generate quick queue
-            console.log('Emergency Mix triggered!');
+            try {
+              if (searchResults.length === 0) {
+                toast({
+                  title: "No results available",
+                  description: "Search for videos first to generate an emergency mix",
+                  variant: "destructive",
+                });
+                return;
+              }
+
+              const mixItems = generateEmergencyMix(searchResults, {
+                duration: 150, // 2.5 minutes
+                segmentLength: [2, 5],
+                crossfadeDuration: 0.5,
+                maxClips: 10,
+              });
+              
+              // Replace current queue with emergency mix
+              setQueueItems(mixItems);
+              
+              toast({
+                title: "Emergency Mix Generated!",
+                description: `Created ${mixItems.length} clips ready for mixing`,
+              });
+            } catch (error) {
+              toast({
+                title: "Mix Generation Failed",
+                description: error instanceof Error ? error.message : "Failed to generate emergency mix",
+                variant: "destructive",
+              });
+            }
           }}
-          className="h-6 px-2 text-xs flex items-center space-x-1 bg-red-600/10 hover:bg-red-600/20 border-red-500/20"
+          disabled={searchResults.length === 0}
+          className="h-6 px-2 text-xs flex items-center space-x-1 bg-red-600/10 hover:bg-red-600/20 border-red-500/20 disabled:opacity-50"
           title="Generate Emergency Mix"
           data-testid="button-emergency-mix"
         >
