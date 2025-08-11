@@ -190,6 +190,48 @@
       #00ff00 100%);
   }
 
+  /* ASCII Mode for Max Headroom theme */
+  .ascii-mode {
+    font-family: 'Courier New', monospace !important;
+    background: #000000 !important;
+    color: #00ff00 !important;
+    text-shadow: 0 0 10px #00ff00;
+  }
+
+  .ascii-mode * {
+    font-family: 'Courier New', monospace !important;
+    font-weight: normal !important;
+    letter-spacing: 0.05em;
+  }
+
+  .ascii-mode::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 255, 0, 0.03) 2px,
+        rgba(0, 255, 0, 0.03) 4px
+      ),
+      radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+    pointer-events: none;
+    z-index: 9999;
+    animation: asciiFlicker 0.15s linear infinite;
+  }
+
+  @keyframes asciiFlicker {
+    0% { opacity: 1; }
+    98% { opacity: 1; }
+    99% { opacity: 0.98; }
+    100% { opacity: 1; }
+  }
+
   /* Glass effects for all themes */
   .glass-ozzy {
     backdrop-filter: blur(16px) saturate(180%);

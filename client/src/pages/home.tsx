@@ -48,6 +48,7 @@ export default function Home() {
     isHulksterMode,
     isDXMode,
     isMarioMode,
+    isAsciiMode,
   } = useStore();
 
   // Perform search when filters change
@@ -130,6 +131,8 @@ export default function Home() {
         ? 'dx-gradient dx-mode'
         : brandSkin === 'dx'
         ? 'dx-gradient'
+        : brandSkin === 'maxheadroom' && isAsciiMode
+        ? 'maxheadroom-gradient ascii-mode'
         : 'maxheadroom-gradient'
     }`}>
       {/* Top Bar */}
