@@ -10,6 +10,9 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Created comprehensive About page explaining Static Buffet's purpose and features
+- Added navigation between main app and about section with proper routing
+- Detailed information about VJ tools, licensing, and creator collaboration
 - Transformed "Diner Mode" to "WAFFLE HOUSE MODE" with authentic diner color scheme
 - Added yellow/amber color palette inspired by classic Waffle House menu design
 - Updated all UI components to use Waffle House theme colors and styling

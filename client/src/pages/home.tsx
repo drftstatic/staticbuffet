@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
-import { Tv } from 'lucide-react';
+import { Tv, Info } from 'lucide-react';
+import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { SearchBar } from '@/components/SearchBar';
 import { Filters } from '@/components/Filters';
@@ -11,6 +12,7 @@ import { EffectPresetNotification } from '@/components/EffectPresetNotification'
 import { BottomHUD } from '@/components/BottomHUD';
 import { BrandSkinToggle } from '@/components/BrandSkinToggle';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { Button } from '@/components/ui/button';
 import { EmergencyMix } from '@/components/EmergencyMix';
 import { AudioReactive } from '@/components/AudioReactive';
 import { useStore } from '@/lib/store';
@@ -154,6 +156,20 @@ export default function Home() {
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-2">
+              <Link href="/about">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className={`flex items-center space-x-1 ${
+                    brandSkin === 'waffle' 
+                      ? 'text-amber-800 hover:text-amber-900 hover:bg-yellow-100/50' 
+                      : 'text-gray-400 hover:text-lime-400 hover:bg-gray-800/50'
+                  }`}
+                >
+                  <Info size={16} />
+                  <span>About</span>
+                </Button>
+              </Link>
               <ThemeSwitcher />
               <EmergencyMix />
               <AudioReactive />
