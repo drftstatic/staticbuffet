@@ -4,6 +4,24 @@ All notable changes to Static Buffet will be documented in this file.
 
 ## [Unreleased]
 
+## [0.7.2] - 2025-01-11
+
+### Fixed
+- **UI Organization**: Resolved duplicate SearchBar components that were causing multiple Lucky Dip buttons to appear
+- **Component Cleanup**: Removed duplicate SearchBars from ResizablePanels.tsx and FloatingPanelsManager.tsx
+- **Button Functionality**: Both Lucky Dip and Emergency Mix buttons are now fully functional with proper error handling
+
+### Improved
+- **Lucky Dip Button**: Changed to icon-only design (dice icon) for more compact header layout
+- **Emergency Mix Integration**: Implemented full functionality in Effects Panel header with queue generation
+- **User Feedback**: Added comprehensive toast notifications for button actions and error states
+- **Performance**: Cleaner component structure with no unused imports or duplicate code
+
+### Technical
+- Lucky Dip performs random searches on public domain vintage content from Prelinger/FedFlix archives
+- Emergency Mix generates 10 clips with 2-5 second segments, totaling 2.5 minutes with crossfades
+- Both buttons integrate with global store state and provide visual feedback during operations
+
 ## [0.1.0-alpha] - 2025-01-11
 
 ### Added

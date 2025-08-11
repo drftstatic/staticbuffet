@@ -1,11 +1,19 @@
 # Static Buffet - Trash Team × Nulltone.TV
-**Version:** 0.7.1
+**Version:** 0.7.2
 **Release Date:** January 11, 2025
 
 ## Overview
 Static Buffet is a professional VJ-focused web application designed for searching, previewing, and queuing free-to-use video content from Archive.org. It enables real-time video mixing with public domain and Creative Commons licensed footage. The application features ten complete visual themes, enhanced drag-and-drop functionality, comprehensive keyboard shortcuts, audio-reactive capabilities, and professional EDL recording. Built as a full-stack TypeScript application, it serves as a "video chaos buffet" for VJs and content creators needing immediate access to royalty-free footage with proper licensing compliance, embodying the vision of turning discarded culture into something new and providing alternative programming.
 
-## Recent Changes (v0.7.1)
+## Recent Changes (v0.7.2)
+- ✅ **UI CLEANUP**: Fixed duplicate SearchBar components causing multiple Lucky Dip buttons to appear
+- ✅ **BUTTON FUNCTIONALITY**: Both Lucky Dip (🎲) and Emergency Mix (⚡ MIX) are now fully functional with proper error handling
+- ✅ **LUCKY DIP**: Changed to compact icon-only design for cleaner header layout, performs random public domain searches
+- ✅ **EMERGENCY MIX**: Implemented full functionality in Effects Panel header with intelligent queue generation from search results
+- ✅ **COMPONENT OPTIMIZATION**: Removed duplicate SearchBars from ResizablePanels and FloatingPanelsManager, cleaner architecture
+- ✅ **USER FEEDBACK**: Added comprehensive toast notifications for all button actions and error states
+
+## Previous Changes (v0.7.1)
 - ✅ Enhanced license badges with detailed tooltips and external Creative Commons/Public Domain links
 - ✅ Implemented comprehensive drag-and-drop system from search results to queue
 - ✅ Added hover information overlays on video cards with license and duration details
