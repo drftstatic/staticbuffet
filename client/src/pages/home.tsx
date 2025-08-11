@@ -99,6 +99,8 @@ export default function Home() {
     
     if (brandSkin === 'waffle') {
       body.className = 'bg-yellow-50 dark:bg-gray-900 font-inter transition-colors duration-300';
+    } else if (brandSkin === 'testcard') {
+      body.className = 'bg-slate-900 font-mono transition-colors duration-300';
     } else {
       body.className = 'bg-gray-900 font-mono transition-colors duration-300';
     }
@@ -114,7 +116,9 @@ export default function Home() {
       <MarioPipeEffect />
       
       <div className={`h-screen flex flex-col overflow-hidden transition-all duration-300 relative ${
-      brandSkin === 'waffle' 
+      brandSkin === 'testcard'
+        ? 'testcard-gradient testcard-grid'
+        : brandSkin === 'waffle' 
         ? 'waffle-gradient waffle-texture' 
         : brandSkin === 'ebn'
         ? 'ebn-gradient scanlines'
@@ -138,7 +142,9 @@ export default function Home() {
     }`}>
       {/* Top Bar */}
       <header className={`flex-shrink-0 border-b transition-all duration-300 ${
-        brandSkin === 'waffle' 
+        brandSkin === 'testcard'
+          ? 'glass-testcard border-slate-400/30'
+          : brandSkin === 'waffle' 
           ? 'glass border-yellow-400/50' 
           : brandSkin === 'ebn'
           ? 'glass-dark border-lime-500/30'
@@ -155,6 +161,7 @@ export default function Home() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <Tv size={20} className={
+                  brandSkin === 'testcard' ? 'text-blue-400' :
                   brandSkin === 'waffle' ? 'text-amber-600' : 
                   brandSkin === 'ebn' ? 'text-yellow-300' :
                   brandSkin === 'ozzy' ? 'text-red-400' :
@@ -162,6 +169,7 @@ export default function Home() {
                   'text-yellow-400'
                 } />
                 <h1 className={`font-bold text-lg ${
+                  brandSkin === 'testcard' ? 'text-slate-200' :
                   brandSkin === 'waffle' ? 'text-amber-900' : 
                   brandSkin === 'ebn' ? 'text-yellow-300' :
                   brandSkin === 'ozzy' ? 'text-red-200' :

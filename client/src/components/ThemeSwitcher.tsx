@@ -12,7 +12,9 @@ export function ThemeSwitcher() {
   return (
     <Select value={brandSkin} onValueChange={handleThemeChange}>
       <SelectTrigger className={`w-56 ${
-        brandSkin === 'waffle' 
+        brandSkin === 'testcard'
+          ? 'border-blue-400/50 bg-gray-900/50 text-white'
+          : brandSkin === 'waffle' 
           ? 'border-yellow-400/50 bg-yellow-50/50' 
           : brandSkin === 'ebn'
           ? 'border-lime-500/30 bg-gray-800/50'
@@ -25,6 +27,7 @@ export function ThemeSwitcher() {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
+        <SelectItem value="testcard">📺 Test Card</SelectItem>
         <SelectItem value="waffle">🧇 Waffle House</SelectItem>
         <SelectItem value="ebn">📺 EBN Hijack</SelectItem>
         <SelectItem value="ozzy">🦇 Heavy Metal</SelectItem>

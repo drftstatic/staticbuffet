@@ -137,6 +137,14 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 211, 0, 0.1);
   }
 
+  .glass-testcard {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(71, 85, 105, 0.3);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.1);
+  }
+
   /* DRAMATICALLY DIFFERENT THEME BACKGROUNDS */
   
   /* 1. WAFFLE HOUSE - Bright Diner Colors */
@@ -604,6 +612,20 @@
     );
   }
 
+  /* 8. TEST CARD - Professional Broadcast Standard */
+  .testcard-gradient {
+    background: 
+      radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+      linear-gradient(135deg, 
+        #0f172a 0%,    /* slate-900 */
+        #1e293b 20%,   /* slate-800 */
+        #334155 40%,   /* slate-700 */
+        #475569 60%,   /* slate-600 */
+        #64748b 80%,   /* slate-500 */
+        #94a3b8 100%); /* slate-400 */
+  }
+
   .glass-mario {
     background: rgba(231, 76, 60, 0.1);
     backdrop-filter: blur(8px);
@@ -900,5 +922,51 @@
     10% { opacity: 0.5; }
     90% { opacity: 0.5; }
     100% { right: 110%; opacity: 0; }
+  }
+
+  /* 8. Test Card - Professional Grid Pattern */
+  .testcard-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 20px,
+        rgba(148, 163, 184, 0.02) 20px,
+        rgba(148, 163, 184, 0.02) 21px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 20px,
+        rgba(148, 163, 184, 0.02) 20px,
+        rgba(148, 163, 184, 0.02) 21px
+      );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .testcard-grid::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 1001;
+    animation: testCardPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes testCardPulse {
+    0%, 100% { border-color: rgba(59, 130, 246, 0.05); }
+    50% { border-color: rgba(59, 130, 246, 0.15); }
   }
 }

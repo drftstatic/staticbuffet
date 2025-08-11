@@ -13,6 +13,17 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 
 ## Recent Changes
 
+### Version 6.5 Release (August 11, 2025)
+- **Test Card Default Mode**: Professional broadcast standard theme now serves as the default mode when visiting the page
+  - **Professional Appearance**: Clean slate gray gradients with subtle blue accents for professional VJ workstation feel
+  - **Grid Pattern Effect**: Subtle broadcast test card-inspired grid overlay with pulsing border animation
+  - **Glass Morphism**: Professional glass effects with slate tones and blue highlights
+  - **Eight-Theme System**: Complete professional toolkit with distinct visual experiences
+- **Enhanced Theme Differentiation**: Dramatically improved visual distinction between all 8 themes
+  - **Multi-layer Gradients**: Complex radial and linear gradients unique to each theme
+  - **Signature Visual Effects**: Each theme now has completely unique animations and textures
+  - **Professional to Playful Range**: From broadcast-standard Test Card to meme-inspired Mario mode
+
 ### Version 6.0 Release (August 11, 2025)
 - **Sexy Mario Plumber Theme**: Seventh complete visual theme with meme-based humor and Nintendo-inspired aesthetics
   - **Mario Water Pipe Effect**: Unexpected visual distortion with floating mushrooms, stars, and peppers
@@ -141,11 +152,15 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 - **Audio Reactive**: Web Audio API with real-time frequency analysis for beat detection
 
 ### Theme System
-- **Four Complete Visual Themes**: 
-  - **Waffle House**: Off-white backgrounds with ketchup red accents and menu-card aesthetics
-  - **EBN Hijack**: Dark charcoal with lime LEDs, animated scanlines, and live broadcast styling
-  - **Heavy Metal**: Black/red Ozzy-inspired theme with metallic textures and industrial elements
+- **Eight Complete Visual Themes**: 
+  - **Test Card (Default)**: Professional broadcast standard with slate gray gradients and grid pattern overlay
+  - **Waffle House**: Bright diner colors with crosshatch texture and golden amber tones
+  - **EBN Hijack**: Dark cyberpunk with animated scanlines, purple/lime gradients, and glitch effects
+  - **Heavy Metal**: Blood red/black industrial with brutal metallic patterns and pulsing animations
   - **NWO Hollywood**: Wrestling-inspired red/black/gold with NWO stripes and HULKSTER Easter egg
+  - **D-Generation X**: Blue/pink attitude era theme with radial pulse effects
+  - **Max Headroom**: Matrix green terminal with flicker effects and data flow animations
+  - **Mario Plumber**: Nintendo rainbow colors with power-up sparkles and pipe warp effects
 - **Interactive Easter Eggs**: HH button system with triple-click activation for HULKSTER mode
 - **CSS Variables**: Theme-aware color system using CSS custom properties
 - **Typography**: Inter font for UI text and JetBrains Mono for technical elements

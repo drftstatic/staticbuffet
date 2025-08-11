@@ -66,7 +66,7 @@ interface AppStore extends AppState {
 
 export const useStore = create<AppStore>((set, get) => ({
   // Initial state
-  brandSkin: 'waffle',
+  brandSkin: 'testcard',
   isHulksterMode: false,
   isDXMode: false,
   isAsciiMode: false,
