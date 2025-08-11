@@ -27,6 +27,7 @@ import { MaxButton } from '@/components/MaxButton';
 import { MarioButton } from '@/components/MarioButton';
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { LiveVideoMode } from '@/components/LiveVideoMode';
+import { WorkspaceLayoutSaver } from '@/components/WorkspaceLayoutSaver';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
@@ -198,6 +199,7 @@ export default function Home() {
 
             {/* Controls */}
             <div className="flex items-center space-x-2">
+              <WorkspaceLayoutSaver />
               <Button 
                 variant="ghost" 
                 size="sm" 
