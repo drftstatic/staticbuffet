@@ -122,6 +122,17 @@
       rgba(31, 41, 55, 1) 50%, 
       rgba(17, 24, 39, 1) 100%);
   }
+
+  /* Bold industrial typography effects */
+  .logo-text {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    letter-spacing: -0.02em;
+  }
+
+  .logo-text-dark {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: -0.02em;
+  }
   
   /* Scanlines for EBN theme */
   .scanlines::before {

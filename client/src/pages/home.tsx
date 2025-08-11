@@ -93,41 +93,23 @@ export default function Home() {
           ? 'glass border-amber-200/50' 
           : 'glass-dark border-lime-500/30'
       }`}>
-        <div className="max-w-full px-4 py-3">
+        <div className="max-w-full px-6 py-5">
           <div className="flex items-center justify-between">
             {/* Logo and Brand */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className={`${brandSkin === 'diner' ? 'text-red-600' : 'text-lime-500'}`}>
-                  <Tv size={24} />
-                </div>
-                <div>
-                  <h1 className={`font-bold text-lg font-inter ${
-                    brandSkin === 'diner' ? 'text-gray-800' : 'text-gray-100'
-                  }`}>
-                    Static Buffet
-                  </h1>
-                  <p className={`text-xs ${
-                    brandSkin === 'diner' ? 'text-gray-600' : 'text-gray-400'
-                  }`}>
-                    All-you-can-eat video chaos
-                  </p>
-                </div>
-              </div>
-
-              {/* Brand Links */}
-              <div className="flex items-center space-x-3 text-xs">
+            <div className="flex flex-col space-y-1">
+              {/* Brand Attribution */}
+              <div className="flex items-center space-x-2 text-xs font-medium tracking-wider">
                 <a 
                   href="https://trashteam.tv" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className={`hover:underline transition-colors ${
                     brandSkin === 'diner' 
-                      ? 'text-red-600 hover:text-red-800' 
-                      : 'text-lime-400 hover:text-lime-300'
+                      ? 'text-gray-600 hover:text-red-600' 
+                      : 'text-gray-400 hover:text-lime-400'
                   }`}
                 >
-                  trashteam.tv
+                  TRASH TEAM
                 </a>
                 <span className={brandSkin === 'diner' ? 'text-gray-400' : 'text-gray-500'}>×</span>
                 <a 
@@ -136,13 +118,34 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className={`hover:underline transition-colors ${
                     brandSkin === 'diner' 
-                      ? 'text-red-600 hover:text-red-800' 
-                      : 'text-lime-400 hover:text-lime-300'
+                      ? 'text-gray-600 hover:text-red-600' 
+                      : 'text-gray-400 hover:text-lime-400'
                   }`}
                 >
-                  nulltone.tv
+                  NULLTONE.TV
                 </a>
               </div>
+              
+              {/* Main Logo */}
+              <div className="flex items-center space-x-3">
+                <div className={`${brandSkin === 'diner' ? 'text-red-600' : 'text-lime-500'}`}>
+                  <Tv size={28} />
+                </div>
+                <div>
+                  <h1 className={`font-black text-2xl font-inter tracking-tight leading-none ${
+                    brandSkin === 'diner' ? 'text-gray-800 logo-text' : 'text-gray-100 logo-text-dark'
+                  }`}>
+                    STATIC<br/>BUFFET
+                  </h1>
+                </div>
+              </div>
+              
+              {/* Tagline */}
+              <p className={`text-sm font-medium ${
+                brandSkin === 'diner' ? 'text-gray-600' : 'text-gray-400'
+              }`}>
+                All-you-can-eat video chaos, straight from the public domain.
+              </p>
             </div>
 
             {/* Search Bar */}
