@@ -484,7 +484,7 @@ export function Player() {
         className={`relative bg-black overflow-hidden transition-all duration-300 ${
           isFullscreen 
             ? 'fixed inset-0 z-50 cursor-none' 
-            : 'flex-1 w-full h-full'
+            : 'flex-1 w-full h-full min-h-0'
         }`}
         onDoubleClick={toggleFullscreen}
       >

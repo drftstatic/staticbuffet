@@ -244,7 +244,7 @@ export default function Home() {
               </div>
             </div>
             {/* Player Area */}
-            <div className="flex-1 bg-black relative">
+            <div className="flex-1 bg-black relative min-h-0">
               <Player />
             </div>
           </div>
