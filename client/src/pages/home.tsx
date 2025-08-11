@@ -401,6 +401,9 @@ export default function Home() {
       {/* Detail Drawer */}
       <DetailDrawer />
 
+      {/* Responsive Layout Hints - Educational component */}
+      <ResponsiveLayoutHints />
+
       {/* Bottom HUD (EBN mode only) */}
       <BottomHUD />
 
