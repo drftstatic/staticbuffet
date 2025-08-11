@@ -119,7 +119,7 @@ export function Footer() {
           <span>AUDIO: {buildInfo.audio}</span>
           <span>VIDEO: {buildInfo.video}</span>
           <span className="text-xs opacity-70">
-            Trash Team × Nulltone.TV × Fladry Creative
+            Trash Team × Nulltone.TV
           </span>
         </div>
       </div>
