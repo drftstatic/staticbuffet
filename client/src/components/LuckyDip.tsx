@@ -150,22 +150,14 @@ export function LuckyDip({ onDipResults }: LuckyDipProps) {
     <Button
       onClick={handleLuckyDip}
       disabled={isDipping}
-      className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg border transition-colors text-xs sm:text-sm ${getThemeClasses()}`}
+      className={`h-8 w-8 flex items-center justify-center rounded-lg border transition-colors text-sm ${getThemeClasses()}`}
       data-testid="button-lucky-dip"
-      title="Get random vintage clips"
+      title="Lucky Dip - Random vintage clips"
     >
       {isDipping ? (
-        <>
-          <Loader2 size={14} className="animate-spin" />
-          <span className="hidden sm:inline">Digging...</span>
-          <span className="sm:hidden">...</span>
-        </>
+        <Loader2 size={14} className="animate-spin" />
       ) : (
-        <>
-          <Dices size={14} />
-          <span className="hidden sm:inline">Lucky Dip</span>
-          <span className="sm:hidden">Dip</span>
-        </>
+        <Dices size={14} />
       )}
     </Button>
   );

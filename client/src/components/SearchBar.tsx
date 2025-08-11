@@ -68,7 +68,9 @@ export function SearchBar({ onSearch }: SearchBarProps) {
         </form>
         
         <div className="flex-shrink-0">
-          <LuckyDip onDipResults={handleLuckyDipResults} />
+          <div className="flex items-center">
+            <LuckyDip onDipResults={handleLuckyDipResults} />
+          </div>
         </div>
       </div>
       
