@@ -1,5 +1,5 @@
 # Static Buffet - Trash Team × Nulltone.TV
-**Version: 0.1.0**
+**Version: 0.1.5**
 
 ## Overview
 
@@ -12,6 +12,19 @@ Preferred communication style: Simple, everyday language.
 Project description: Trash Team × Nulltone.TV present Static Buffet — all-you-can-eat video chaos, straight from the public domain. Trash Team is an audio/visual collaboration dedicated to turning discarded culture into something worth watching again. Nulltone.TV is the broadcast arm of the resistance — a streaming experiment for alternative programming, glitch aesthetics, and strange transmissions. Built by Fladry Creative (fladrycreative.co).
 
 ## Recent Changes
+
+### Version 0.1.5 Release (January 11, 2025)
+- **Efficient Header Layout**: Redesigned header with three-row structure for optimal space usage
+  - Row 1: Compact brand logo + controls on right
+  - Row 2: Full-width search bar for maximum usability  
+  - Row 3: Filters row
+- **Extended Search Range**: Updated year filters to include 2025 in search parameters
+- **Fixed Video Playback Issues**: Resolved critical video streaming problems
+  - Corrected incomplete video URL construction (was missing filenames)
+  - Added smart quality selection prioritizing original files over compressed versions
+  - Fixed duplicate function declarations causing TypeScript errors
+- **Improved Panel Minimization**: True panel collapse system using CSS Grid for better screen space management
+- **Enhanced Video File Selection**: Server now intelligently selects best available video format from Archive.org
 
 ### Version 0.1.0 Release (January 11, 2025)
 - **Professional Media Workstation Layout**: Transformed interface to panel-based layout inspired by Adobe Premiere and Resolume
