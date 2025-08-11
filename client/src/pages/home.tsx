@@ -33,6 +33,7 @@ export default function Home() {
     setDetailDrawerOpen,
     panelStates,
     togglePanelCollapse,
+    resetPanels,
   } = useStore();
 
   // Perform search when filters change
@@ -127,6 +128,18 @@ export default function Home() {
 
             {/* Controls */}
             <div className="flex items-center space-x-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={resetPanels}
+                data-testid="button-reset-panels"
+                className={`flex items-center space-x-1 ${
+                  brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 'text-yellow-300 hover:bg-purple-900/50'
+                }`}
+              >
+                <Tv size={14} />
+                <span>Reset</span>
+              </Button>
               <Link href="/about">
                 <Button variant="ghost" size="sm" className={`flex items-center space-x-1 ${
                   brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 'text-yellow-300 hover:bg-purple-900/50'

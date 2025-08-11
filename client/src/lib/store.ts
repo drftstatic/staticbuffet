@@ -38,6 +38,7 @@ interface AppStore extends AppState {
   
   // Panel actions
   togglePanelCollapse: (panel: 'search' | 'player' | 'queue' | 'effects') => void;
+  resetPanels: () => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
@@ -219,6 +220,15 @@ export const useStore = create<AppStore>((set, get) => ({
     panelStates: {
       ...state.panelStates,
       [`${panel}Collapsed`]: !state.panelStates[`${panel}Collapsed` as keyof typeof state.panelStates]
+    }
+  })),
+  
+  resetPanels: () => set(() => ({
+    panelStates: {
+      searchCollapsed: false,
+      playerCollapsed: false,
+      queueCollapsed: false,
+      effectsCollapsed: false,
     }
   })),
 }));
