@@ -105,8 +105,8 @@ export default function Home() {
                   target="_blank" 
                   rel="noopener noreferrer"
                   className={`hover:underline transition-colors ${
-                    brandSkin === 'diner' 
-                      ? 'text-gray-600 hover:text-red-600' 
+                    brandSkin === 'waffle' 
+                      ? 'text-amber-800 hover:text-red-700' 
                       : 'text-gray-400 hover:text-lime-400'
                   }`}
                 >
