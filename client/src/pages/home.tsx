@@ -290,25 +290,113 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content */}
-      {isResizableMode ? (
-        <>
-          <DockingGuides isDragging={isDragging} dragPosition={dragPosition} />
-          <ResizablePanels
-            searchResults={searchData ? (searchData as any).docs || [] : []}
-            totalResults={searchData ? (searchData as any).numFound || 0 : 0}
-            isLoading={isLoading}
-            onSearch={handleSearch}
-            onVideoSelect={handleVideoSelect}
-          />
-        </>
-      ) : (
-        /* Dominant Player with Sidebar Layout */
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-1 p-1 overflow-hidden">
-        {/* Large Preview/Player Panel - Left Side (9 columns) */}
-        <div className={`col-span-1 lg:col-span-9 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
-          panelStates.playerCollapsed ? 'h-12' : 'h-full'
-        } ${
+      {/* Main Content - Two-tier layout: Top content + Bottom timeline */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Content Area */}
+        <div className="flex-1 overflow-hidden">
+          {isResizableMode ? (
+            <>
+              <DockingGuides isDragging={isDragging} dragPosition={dragPosition} />
+              <ResizablePanels
+                searchResults={searchData ? (searchData as any).docs || [] : []}
+                totalResults={searchData ? (searchData as any).numFound || 0 : 0}
+                isLoading={isLoading}
+                onSearch={handleSearch}
+                onVideoSelect={handleVideoSelect}
+              />
+            </>
+          ) : (
+            /* Grid Layout - Top Row Only (Search, Player, Effects) */
+            <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-1 p-1 overflow-hidden">
+              {/* Large Preview/Player Panel - Left Side (8 columns) */}
+              <div className={`col-span-1 lg:col-span-8 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+                panelStates.playerCollapsed ? 'h-12' : 'h-full'
+              } ${
+                brandSkin === 'waffle' 
+                  ? 'bg-yellow-50/80 border-yellow-400/50' 
+                  : 'bg-purple-950/80 border-yellow-400/50'
+              }`}>
+                <div className={`h-full flex flex-col ${
+                  brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+                }`}>
+                  <PanelHeader
+                    title="PREVIEW • PLAYER"
+                    status="LIVE"
+                    isCollapsed={panelStates.playerCollapsed}
+                    onToggleCollapse={() => togglePanelCollapse('player')}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-2 h-2 rounded-full ${
+                        brandSkin === 'waffle' ? 'bg-red-500' : 'bg-red-400'
+                      } animate-pulse`}></div>
+                    </div>
+                  </PanelHeader>
+                  {!panelStates.playerCollapsed && (
+                    <div className="flex-1 overflow-hidden">
+                      <Player />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Sidebar - 4 columns */}
+              <div className="col-span-1 lg:col-span-4 flex flex-col gap-1">
+                {/* Search/Results Panel */}
+                <div className={`rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+                  panelStates.searchCollapsed ? 'h-12' : 'flex-1'
+                } ${
+                  brandSkin === 'waffle' 
+                    ? 'bg-yellow-50/80 border-yellow-400/50' 
+                    : 'bg-purple-950/80 border-yellow-400/50'
+                }`}>
+                  <div className={`h-full flex flex-col ${
+                    brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+                  }`}>
+                    <PanelHeader
+                      title="SEARCH • RESULTS"
+                      status={`${searchData?.numFound || 0} ITEMS`}
+                      isCollapsed={panelStates.searchCollapsed}
+                      onToggleCollapse={() => togglePanelCollapse('search')}
+                    />
+                    {!panelStates.searchCollapsed && (
+                      <div className="flex-1 overflow-y-auto">
+                        <ResultsGrid onVideoSelect={handleVideoSelect} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Effects Panel */}
+                <div className={`rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+                  panelStates.effectsCollapsed ? 'h-12' : 'flex-1'
+                } ${
+                  brandSkin === 'waffle' 
+                    ? 'bg-yellow-50/80 border-yellow-400/50' 
+                    : 'bg-purple-950/80 border-yellow-400/50'
+                }`}>
+                  <div className={`h-full flex flex-col ${
+                    brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+                  }`}>
+                    <PanelHeader
+                      title="EFFECTS • MIX"
+                      status="READY"
+                      isCollapsed={panelStates.effectsCollapsed}
+                      onToggleCollapse={() => togglePanelCollapse('effects')}
+                    />
+                    {!panelStates.effectsCollapsed && (
+                      <div className="flex-1 overflow-y-auto">
+                        <EffectsPanel />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Timeline Panel - Full Width */}
+        <div className={`${panelStates.queueCollapsed ? 'h-16' : 'h-64'} rounded-lg border-2 mx-1 mb-1 overflow-hidden transition-all duration-300 ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
@@ -317,104 +405,27 @@ export default function Home() {
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
             <PanelHeader
-              title="PREVIEW / PLAYER"
-              status="LIVE"
-              isCollapsed={panelStates.playerCollapsed}
-              onToggleCollapse={() => togglePanelCollapse('player')}
+              title="TIMELINE • QUEUE"
+              status={`${queueItems.length} CLIPS • FULL WIDTH`}
+              isCollapsed={panelStates.queueCollapsed}
+              onToggleCollapse={() => togglePanelCollapse('queue')}
             >
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${
-                  brandSkin === 'waffle' ? 'bg-red-500' : 'bg-red-400'
-                } animate-pulse`}></div>
+                <div className={`px-2 py-1 rounded text-xs font-mono ${
+                  brandSkin === 'waffle' ? 'bg-amber-200 text-amber-800' : 'bg-yellow-400/20 text-yellow-300'
+                }`}>
+                  LONG
+                </div>
               </div>
             </PanelHeader>
-            {!panelStates.playerCollapsed && (
-              <div className="flex-1 overflow-hidden">
-                <Player />
+            {!panelStates.queueCollapsed && (
+              <div className="flex-1 overflow-hidden p-4">
+                <QueuePanel />
               </div>
             )}
           </div>
         </div>
-
-        {/* Sidebar - Right Side (3 columns) */}
-        <div className="col-span-1 lg:col-span-3 flex flex-col gap-1">
-          {/* Search/Results Panel - Top of Sidebar */}
-          <div className={`rounded-lg border-2 overflow-hidden transition-all duration-300 ${
-            panelStates.searchCollapsed ? 'h-12' : 'flex-1'
-          } ${
-            brandSkin === 'waffle' 
-              ? 'bg-yellow-50/80 border-yellow-400/50' 
-              : 'bg-purple-950/80 border-yellow-400/50'
-          }`}>
-            <div className={`h-full flex flex-col ${
-              brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
-            }`}>
-              <PanelHeader
-                title="SEARCH / RESULTS"
-                status={`${searchData?.numFound || 0} ITEMS`}
-                isCollapsed={panelStates.searchCollapsed}
-                onToggleCollapse={() => togglePanelCollapse('search')}
-              />
-              {!panelStates.searchCollapsed && (
-                <div className="flex-1 overflow-y-auto">
-                  <ResultsGrid onVideoSelect={handleVideoSelect} />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Queue Panel - Middle of Sidebar */}
-          <div className={`rounded-lg border-2 overflow-hidden transition-all duration-300 ${
-            panelStates.queueCollapsed ? 'h-12' : 'flex-1'
-          } ${
-            brandSkin === 'waffle' 
-              ? 'bg-yellow-50/80 border-yellow-400/50' 
-              : 'bg-purple-950/80 border-yellow-400/50'
-          }`}>
-            <div className={`h-full flex flex-col ${
-              brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
-            }`}>
-              <PanelHeader
-                title="QUEUE / TIMELINE"
-                status={`${queueItems.length} CLIPS`}
-                isCollapsed={panelStates.queueCollapsed}
-                onToggleCollapse={() => togglePanelCollapse('queue')}
-              />
-              {!panelStates.queueCollapsed && (
-                <div className="flex-1 overflow-y-auto">
-                  <QueuePanel />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Effects Panel - Bottom of Sidebar */}
-          <div className={`rounded-lg border-2 overflow-hidden transition-all duration-300 ${
-            panelStates.effectsCollapsed ? 'h-12' : 'flex-1'
-          } ${
-            brandSkin === 'waffle' 
-              ? 'bg-yellow-50/80 border-yellow-400/50' 
-              : 'bg-purple-950/80 border-yellow-400/50'
-          }`}>
-            <div className={`h-full flex flex-col ${
-              brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
-            }`}>
-              <PanelHeader
-                title="EFFECTS / MIX"
-                status="READY"
-                isCollapsed={panelStates.effectsCollapsed}
-                onToggleCollapse={() => togglePanelCollapse('effects')}
-              />
-              {!panelStates.effectsCollapsed && (
-                <div className="flex-1 overflow-y-auto">
-                  <EffectsPanel />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        </div>
-      )}
+      </div>
 
       {/* Detail Drawer */}
       <DetailDrawer />

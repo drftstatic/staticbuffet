@@ -123,7 +123,7 @@ export const useStore = create<AppStore>((set, get) => ({
         {
           id: 'default_full_interface',
           name: '🎛️ Full Interface',
-          description: 'All panels open for comprehensive VJ control',
+          description: '3-panel top row + full-width timeline for complete VJ control',
           panelStates: {
             searchCollapsed: false,
             playerCollapsed: false,
@@ -138,11 +138,11 @@ export const useStore = create<AppStore>((set, get) => ({
         {
           id: 'default_performance',
           name: '🎬 Performance Mode',
-          description: 'Player and effects only for live performance',
+          description: 'Player-focused top + long timeline for live mixing',
           panelStates: {
-            searchCollapsed: true,
+            searchCollapsed: false,
             playerCollapsed: false,
-            queueCollapsed: true,
+            queueCollapsed: false,
             effectsCollapsed: false,
           },
           layoutMode: 'panels',
@@ -153,22 +153,22 @@ export const useStore = create<AppStore>((set, get) => ({
         {
           id: 'default_preparation',
           name: '📚 Preparation Mode',
-          description: 'Focus on search and queue building',
+          description: 'Search-focused top + timeline for content preparation',
           panelStates: {
             searchCollapsed: false,
-            playerCollapsed: true,
+            playerCollapsed: false,
             queueCollapsed: false,
-            effectsCollapsed: true,
+            effectsCollapsed: false,
           },
           layoutMode: 'panels',
-          panelSizes: [40, 30, 30],
+          panelSizes: [50, 30, 20],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
         {
           id: 'default_grid_layout',
           name: '⌗ Grid Layout',
-          description: 'Traditional grid-based layout for classic workflow',
+          description: 'Traditional grid top + dedicated bottom timeline',
           panelStates: {
             searchCollapsed: false,
             playerCollapsed: false,

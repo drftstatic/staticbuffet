@@ -61,169 +61,158 @@ export function ResizablePanels({
   }`;
 
   return (
-    <div className="flex-1 overflow-hidden">
-      <PanelGroup 
-        direction="horizontal" 
-        onLayout={handleLayoutChange}
-        className="h-full"
-      >
-        {/* Search & Results Panel */}
-        <Panel 
-          defaultSize={panelSizes[0]} 
-          minSize={20}
-          className="flex flex-col"
+    <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Top Row - Search, Preview, Effects */}
+      <div className="flex-1 overflow-hidden">
+        <PanelGroup 
+          direction="horizontal" 
+          onLayout={handleLayoutChange}
+          className="h-full"
         >
-          <div className={panelHeaderClass}>
-            <PanelHeader 
-              title="SEARCH • RESULTS" 
-              status={`${totalResults} ITEMS`}
-              isCollapsed={false}
-              onToggleCollapse={() => {}}
-            />
-          </div>
-          
-          <div className="flex-1 overflow-hidden flex flex-col p-4 space-y-4">
-            <div className="space-y-3">
-              <SearchBar onSearch={onSearch} />
-              <Filters onFiltersChange={() => {}} />
+          {/* Search & Results Panel */}
+          <Panel 
+            defaultSize={panelSizes[0]} 
+            minSize={20}
+            className="flex flex-col"
+          >
+            <div className={panelHeaderClass}>
+              <PanelHeader 
+                title="SEARCH • RESULTS" 
+                status={`${totalResults} ITEMS`}
+                isCollapsed={false}
+                onToggleCollapse={() => {}}
+              />
+            </div>
+            
+            <div className="flex-1 overflow-hidden flex flex-col p-4 space-y-4">
+              <div className="space-y-3">
+                <SearchBar onSearch={onSearch} />
+                <Filters onFiltersChange={() => {}} />
+              </div>
+              
+              <div className="flex-1 overflow-hidden">
+                <ResultsGrid onVideoSelect={onVideoSelect} />
+              </div>
+            </div>
+          </Panel>
+
+          {/* Vertical Resize Handle */}
+          <PanelResizeHandle className={`
+            w-2 relative group transition-all duration-200
+            ${resizeHandleClass}
+            border-r border-l
+          `}>
+            <div className="absolute inset-y-0 left-0 w-full flex items-center justify-center">
+              <GripVertical size={16} className={`
+                transition-opacity duration-200 opacity-40 group-hover:opacity-80
+                ${brandSkin === 'testcard' ? 'text-blue-400' :
+                  brandSkin === 'waffle' ? 'text-amber-400' :
+                  brandSkin === 'ebn' ? 'text-lime-400' :
+                  brandSkin === 'ozzy' ? 'text-red-400' :
+                  brandSkin === 'mario' ? 'text-red-400' :
+                  'text-yellow-400'}
+              `} />
+            </div>
+            
+            {/* Snap Guide Indicators */}
+            <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-12 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className={`w-full h-full rounded-l border-2 border-dashed ${
+                brandSkin === 'testcard' ? 'border-blue-400/50' :
+                brandSkin === 'waffle' ? 'border-amber-400/50' :
+                brandSkin === 'ebn' ? 'border-lime-400/50' :
+                brandSkin === 'ozzy' ? 'border-red-400/50' :
+                brandSkin === 'mario' ? 'border-red-400/50' :
+                'border-yellow-400/50'
+              }`} />
+            </div>
+          </PanelResizeHandle>
+
+          {/* Preview Panel */}
+          <Panel 
+            defaultSize={panelSizes[1]} 
+            minSize={25}
+            className="flex flex-col"
+          >
+            <div className={panelHeaderClass}>
+              <PanelHeader 
+                title="PREVIEW • PLAYER" 
+                status="LIVE"
+                isCollapsed={false}
+                onToggleCollapse={() => {}}
+              />
             </div>
             
             <div className="flex-1 overflow-hidden">
-              <ResultsGrid onVideoSelect={onVideoSelect} />
+              <Player />
             </div>
-          </div>
-        </Panel>
+          </Panel>
 
-        {/* Vertical Resize Handle */}
-        <PanelResizeHandle className={`
-          w-2 relative group transition-all duration-200
-          ${resizeHandleClass}
-          border-r border-l
-        `}>
-          <div className="absolute inset-y-0 left-0 w-full flex items-center justify-center">
-            <GripVertical size={16} className={`
-              transition-opacity duration-200 opacity-40 group-hover:opacity-80
-              ${brandSkin === 'testcard' ? 'text-blue-400' :
-                brandSkin === 'waffle' ? 'text-amber-400' :
-                brandSkin === 'ebn' ? 'text-lime-400' :
-                brandSkin === 'ozzy' ? 'text-red-400' :
-                brandSkin === 'mario' ? 'text-red-400' :
-                'text-yellow-400'}
-            `} />
-          </div>
-          
-          {/* Snap Guide Indicators */}
-          <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-12 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className={`w-full h-full rounded-l border-2 border-dashed ${
-              brandSkin === 'testcard' ? 'border-blue-400/50' :
-              brandSkin === 'waffle' ? 'border-amber-400/50' :
-              brandSkin === 'ebn' ? 'border-lime-400/50' :
-              brandSkin === 'ozzy' ? 'border-red-400/50' :
-              brandSkin === 'mario' ? 'border-red-400/50' :
-              'border-yellow-400/50'
-            }`} />
-          </div>
-        </PanelResizeHandle>
+          {/* Vertical Resize Handle */}
+          <PanelResizeHandle className={`
+            w-2 relative group transition-all duration-200
+            ${resizeHandleClass}
+            border-r border-l
+          `}>
+            <div className="absolute inset-y-0 left-0 w-full flex items-center justify-center">
+              <GripVertical size={16} className={`
+                transition-opacity duration-200 opacity-40 group-hover:opacity-80
+                ${brandSkin === 'testcard' ? 'text-blue-400' :
+                  brandSkin === 'waffle' ? 'text-amber-400' :
+                  brandSkin === 'ebn' ? 'text-lime-400' :
+                  brandSkin === 'ozzy' ? 'text-red-400' :
+                  brandSkin === 'mario' ? 'text-red-400' :
+                  'text-yellow-400'}
+              `} />
+            </div>
+          </PanelResizeHandle>
 
-        {/* Preview Panel */}
-        <Panel 
-          defaultSize={panelSizes[1]} 
-          minSize={25}
-          className="flex flex-col"
-        >
-          <div className={panelHeaderClass}>
-            <PanelHeader 
-              title="PREVIEW • PLAYER" 
-              status="LIVE"
-              isCollapsed={false}
-              onToggleCollapse={() => {}}
-            />
-          </div>
-          
-          <div className="flex-1 overflow-hidden">
-            <Player />
-          </div>
-        </Panel>
+          {/* Effects Panel */}
+          <Panel 
+            defaultSize={panelSizes[2]} 
+            minSize={20}
+            className="flex flex-col"
+          >
+            <div className={panelHeaderClass}>
+              <PanelHeader 
+                title="EFFECTS • MIX" 
+                status="ACTIVE"
+                isCollapsed={false}
+                onToggleCollapse={() => {}}
+              />
+            </div>
+            
+            <div className="flex-1 overflow-hidden">
+              <EffectsPanel />
+            </div>
+          </Panel>
+        </PanelGroup>
+      </div>
 
-        {/* Vertical Resize Handle */}
-        <PanelResizeHandle className={`
-          w-2 relative group transition-all duration-200
-          ${resizeHandleClass}
-          border-r border-l
-        `}>
-          <div className="absolute inset-y-0 left-0 w-full flex items-center justify-center">
-            <GripVertical size={16} className={`
-              transition-opacity duration-200 opacity-40 group-hover:opacity-80
-              ${brandSkin === 'testcard' ? 'text-blue-400' :
-                brandSkin === 'waffle' ? 'text-amber-400' :
-                brandSkin === 'ebn' ? 'text-lime-400' :
-                brandSkin === 'ozzy' ? 'text-red-400' :
-                brandSkin === 'mario' ? 'text-red-400' :
-                'text-yellow-400'}
-            `} />
-          </div>
-        </PanelResizeHandle>
-
-        {/* Queue & Effects Panel */}
-        <Panel 
-          defaultSize={panelSizes[2]} 
-          minSize={20}
-          className="flex flex-col"
-        >
-          <PanelGroup direction="vertical">
-            {/* Queue Panel */}
-            <Panel defaultSize={60} minSize={30}>
-              <div className={panelHeaderClass}>
-                <PanelHeader 
-                  title="QUEUE • TIMELINE" 
-                  status="READY"
-                  isCollapsed={false}
-                  onToggleCollapse={() => {}}
-                />
-              </div>
-              
-              <div className="flex-1 overflow-hidden">
-                <QueuePanel />
-              </div>
-            </Panel>
-
-            {/* Horizontal Resize Handle */}
-            <PanelResizeHandle className={`
-              h-2 relative group transition-all duration-200
-              ${resizeHandleClass}
-              border-t border-b
-            `}>
-              <div className="absolute inset-x-0 top-0 h-full flex items-center justify-center">
-                <GripHorizontal size={16} className={`
-                  transition-opacity duration-200 opacity-40 group-hover:opacity-80
-                  ${brandSkin === 'testcard' ? 'text-blue-400' :
-                    brandSkin === 'waffle' ? 'text-amber-400' :
-                    brandSkin === 'ebn' ? 'text-lime-400' :
-                    brandSkin === 'ozzy' ? 'text-red-400' :
-                    brandSkin === 'mario' ? 'text-red-400' :
-                    'text-yellow-400'}
-                `} />
-              </div>
-            </PanelResizeHandle>
-
-            {/* Effects Panel */}
-            <Panel defaultSize={40} minSize={30}>
-              <div className={panelHeaderClass}>
-                <PanelHeader 
-                  title="EFFECTS • MIX" 
-                  status="ACTIVE"
-                  isCollapsed={false}
-                  onToggleCollapse={() => {}}
-                />
-              </div>
-              
-              <div className="flex-1 overflow-hidden">
-                <EffectsPanel />
-              </div>
-            </Panel>
-          </PanelGroup>
-        </Panel>
-      </PanelGroup>
+      {/* Bottom Timeline Panel - Full Width */}
+      <div className={`h-64 ${panelHeaderClass} border-t-2 ${
+        brandSkin === 'testcard'
+          ? 'border-slate-400/20'
+          : brandSkin === 'waffle' 
+          ? 'border-yellow-400/30' 
+          : brandSkin === 'ebn'
+          ? 'border-lime-500/20'
+          : brandSkin === 'ozzy'
+          ? 'border-red-500/30'
+          : brandSkin === 'mario'
+          ? 'border-yellow-400/30'
+          : 'border-yellow-400/30'
+      }`}>
+        <PanelHeader 
+          title="TIMELINE • QUEUE" 
+          status={`${queueItems.length} TRACKS • RESIZABLE LONG`}
+          isCollapsed={false}
+          onToggleCollapse={() => {}}
+        />
+        
+        <div className="flex-1 overflow-hidden p-4">
+          <QueuePanel />
+        </div>
+      </div>
     </div>
   );
 }
