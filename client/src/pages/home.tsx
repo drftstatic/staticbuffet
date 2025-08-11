@@ -26,6 +26,7 @@ import { EBNButton } from '@/components/EBNButton';
 import { MaxButton } from '@/components/MaxButton';
 import { MarioButton } from '@/components/MarioButton';
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
+import { LiveVideoMode } from '@/components/LiveVideoMode';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';

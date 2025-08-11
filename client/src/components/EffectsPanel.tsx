@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AdaptiveColorControls } from '@/components/AdaptiveColorControls';
+import { LiveVideoMode } from '@/components/LiveVideoMode';
 import { LoopControls } from '@/components/LoopControls';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -513,6 +514,18 @@ export function EffectsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <LoopControls />
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Live Video Mode */}
+        <AccordionItem value="live-video">
+          <AccordionTrigger className="text-sm">
+            <div className="flex items-center space-x-2">
+              📹 <span>Live Video Mode</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <LiveVideoMode />
           </AccordionContent>
         </AccordionItem>
 
