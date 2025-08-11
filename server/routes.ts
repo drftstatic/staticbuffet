@@ -80,19 +80,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const data = await response.json();
       
-      // Filter results to only include videos with proper licensing
-      const filteredDocs = data.response?.docs?.filter((doc: any) => {
-        if (!doc.licenseurl && !doc.collection) return false;
-        
-        const license = (doc.licenseurl || '').toLowerCase();
-        const collection = (doc.collection || '').toLowerCase();
-        
-        // Allow public domain, CC0, CC-BY but exclude NC/ND by default
-        return license.includes('publicdomain') || 
-               license.includes('cc0') || 
-               (license.includes('by') && !license.includes('nc') && !license.includes('nd')) ||
-               collection.includes('publicdomain');
-      }) || [];
+      // Log the first few docs for debugging
+      console.log("Sample docs from Archive.org:", JSON.stringify(data.response?.docs?.slice(0, 2), null, 2));
+      
+      // Return all docs for now to debug the filtering issue
+      const filteredDocs = data.response?.docs || [];
+      
+      console.log(`Original docs count: ${data.response?.docs?.length}, Filtered count: ${filteredDocs.length}`);
       
       res.json({
         ...data.response,
