@@ -15,7 +15,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search Archive.org with filters
   app.get("/api/search", apiLimiter, async (req, res) => {
     try {
-      const filters = searchFiltersSchema.parse(req.query);
+      // Convert string parameters to proper types before validation
+      const queryData = {
+        ...req.query,
+        page: req.query.page ? parseInt(req.query.page as string) : 1,
+        rows: req.query.rows ? parseInt(req.query.rows as string) : 50,
+        durationMin: req.query.durationMin ? parseInt(req.query.durationMin as string) : undefined,
+        durationMax: req.query.durationMax ? parseInt(req.query.durationMax as string) : undefined,
+      };
+      
+      const filters = searchFiltersSchema.parse(queryData);
       
       // Build Archive.org search query
       let query = filters.query;

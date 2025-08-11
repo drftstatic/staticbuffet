@@ -5,8 +5,8 @@ export interface SearchState {
   yearFrom: string;
   yearTo: string;
   duration: string;
-  license: string;
-  sort: string;
+  license: 'all' | 'publicdomain' | 'cc0' | 'ccby';
+  sort: 'downloads' | 'date' | 'relevance';
   page: number;
 }
 

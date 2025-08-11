@@ -1,17 +1,29 @@
 import { type SearchFilters, type Video } from "@shared/schema";
+import { type SearchState } from "./types";
 
-export async function searchVideos(filters: Partial<SearchFilters>) {
+export async function searchVideos(filters: SearchState) {
   const params = new URLSearchParams();
   
   if (filters.query) params.set('query', filters.query);
   if (filters.yearFrom) params.set('yearFrom', filters.yearFrom);
   if (filters.yearTo) params.set('yearTo', filters.yearTo);
-  if (filters.durationMin) params.set('durationMin', filters.durationMin.toString());
-  if (filters.durationMax) params.set('durationMax', filters.durationMax.toString());
+  
+  // Map duration filter to min/max
+  if (filters.duration === 'short') {
+    params.set('durationMax', '300'); // 5 minutes
+  } else if (filters.duration === 'medium') {
+    params.set('durationMin', '300');
+    params.set('durationMax', '1800'); // 30 minutes
+  } else if (filters.duration === 'long') {
+    params.set('durationMin', '1800');
+  }
+  
   if (filters.license) params.set('license', filters.license);
   if (filters.sort) params.set('sort', filters.sort);
   if (filters.page) params.set('page', filters.page.toString());
-  if (filters.rows) params.set('rows', filters.rows.toString());
+  
+  // Set default rows if not specified
+  params.set('rows', '50');
 
   const response = await fetch(`/api/search?${params.toString()}`);
   
