@@ -139,3 +139,36 @@ export interface QueueItem {
   license?: string;
   attribution?: string;
 }
+
+// EDL (Edit Decision List) types for recording sets
+export interface EDLEvent {
+  id: string;
+  sessionId: string;
+  timestamp: string; // ISO timestamp when event occurred
+  eventType: 'play' | 'pause' | 'cut' | 'seek' | 'crossfade' | 'effect_change' | 'loop_toggle' | 'volume_change';
+  clipId: string; // Queue item identifier
+  clipTitle: string;
+  timecode: string; // Current playback time in video
+  trimIn: string;
+  trimOut: string;
+  parameters?: Record<string, any>; // Effect values, volume levels, etc.
+  notes?: string;
+}
+
+export interface EDLSession {
+  id: string;
+  name: string;
+  startTime: string;
+  endTime?: string;
+  totalDuration?: string;
+  venue?: string;
+  description?: string;
+  events: EDLEvent[];
+  metadata?: {
+    bpm?: number;
+    theme?: string;
+    audioReactive?: boolean;
+    totalClips?: number;
+    totalCuts?: number;
+  };
+}

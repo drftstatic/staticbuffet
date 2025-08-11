@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AdaptiveColorControls } from '@/components/AdaptiveColorControls';
 import { LiveVideoMode } from '@/components/LiveVideoMode';
 import { LoopControls } from '@/components/LoopControls';
+import { EDLRecorder } from '@/components/EDLRecorder';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -16,7 +17,8 @@ import {
   Waves,
   RotateCw,
   Contrast,
-  Sun
+  Sun,
+  FileText
 } from 'lucide-react';
 import {
   Accordion,
@@ -545,6 +547,19 @@ export function EffectsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <AdaptiveColorControls />
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* EDL Recording */}
+        <AccordionItem value="edl-recording">
+          <AccordionTrigger className="text-sm">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4" />
+              <span>Record Set (EDL)</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <EDLRecorder />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
