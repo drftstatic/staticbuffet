@@ -29,6 +29,7 @@ import { FirstRunTour } from '@/components/FirstRunTour';
 import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
 import { CoreSoundboards } from '@/components/CoreSoundboards';
 import { LayoutControls } from '@/components/LayoutControls';
+import { ResponsiveLayoutHints } from '@/components/ResponsiveLayoutHints';
 import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
 
 export default function Home() {
@@ -486,6 +487,9 @@ export default function Home() {
       
       {/* Theme Selector (top-right) */}
       <ThemeSelector />
+      
+      {/* Responsive Layout Hints */}
+      <ResponsiveLayoutHints />
     </div>
     </ResponsiveLayoutManager>
   );

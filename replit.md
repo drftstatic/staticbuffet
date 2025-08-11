@@ -1,11 +1,11 @@
 # Static Buffet - Trash Team × Nulltone.TV
-**Version:** 0.1.0-alpha (Pre-release)
+**Version:** 0.7.0
 **Release Date:** January 11, 2025
 
 ## Overview
 Static Buffet is a professional VJ-focused web application designed for searching, previewing, and queuing free-to-use video content from Archive.org. It enables real-time video mixing with public domain and Creative Commons licensed footage. The application features ten complete visual themes, enhanced drag-and-drop functionality, comprehensive keyboard shortcuts, audio-reactive capabilities, and professional EDL recording. Built as a full-stack TypeScript application, it serves as a "video chaos buffet" for VJs and content creators needing immediate access to royalty-free footage with proper licensing compliance, embodying the vision of turning discarded culture into something new and providing alternative programming.
 
-## Recent Changes (v0.1.0-alpha)
+## Recent Changes (v0.7.0)
 - ✅ Enhanced license badges with detailed tooltips and external Creative Commons/Public Domain links
 - ✅ Implemented comprehensive drag-and-drop system from search results to queue
 - ✅ Added hover information overlays on video cards with license and duration details
@@ -21,6 +21,7 @@ Static Buffet is a professional VJ-focused web application designed for searchin
 - ✅ Text-to-Speech Soundboards - All soundboards now use browser speech synthesis with character-specific voice configurations for authentic audio playback
 - ✅ **NEW**: Interactive Layout Controls - Fully functional responsive layout indicators with manual layout switching, live previews, comprehensive layout demonstration system, and automatic reset functionality
 - ✅ **OPTIMIZATION**: Comprehensive Site Audit - Reduced home.tsx imports from 47 to 24 components (48% reduction), consolidated 7 soundboard components into CoreSoundboards, merged 4 layout components into LayoutControls, replaced verbose welcome modal with StreamlinedWelcome, and consolidated theme switching from 8+ buttons to single ThemeSelector dropdown
+- ✅ **NEW**: Responsive Layout Hint Animations - Interactive educational component that demonstrates how the VJ interface adapts across desktop (1024px), tablet (768px), and mobile (375px) breakpoints with smooth animated transitions, visual viewport scaling, breakpoint indicators, play/pause controls, and theme-aware styling
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.

@@ -1,286 +1,239 @@
 import { useState, useEffect } from 'react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useStore } from '@/lib/store';
-import { Smartphone, Tablet, Monitor, Grid3X3, Layers, ArrowLeftRight, ArrowUpDown } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, RotateCcw, Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { useStore } from '@/lib/store';
 
-interface ResponsiveLayoutHintsProps {
-  onLayoutChange?: (layout: 'mobile' | 'tablet' | 'desktop') => void;
+interface LayoutBreakpoint {
+  name: string;
+  width: number;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  description: string;
 }
 
-export function ResponsiveLayoutHints({ onLayoutChange }: ResponsiveLayoutHintsProps) {
+const breakpoints: LayoutBreakpoint[] = [
+  {
+    name: 'Desktop',
+    width: 1024,
+    icon: Monitor,
+    description: 'Full workspace with all panels visible'
+  },
+  {
+    name: 'Tablet',
+    width: 768,
+    icon: Tablet,
+    description: 'Compact layout with collapsible panels'
+  },
+  {
+    name: 'Mobile',
+    width: 375,
+    icon: Smartphone,
+    description: 'Stacked layout optimized for touch'
+  }
+];
+
+export function ResponsiveLayoutHints() {
   const { brandSkin } = useStore();
-  const isMobile = useIsMobile();
-  const [currentLayout, setCurrentLayout] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
-  const [showHints, setShowHints] = useState(false);
-  const [animationState, setAnimationState] = useState<'idle' | 'transitioning' | 'complete'>('idle');
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentBreakpoint, setCurrentBreakpoint] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
-  // Detect layout changes
+  // Auto-cycle through breakpoints when animating
   useEffect(() => {
-    const updateLayout = () => {
-      const width = window.innerWidth;
-      if (width < 768) {
-        setCurrentLayout('mobile');
-      } else if (width < 1024) {
-        setCurrentLayout('tablet');
-      } else {
-        setCurrentLayout('desktop');
-      }
-    };
+    if (!isAnimating) return;
 
-    updateLayout();
-    window.addEventListener('resize', updateLayout);
-    return () => window.removeEventListener('resize', updateLayout);
-  }, []);
+    const interval = setInterval(() => {
+      setCurrentBreakpoint((prev) => (prev + 1) % breakpoints.length);
+    }, 2000);
 
-  // Trigger animation when layout changes
-  useEffect(() => {
-    if (currentLayout) {
-      setAnimationState('transitioning');
-      const timer = setTimeout(() => {
-        setAnimationState('complete');
-        onLayoutChange?.(currentLayout);
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [currentLayout, onLayoutChange]);
+    return () => clearInterval(interval);
+  }, [isAnimating]);
 
-  const getThemeClasses = () => {
-    switch (brandSkin) {
-      case 'testcard':
-        return {
-          bg: 'bg-blue-900/10 border-blue-400/30',
-          text: 'text-blue-300',
-          accent: 'text-blue-400',
-          badge: 'bg-blue-400/20 text-blue-300 border-blue-400/50'
-        };
-      case 'waffle':
-        return {
-          bg: 'bg-amber-100/20 border-amber-400/30',
-          text: 'text-amber-800',
-          accent: 'text-amber-600',
-          badge: 'bg-amber-100/50 text-amber-800 border-amber-400/50'
-        };
-      case 'ebn':
-        return {
-          bg: 'bg-lime-900/20 border-lime-400/30',
-          text: 'text-lime-300',
-          accent: 'text-lime-400',
-          badge: 'bg-lime-400/20 text-lime-300 border-lime-400/50'
-        };
-      case 'ozzy':
-        return {
-          bg: 'bg-red-900/20 border-red-400/30',
-          text: 'text-red-300',
-          accent: 'text-red-400',
-          badge: 'bg-red-400/20 text-red-300 border-red-400/50'
-        };
-      case 'hogan':
-        return {
-          bg: 'bg-yellow-900/20 border-yellow-400/30',
-          text: 'text-yellow-300',
-          accent: 'text-yellow-400',
-          badge: 'bg-yellow-400/20 text-yellow-300 border-yellow-400/50'
-        };
-      case 'dx':
-        return {
-          bg: 'bg-pink-900/20 border-pink-400/30',
-          text: 'text-pink-300',
-          accent: 'text-pink-400',
-          badge: 'bg-pink-400/20 text-pink-300 border-pink-400/50'
-        };
-      case 'maxheadroom':
-        return {
-          bg: 'bg-green-900/20 border-green-400/30',
-          text: 'text-green-300',
-          accent: 'text-green-400',
-          badge: 'bg-green-400/20 text-green-300 border-green-400/50'
-        };
-      case 'mario':
-        return {
-          bg: 'bg-red-900/20 border-yellow-400/30',
-          text: 'text-yellow-300',
-          accent: 'text-red-400',
-          badge: 'bg-red-400/20 text-yellow-300 border-yellow-400/50'
-        };
-      case 'dakota':
-        return {
-          bg: 'bg-gray-800/20 border-gray-400/30',
-          text: 'text-gray-300',
-          accent: 'text-gray-400',
-          badge: 'bg-gray-400/20 text-gray-300 border-gray-400/50'
-        };
-      case 'blondie':
-        return {
-          bg: 'bg-amber-900/20 border-amber-400/30',
-          text: 'text-amber-300',
-          accent: 'text-amber-400',
-          badge: 'bg-amber-400/20 text-amber-300 border-amber-400/50'
-        };
-      default:
-        return {
-          bg: 'bg-blue-900/10 border-blue-400/30',
-          text: 'text-blue-300',
-          accent: 'text-blue-400',
-          badge: 'bg-blue-400/20 text-blue-300 border-blue-400/50'
-        };
-    }
+  const toggleAnimation = () => {
+    setIsAnimating(!isAnimating);
   };
 
-  const theme = getThemeClasses();
-
-  const layoutConfig = {
-    mobile: {
-      icon: Smartphone,
-      title: 'Mobile Layout',
-      description: 'Stacked panels, touch-optimized controls',
-      features: ['Single column', 'Touch gestures', 'Simplified controls'],
-      animations: 'animate-bounce'
-    },
-    tablet: {
-      icon: Tablet,
-      title: 'Tablet Layout',
-      description: 'Hybrid view with collapsible panels',
-      features: ['Dual column', 'Swipe navigation', 'Adaptive sizing'],
-      animations: 'animate-pulse'
-    },
-    desktop: {
-      icon: Monitor,
-      title: 'Desktop Layout',
-      description: 'Full multi-panel workspace',
-      features: ['Resizable panels', 'Keyboard shortcuts', 'Multi-window'],
-      animations: 'animate-fade-in'
-    }
+  const resetToDesktop = () => {
+    setCurrentBreakpoint(0);
+    setIsAnimating(false);
   };
 
-  const currentConfig = layoutConfig[currentLayout];
-  const IconComponent = currentConfig.icon;
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
 
-  if (!showHints && animationState === 'idle') {
+  if (!isVisible) {
     return (
       <Button
-        variant="ghost"
+        onClick={toggleVisibility}
+        variant="outline"
         size="sm"
-        onClick={() => setShowHints(true)}
-        className={`fixed bottom-4 right-4 z-50 ${theme.text} hover:${theme.bg}`}
+        className="fixed bottom-20 right-4 z-50 bg-background/90 backdrop-blur-sm border-2"
         data-testid="button-show-layout-hints"
       >
-        <Grid3X3 size={16} className="mr-2" />
-        Layout
+        <Monitor className="w-4 h-4 mr-2" />
+        Layout Hints
       </Button>
     );
   }
 
+  const currentBreakpointData = breakpoints[currentBreakpoint];
+  const IconComponent = currentBreakpointData.icon;
+
   return (
     <div 
-      className={`fixed bottom-4 right-4 z-50 p-6 rounded-xl border-2 shadow-xl backdrop-blur-md ${theme.bg} ${
-        animationState === 'transitioning' ? 'animate-pulse scale-105' : 'animate-fade-in'
-      } min-w-[280px] max-w-[320px]`}
-      data-testid="responsive-layout-hints"
+      className="fixed bottom-4 right-4 z-50 bg-background/95 backdrop-blur-sm border-2 rounded-lg p-4 shadow-lg"
+      style={{
+        borderColor: `var(--${brandSkin}-accent)`,
+        maxWidth: '320px'
+      }}
+      data-testid="layout-hints-panel"
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <IconComponent 
-            size={24} 
-            className={`${theme.accent} ${animationState === 'transitioning' ? currentConfig.animations : ''}`} 
-          />
-          <h3 className={`font-bold text-lg ${theme.text}`}>
-            {currentConfig.title}
-          </h3>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <IconComponent className="w-5 h-5" style={{ color: `var(--${brandSkin}-accent)` }} />
+          <h3 className="font-bold text-sm">Layout Hints</h3>
         </div>
         <Button
+          onClick={toggleVisibility}
           variant="ghost"
           size="sm"
-          onClick={() => setShowHints(false)}
-          className={`${theme.text} hover:${theme.bg}`}
+          className="h-6 w-6 p-0"
           data-testid="button-hide-layout-hints"
         >
           ×
         </Button>
       </div>
 
-      {/* Current Layout Info */}
-      <div className="space-y-4">
-        <p className={`text-sm font-medium ${theme.text} opacity-90`}>
-          {currentConfig.description}
+      {/* Breakpoint Visualization */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium">{currentBreakpointData.name}</span>
+          <span className="text-xs text-muted-foreground">{currentBreakpointData.width}px</span>
+        </div>
+        
+        {/* Animated viewport representation */}
+        <div 
+          className="bg-muted rounded border-2 transition-all duration-1000 ease-in-out relative overflow-hidden"
+          style={{
+            width: '100%',
+            height: '80px',
+            borderColor: isAnimating ? `var(--${brandSkin}-accent)` : 'transparent'
+          }}
+        >
+          {/* Simulated interface elements */}
+          <div 
+            className="absolute inset-1 bg-background rounded transition-all duration-1000"
+            style={{
+              transform: `scale(${currentBreakpointData.width / 1024})`,
+              transformOrigin: 'top left'
+            }}
+          >
+            {/* Header */}
+            <div 
+              className="h-3 rounded-sm mb-1"
+              style={{ backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.8 }}
+            />
+            
+            {/* Main content areas */}
+            <div className="flex gap-1 h-12">
+              {/* Search panel */}
+              <div 
+                className="rounded-sm transition-all duration-1000"
+                style={{ 
+                  backgroundColor: `var(--${brandSkin}-primary)`,
+                  opacity: 0.6,
+                  width: currentBreakpoint === 2 ? '100%' : '25%'
+                }}
+              />
+              
+              {/* Video player (hidden on mobile) */}
+              {currentBreakpoint !== 2 && (
+                <div 
+                  className="rounded-sm transition-all duration-1000"
+                  style={{ 
+                    backgroundColor: `var(--${brandSkin}-secondary)`,
+                    opacity: 0.6,
+                    width: currentBreakpoint === 1 ? '60%' : '50%'
+                  }}
+                />
+              )}
+              
+              {/* Queue panel (collapsed on tablet, hidden on mobile) */}
+              {currentBreakpoint === 0 && (
+                <div 
+                  className="rounded-sm transition-all duration-1000"
+                  style={{ 
+                    backgroundColor: `var(--${brandSkin}-accent)`,
+                    opacity: 0.6,
+                    width: '25%'
+                  }}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+        
+        <p className="text-xs text-muted-foreground mt-2">
+          {currentBreakpointData.description}
         </p>
+      </div>
 
-        {/* Features */}
-        <div className="flex flex-wrap gap-2">
-          {currentConfig.features.map((feature, index) => (
-            <Badge 
-              key={index}
-              variant="outline" 
-              className={`text-sm font-medium px-3 py-1 ${theme.badge} ${
-                animationState === 'transitioning' ? 'animate-bounce' : ''
+      {/* Breakpoint indicators */}
+      <div className="flex justify-center gap-2 mb-4">
+        {breakpoints.map((bp, index) => {
+          const BpIcon = bp.icon;
+          return (
+            <button
+              key={bp.name}
+              onClick={() => {
+                setCurrentBreakpoint(index);
+                setIsAnimating(false);
+              }}
+              className={`p-2 rounded transition-colors ${
+                index === currentBreakpoint 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'hover:bg-muted'
               }`}
-              style={{ animationDelay: `${index * 100}ms` }}
+              data-testid={`button-breakpoint-${bp.name.toLowerCase()}`}
             >
-              {feature}
-            </Badge>
-          ))}
-        </div>
+              <BpIcon className="w-4 h-4" />
+            </button>
+          );
+        })}
+      </div>
 
-        {/* Layout Preview */}
-        <div className="mt-4 p-3 rounded-lg border border-dashed border-gray-400/40">
-          <div className="flex items-center space-x-2 mb-3">
-            <Layers size={16} className={theme.accent} />
-            <span className={`text-sm font-medium ${theme.text}`}>Panel Layout</span>
-          </div>
-          
-          <div className="grid gap-1" style={{
-            gridTemplateColumns: currentLayout === 'mobile' ? '1fr' : 
-                                currentLayout === 'tablet' ? '1fr 1fr' : '1fr 2fr 1fr'
-          }}>
-            {currentLayout === 'mobile' && (
-              <>
-                <div className={`h-6 ${theme.bg} rounded-md border-2 border-opacity-50`} />
-                <div className={`h-8 ${theme.bg} rounded-md border-2 border-opacity-50`} />
-                <div className={`h-5 ${theme.bg} rounded-md border-2 border-opacity-50`} />
-              </>
-            )}
-            {currentLayout === 'tablet' && (
-              <>
-                <div className={`h-10 ${theme.bg} rounded-md border-2 border-opacity-50`} />
-                <div className={`h-10 ${theme.bg} rounded-md border-2 border-opacity-50`} />
-              </>
-            )}
-            {currentLayout === 'desktop' && (
-              <>
-                <div className={`h-8 ${theme.bg} rounded-md border-2 border-opacity-50`} />
-                <div className={`h-8 ${theme.bg} rounded-md border-2 border-opacity-50`} />
-                <div className={`h-8 ${theme.bg} rounded-md border-2 border-opacity-50`} />
-              </>
-            )}
-          </div>
-        </div>
+      {/* Controls */}
+      <div className="flex gap-2">
+        <Button
+          onClick={toggleAnimation}
+          variant="outline"
+          size="sm"
+          className="flex-1"
+          data-testid="button-toggle-animation"
+        >
+          {isAnimating ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
+          {isAnimating ? 'Pause' : 'Animate'}
+        </Button>
+        
+        <Button
+          onClick={resetToDesktop}
+          variant="outline"
+          size="sm"
+          data-testid="button-reset-layout"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </Button>
+      </div>
 
-        {/* Resize Hints */}
-        {currentLayout === 'desktop' && (
-          <div className="flex items-center space-x-2 text-sm opacity-80">
-            <ArrowLeftRight size={14} className={theme.accent} />
-            <span className={`${theme.text} font-medium`}>Drag panel edges to resize</span>
-          </div>
-        )}
-
-        {currentLayout === 'tablet' && (
-          <div className="flex items-center space-x-2 text-sm opacity-80">
-            <ArrowUpDown size={14} className={theme.accent} />
-            <span className={`${theme.text} font-medium`}>Swipe to navigate panels</span>
-          </div>
-        )}
-
-        {/* Animation State Indicator */}
-        {animationState === 'transitioning' && (
-          <div className="flex items-center space-x-3 mt-3 p-2 rounded-md bg-opacity-20 bg-white">
-            <div className={`w-3 h-3 rounded-full ${theme.accent} animate-pulse`} />
-            <span className={`text-sm font-medium ${theme.text} opacity-80`}>
-              Adapting layout...
-            </span>
-          </div>
-        )}
+      {/* Additional info */}
+      <div className="mt-3 pt-3 border-t border-border">
+        <p className="text-xs text-muted-foreground">
+          {isAnimating 
+            ? 'Showing responsive adaptations automatically' 
+            : 'Click breakpoint icons or animate to see layout changes'
+          }
+        </p>
       </div>
     </div>
   );
