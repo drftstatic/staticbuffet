@@ -2,6 +2,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Trash2, GripVertical, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
+import { QueueDropZone } from './QueueDropZone';
 
 export function QueuePanel() {
   const { 
@@ -46,16 +47,19 @@ export function QueuePanel() {
 
   return (
     <div className="h-full">
-      <div className="flex items-center space-x-2 h-full overflow-x-auto">
-        {/* Timeline Segments */}
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="queue" direction="horizontal">
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="flex items-center space-x-2 h-full"
-              >
+      {queueItems.length === 0 ? (
+        <QueueDropZone className="h-full" />
+      ) : (
+        <div className="flex items-center space-x-2 h-full overflow-x-auto">
+          {/* Timeline Segments */}
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="queue" direction="horizontal">
+              {(provided) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className="flex items-center space-x-2 h-full"
+                >
                 {queueItems.map((item, index) => (
                   <Draggable key={item.id} draggableId={item.id} index={index}>
                     {(provided, snapshot) => (
@@ -112,25 +116,26 @@ export function QueuePanel() {
               </div>
             )}
           </Droppable>
-        </DragDropContext>
-        
-        {queueItems.length > 0 && (
-          <div className="ml-4 flex items-center space-x-2">
-            <span className="text-xs font-mono">
-              {queueItems.length} clips • {calculateTotalDuration()}
-            </span>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={clearQueue}
-              data-testid="button-clear-queue"
-              className="text-xs hover:text-red-600"
-            >
-              Clear
-            </Button>
-          </div>
-        )}
-      </div>
+          </DragDropContext>
+          
+          {queueItems.length > 0 && (
+            <div className="ml-4 flex items-center space-x-2">
+              <span className="text-xs font-mono">
+                {queueItems.length} clips • {calculateTotalDuration()}
+              </span>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={clearQueue}
+                data-testid="button-clear-queue"
+                className="text-xs hover:text-red-600"
+              >
+                Clear
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

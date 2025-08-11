@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { EasterEgg } from "@/components/EasterEgg";
 import { useEasterEgg } from "@/hooks/use-easter-egg";
+import { DragDropProvider } from "@/components/DragDropProvider";
+import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import Home from "@/pages/home";
 import About from "@/pages/about";
 import NotFound from "@/pages/not-found";
@@ -25,9 +27,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Router />
-        <EasterEgg isActive={isEasterEggActive} onClose={closeEasterEgg} />
+        <DragDropProvider>
+          <Toaster />
+          <Router />
+          <EasterEgg isActive={isEasterEggActive} onClose={closeEasterEgg} />
+          <KeyboardShortcuts />
+        </DragDropProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

@@ -4,6 +4,7 @@ import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { SearchBar } from '@/components/SearchBar';
 import { Filters } from '@/components/Filters';
+import { SavedSearches } from '@/components/SavedSearches';
 import { ResultsGrid } from '@/components/ResultsGrid';
 import { QueuePanel } from '@/components/QueuePanel';
 import { DetailDrawer } from '@/components/DetailDrawer';
@@ -309,8 +310,9 @@ export default function Home() {
           </div>
 
           {/* Search Bar Row - Full Width */}
-          <div>
+          <div className="flex gap-2 items-center">
             <SearchBar onSearch={handleSearch} />
+            <SavedSearches />
           </div>
 
           {/* Filters Row */}
