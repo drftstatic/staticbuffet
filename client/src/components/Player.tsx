@@ -8,6 +8,15 @@ export function Player() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const bassNodeRef = useRef<BiquadFilterNode | null>(null);
+  const midNodeRef = useRef<BiquadFilterNode | null>(null);
+  const trebleNodeRef = useRef<BiquadFilterNode | null>(null);
+  const distortionNodeRef = useRef<WaveShaperNode | null>(null);
+  const reverbNodeRef = useRef<ConvolverNode | null>(null);
+  const delayNodeRef = useRef<DelayNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState([75]);
   const [currentTime, setCurrentTime] = useState(0);
@@ -53,31 +62,143 @@ export function Player() {
     };
   }, [nextTrack]);
 
-  // Audio-reactive visualization
+  // Initialize audio context and effects chain
+  const initializeAudioEffects = async () => {
+    if (!videoRef.current || audioContextRef.current) return;
+
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+
+      // Create audio nodes
+      const sourceNode = audioContext.createMediaElementSource(videoRef.current);
+      const gainNode = audioContext.createGain();
+      const bassNode = audioContext.createBiquadFilter();
+      const midNode = audioContext.createBiquadFilter();
+      const trebleNode = audioContext.createBiquadFilter();
+      const distortionNode = audioContext.createWaveShaper();
+      const delayNode = audioContext.createDelay();
+      
+      // Configure EQ filters
+      bassNode.type = 'lowshelf';
+      bassNode.frequency.value = 320;
+      bassNode.gain.value = 0;
+
+      midNode.type = 'peaking';
+      midNode.frequency.value = 1000;
+      midNode.Q.value = 0.5;
+      midNode.gain.value = 0;
+
+      trebleNode.type = 'highshelf';
+      trebleNode.frequency.value = 3200;
+      trebleNode.gain.value = 0;
+
+      // Configure distortion
+      distortionNode.curve = createDistortionCurve(0);
+      distortionNode.oversample = '4x';
+
+      // Configure delay
+      delayNode.delayTime.value = 0;
+
+      // Connect audio chain
+      sourceNode.connect(bassNode);
+      bassNode.connect(midNode);
+      midNode.connect(trebleNode);
+      trebleNode.connect(distortionNode);
+      distortionNode.connect(delayNode);
+      delayNode.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Store references
+      audioContextRef.current = audioContext;
+      sourceNodeRef.current = sourceNode;
+      gainNodeRef.current = gainNode;
+      bassNodeRef.current = bassNode;
+      midNodeRef.current = midNode;
+      trebleNodeRef.current = trebleNode;
+      distortionNodeRef.current = distortionNode;
+      delayNodeRef.current = delayNode;
+
+      console.log('Audio effects initialized successfully');
+    } catch (error) {
+      console.error('Audio effects initialization error:', error);
+    }
+  };
+
+  // Create distortion curve
+  const createDistortionCurve = (amount: number) => {
+    const samples = 44100;
+    const curve = new Float32Array(samples);
+    const deg = Math.PI / 180;
+    
+    for (let i = 0; i < samples; i++) {
+      const x = (i * 2) / samples - 1;
+      curve[i] = ((3 + amount) * x * 20 * deg) / (Math.PI + amount * Math.abs(x));
+    }
+    
+    return curve;
+  };
+
+  // Audio reactive visualization setup
   useEffect(() => {
-    if (!isAudioReactive || !canvasRef.current || !videoRef.current) return;
+    if (!isAudioReactive || !videoRef.current || !canvasRef.current) return;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const video = videoRef.current;
-
+    let analyser: AnalyserNode;
     let animationFrame: number;
 
-    const drawVisualization = () => {
-      if (!ctx || !video) return;
+    const setupAudioReactive = async () => {
+      try {
+        if (!audioContextRef.current) {
+          await initializeAudioEffects();
+        }
 
-      // Draw video frame
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        if (!audioContextRef.current || !sourceNodeRef.current) return;
 
-      // Add audio-reactive overlay (simplified - would need Web Audio API for real implementation)
-      ctx.fillStyle = `rgba(0, 255, 0, ${Math.random() * 0.3})`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+        analyser = audioContextRef.current.createAnalyser();
+        sourceNodeRef.current.connect(analyser);
+        
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
 
-      animationFrame = requestAnimationFrame(drawVisualization);
+        const draw = () => {
+          if (!isPlaying) {
+            animationFrame = requestAnimationFrame(draw);
+            return;
+          }
+
+          analyser.getByteFrequencyData(dataArray);
+          
+          // Apply audio-reactive effects to video
+          const bass = dataArray.slice(0, 4).reduce((a, b) => a + b, 0) / 4;
+          const mid = dataArray.slice(4, 16).reduce((a, b) => a + b, 0) / 12;
+          const treble = dataArray.slice(16, 64).reduce((a, b) => a + b, 0) / 48;
+          
+          // Normalize values (0-1)
+          const bassNorm = bass / 255;
+          const midNorm = mid / 255;
+          const trebleNorm = treble / 255;
+          
+          // Apply reactive effects (this could be enhanced further)
+          if (videoRef.current) {
+            const reactiveFilter = `brightness(${1 + bassNorm * 0.3}) saturate(${1 + midNorm * 0.5}) hue-rotate(${trebleNorm * 30}deg)`;
+            videoRef.current.style.filter = reactiveFilter;
+          }
+
+          animationFrame = requestAnimationFrame(draw);
+        };
+
+        draw();
+      } catch (error) {
+        console.error('Audio reactive setup error:', error);
+      }
     };
 
     if (isPlaying) {
-      drawVisualization();
+      setupAudioReactive();
     }
 
     return () => {
@@ -86,6 +207,39 @@ export function Player() {
       }
     };
   }, [isAudioReactive, isPlaying]);
+
+  // Update audio effects when settings change
+  useEffect(() => {
+    if (!audioContextRef.current || !gainNodeRef.current) return;
+
+    try {
+      // Update volume
+      gainNodeRef.current.gain.value = volume[0] / 100;
+
+      // Update EQ
+      if (bassNodeRef.current) {
+        bassNodeRef.current.gain.value = (audioEffects.bassEQ - 50) * 0.3; // -15 to +15 dB
+      }
+      if (midNodeRef.current) {
+        midNodeRef.current.gain.value = (audioEffects.midEQ - 50) * 0.3;
+      }
+      if (trebleNodeRef.current) {
+        trebleNodeRef.current.gain.value = (audioEffects.trebleEQ - 50) * 0.3;
+      }
+
+      // Update distortion
+      if (distortionNodeRef.current) {
+        distortionNodeRef.current.curve = createDistortionCurve(audioEffects.distortion / 10);
+      }
+
+      // Update delay
+      if (delayNodeRef.current) {
+        delayNodeRef.current.delayTime.value = audioEffects.delay / 1000; // Convert ms to seconds
+      }
+    } catch (error) {
+      console.error('Audio effects update error:', error);
+    }
+  }, [audioEffects, volume]);
 
   // Fullscreen handling
   useEffect(() => {
@@ -158,15 +312,25 @@ export function Player() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen, currentVideo, isPlaying]);
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (!videoRef.current) return;
 
     if (isPlaying) {
       videoRef.current.pause();
+      setIsPlaying(false);
     } else {
-      videoRef.current.play();
+      // Initialize audio effects on first play
+      if (!audioContextRef.current) {
+        await initializeAudioEffects();
+      }
+      
+      try {
+        await videoRef.current.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error('Play error:', error);
+      }
     }
-    setIsPlaying(!isPlaying);
   };
 
   const handleSeek = (value: number[]) => {
@@ -180,6 +344,10 @@ export function Player() {
     setVolume(value);
     if (videoRef.current) {
       videoRef.current.volume = value[0] / 100;
+    }
+    // Update Web Audio API gain
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = value[0] / 100;
     }
   };
 
