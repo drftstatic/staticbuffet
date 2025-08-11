@@ -10,6 +10,7 @@ import { DetailDrawer } from '@/components/DetailDrawer';
 import { EffectsPanel } from '@/components/EffectsPanel';
 import { EffectPresetNotification } from '@/components/EffectPresetNotification';
 import { BottomHUD } from '@/components/BottomHUD';
+import { DevicePrompt } from '@/components/DevicePrompt';
 import { BrandSkinToggle } from '@/components/BrandSkinToggle';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Button } from '@/components/ui/button';
@@ -289,6 +290,9 @@ export default function Home() {
 
       {/* Effect Preset Notifications */}
       <EffectPresetNotification />
+
+      {/* Device Prompt */}
+      <DevicePrompt />
 
       {/* Footer */}
       <div className="flex-shrink-0">
