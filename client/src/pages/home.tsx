@@ -20,6 +20,10 @@ import { Footer } from '@/components/Footer';
 import { DXButton } from '@/components/DXButton';
 import { DXSoundboard } from '@/components/DXSoundboard';
 import { HulksterButton } from '@/components/HulksterButton';
+import { WaffleButton } from '@/components/WaffleButton';
+import { OzzyButton } from '@/components/OzzyButton';
+import { EBNButton } from '@/components/EBNButton';
+import { MaxButton } from '@/components/MaxButton';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
@@ -203,6 +207,10 @@ export default function Home() {
               <ThemeSwitcher />
               <DXButton />
               <HulksterButton />
+              <WaffleButton />
+              <OzzyButton />
+              <EBNButton />
+              <MaxButton />
               <GroupedControls />
             </div>
           </div>

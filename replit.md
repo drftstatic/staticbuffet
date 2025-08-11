@@ -20,8 +20,12 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
   - **DX Easter Egg**: Triple-click DX button for authentic "Suck It" soundboard with classic quotes
   - **ASCII Mode**: Ultimate retro computing easter egg experience
   - **Live Webcam Integration**: Real-time video mixing capabilities for performance VJs
+- **Comprehensive Soundboard System**: Triple-click easter eggs for all six themes
+  - **All Themes**: WH (Waffle), OZ (Ozzy), EB (EBN), MX (Max), HH (Hogan), DX buttons with 8-quote soundboards
+  - **Theme-Specific Audio**: Authentic quotes and catchphrases for each visual theme
+  - **Consistent UX**: Unified triple-click activation pattern across all themes
 - **Changelog Modal**: Pop-up changelog accessible from About page without taking permanent UI space
-- **Complete Six-Theme System**: Professional VJ toolkit with distinct visual experiences
+- **Complete Six-Theme System**: Professional VJ toolkit with distinct visual experiences and audio identity
 
 ### Version 4.0 Release (August 11, 2025)
 - **Expanded Theme System**: Added two new complete visual themes with unique styling
