@@ -34,7 +34,7 @@ export default function Home() {
     panelStates,
     togglePanelCollapse,
     resetPanels,
-    queue,
+    queueItems,
   } = useStore();
 
   // Perform search when filters change
@@ -239,7 +239,7 @@ export default function Home() {
             }`}>
               <PanelHeader
                 title="QUEUE / TIMELINE"
-                status={`${queue.length} CLIPS`}
+                status={`${queueItems.length} CLIPS`}
                 isCollapsed={panelStates.queueCollapsed}
                 onToggleCollapse={() => togglePanelCollapse('queue')}
               />
