@@ -64,7 +64,7 @@ export function Footer() {
   const buildInfo = {
     version: '0.3.0',
     build: '2025.08.11',
-    engine: 'Static Buffet VJ Engine',
+    engine: 'FS9000',
     audio: 'Web Audio API',
     video: 'HTML5 + CSS Filters'
   };
