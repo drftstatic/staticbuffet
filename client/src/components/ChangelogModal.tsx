@@ -14,7 +14,7 @@ import { useStore } from '@/lib/store';
 
 const CHANGELOG_ENTRIES = [
   {
-    version: "0.5.0",
+    version: "5.0",
     date: "August 11, 2025",
     title: "New Wrestling Themes & Easter Eggs",
     changes: [
@@ -27,7 +27,7 @@ const CHANGELOG_ENTRIES = [
     ]
   },
   {
-    version: "0.4.0",
+    version: "4.0",
     date: "August 11, 2025",
     title: "Expanded Theme System",
     changes: [
@@ -40,7 +40,7 @@ const CHANGELOG_ENTRIES = [
     ]
   },
   {
-    version: "0.3.0",
+    version: "3.0",
     date: "August 11, 2025",
     title: "UI Polish & Professional Interface",
     changes: [
@@ -52,8 +52,8 @@ const CHANGELOG_ENTRIES = [
     ]
   },
   {
-    version: "0.1.6",
-    date: "January 11, 2025",
+    version: "2.6",
+    date: "August 11, 2025",
     title: "Critical Video Playback Fix",
     changes: [
       "Resolved complete video playback failure blocking all functionality",
@@ -64,8 +64,8 @@ const CHANGELOG_ENTRIES = [
     ]
   },
   {
-    version: "0.1.5",
-    date: "January 11, 2025",
+    version: "2.5",
+    date: "August 11, 2025",
     title: "Efficient Header & Search Updates",
     changes: [
       "Redesigned header with three-row structure for optimal space usage",
@@ -76,8 +76,8 @@ const CHANGELOG_ENTRIES = [
     ]
   },
   {
-    version: "0.1.0",
-    date: "January 11, 2025",
+    version: "1.0",
+    date: "August 10, 2025",
     title: "Professional Media Workstation Launch",
     changes: [
       "Transformed to panel-based layout inspired by Adobe Premiere",

@@ -13,7 +13,17 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 
 ## Recent Changes
 
-### Version 0.4.0 Release (August 11, 2025)
+### Version 5.0 Release (August 11, 2025)
+- **New Wrestling Themes & Easter Eggs**: Extended theme system with D-Generation X and Max Headroom
+  - **D-Generation X Theme (🤘)**: WWE attitude-era styling with blue/pink gradients and DX Mode easter egg
+  - **Max Headroom Theme (📺)**: Retro-futuristic green matrix aesthetic with cyberpunk elements
+  - **DX Easter Egg**: Triple-click DX button for authentic "Suck It" soundboard with classic quotes
+  - **ASCII Mode**: Ultimate retro computing easter egg experience
+  - **Live Webcam Integration**: Real-time video mixing capabilities for performance VJs
+- **Changelog Modal**: Pop-up changelog accessible from About page without taking permanent UI space
+- **Complete Six-Theme System**: Professional VJ toolkit with distinct visual experiences
+
+### Version 4.0 Release (August 11, 2025)
 - **Expanded Theme System**: Added two new complete visual themes with unique styling
   - **Heavy Metal Theme (🦇)**: Dark Ozzy Osbourne-inspired aesthetic with red accents, metallic textures, and industrial brutality
   - **NWO Hollywood Theme (💪)**: Hulk Hogan wrestling era with red/black/gold colors and NWO stripes
