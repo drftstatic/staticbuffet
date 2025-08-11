@@ -337,7 +337,8 @@ export default function Home() {
             </>
           ) : (
             /* Grid Layout - Top Row Only (Search, Player, Effects) */
-            <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-1 p-1 overflow-hidden">
+            <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-1 p-1 overflow-hidden"
+                 style={{ gridTemplateRows: 'minmax(0, 1fr)' }}>
               {/* Large Preview/Player Panel - Left Side (8 columns) */}
               <div 
                 data-tour-target="player-section"

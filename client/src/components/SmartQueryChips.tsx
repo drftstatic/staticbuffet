@@ -122,8 +122,8 @@ export function SmartQueryChips({ onQuerySelect }: SmartQueryChipsProps) {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 mb-3">
-      <div className="text-xs text-gray-400 mr-2 self-center">Quick Search:</div>
+    <div className="flex flex-wrap gap-1 sm:gap-2 mb-3">
+      <div className="text-xs text-gray-400 mr-1 sm:mr-2 self-center hidden sm:block">Quick Search:</div>
       {SMART_QUERIES.map((smartQuery) => {
         const isActive = searchState.query.includes(smartQuery.query) || 
                         smartQuery.query.split(' ').some(term => 
@@ -136,13 +136,13 @@ export function SmartQueryChips({ onQuerySelect }: SmartQueryChipsProps) {
             variant="ghost"
             size="sm"
             onClick={() => handleChipClick(smartQuery)}
-            className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+            className={`px-1.5 py-1 sm:px-2 sm:py-1 text-xs rounded-full border transition-colors ${
               isActive ? theme.active : theme.chip
             }`}
             title={smartQuery.description}
             data-testid={`chip-${smartQuery.id}`}
           >
-            {smartQuery.label}
+            <span className="truncate">{smartQuery.label}</span>
           </Button>
         );
       })}

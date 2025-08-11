@@ -49,7 +49,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
       <SmartQueryChips onQuerySelect={handleSmartQuerySelect} />
       
       {/* Main Search Bar */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-2 sm:space-x-3">
         <form onSubmit={handleSubmit} className="relative flex-1">
           <Input
             type="text"
@@ -70,11 +70,13 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           </Button>
         </form>
         
-        <LuckyDip onDipResults={handleLuckyDipResults} />
+        <div className="flex-shrink-0">
+          <LuckyDip onDipResults={handleLuckyDipResults} />
+        </div>
       </div>
       
       {/* Source Toggles and License Controls */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
         <SourceToggles onSourcesChange={handleFiltersChange} />
         <LicenseGuardrail onLicenseChange={handleFiltersChange} />
       </div>

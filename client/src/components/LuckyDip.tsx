@@ -64,51 +64,80 @@ export function LuckyDip({ onDipResults }: LuckyDipProps) {
       // Pick random queries and combine search terms
       const randomQueries = [...LUCKY_DIP_QUERIES]
         .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
+        .slice(0, 2); // Use fewer terms to get better results
 
-      // Create search parameters for legally safe, short content
+      // Create search parameters for legally safe, short content with improved query
+      const combinedQuery = `${randomQueries.join(' OR ')} AND mediatype:movies AND (licenseurl:*publicdomain* OR collection:*publicdomain*) AND (collection:prelinger OR collection:fedflix) AND year:[1940 TO 1990]`;
+      
       const searchParams = {
-        query: randomQueries.join(' OR '),
+        query: combinedQuery,
         license: 'publicdomain' as const,
-        duration: 'short' as const, // Under 5 minutes
+        duration: 'short' as const,
         yearFrom: '1940',
         yearTo: '1990',
         sort: 'downloads' as const,
-        page: Math.floor(Math.random() * 5) + 1, // Random page 1-5
+        page: Math.floor(Math.random() * 3) + 1, // Random page 1-3 for better results
         sources: ['prelinger', 'fedflix'],
         allowRestrictedLicenses: false
       };
 
+      console.log('Lucky Dip search params:', searchParams);
       setSearchState(searchParams);
 
       const results = await searchVideos(searchParams);
+      console.log('Lucky Dip results:', results);
       
       if (results?.docs && results.docs.length > 0) {
-        // Take up to 12 random results
+        // Take up to 15 random results
         const shuffledResults = [...results.docs]
           .sort(() => 0.5 - Math.random())
-          .slice(0, 12);
+          .slice(0, 15);
 
         setSearchResults(shuffledResults);
         setTotalResults(shuffledResults.length);
         onDipResults(shuffledResults);
 
         toast({
-          title: "Lucky Dip Complete!",
-          description: `Found ${shuffledResults.length} legally safe clips for your mix.`,
+          title: "Lucky Dip Success!",
+          description: `Found ${shuffledResults.length} legally safe vintage clips ready for mixing.`,
         });
       } else {
-        toast({
-          title: "No luck this time",
-          description: "Try again for a different selection of clips.",
-          variant: "destructive",
-        });
+        // Try a fallback search with broader terms
+        const fallbackQuery = `vintage AND mediatype:movies AND (licenseurl:*publicdomain* OR collection:*publicdomain*)`;
+        const fallbackParams = {
+          ...searchParams,
+          query: fallbackQuery,
+          page: 1
+        };
+        
+        const fallbackResults = await searchVideos(fallbackParams);
+        
+        if (fallbackResults?.docs && fallbackResults.docs.length > 0) {
+          const shuffledResults = [...fallbackResults.docs]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 10);
+
+          setSearchResults(shuffledResults);
+          setTotalResults(shuffledResults.length);
+          onDipResults(shuffledResults);
+
+          toast({
+            title: "Lucky Dip Found Content!",
+            description: `Found ${shuffledResults.length} vintage clips using broader search.`,
+          });
+        } else {
+          toast({
+            title: "No luck this time",
+            description: "Archive.org might be slow. Try again in a moment.",
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       console.error('Lucky Dip error:', error);
       toast({
         title: "Lucky Dip Failed",
-        description: "Unable to fetch random clips. Please try again.",
+        description: "Network issue or Archive.org is busy. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -121,18 +150,21 @@ export function LuckyDip({ onDipResults }: LuckyDipProps) {
     <Button
       onClick={handleLuckyDip}
       disabled={isDipping}
-      className={`flex items-center space-x-2 px-3 py-2 rounded-lg border transition-colors ${getThemeClasses()}`}
+      className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg border transition-colors text-xs sm:text-sm ${getThemeClasses()}`}
       data-testid="button-lucky-dip"
+      title="Get random vintage clips"
     >
       {isDipping ? (
         <>
-          <Loader2 size={16} className="animate-spin" />
-          <span>Digging...</span>
+          <Loader2 size={14} className="animate-spin" />
+          <span className="hidden sm:inline">Digging...</span>
+          <span className="sm:hidden">...</span>
         </>
       ) : (
         <>
-          <Dices size={16} />
-          <span>Lucky Dip</span>
+          <Dices size={14} />
+          <span className="hidden sm:inline">Lucky Dip</span>
+          <span className="sm:hidden">Dip</span>
         </>
       )}
     </Button>
