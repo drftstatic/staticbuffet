@@ -23,7 +23,9 @@ export function EasterEgg({ isActive, onClose }: EasterEggProps) {
 
     // Load the video when activated
     if (videoRef.current && !isLoaded) {
-      videoRef.current.src = 'https://archive.org/download/TheVistaGroup-MarilynMansonGetYourGunnonBeavisandButthead/TheVistaGroup-MarilynMansonGetYourGunnonBeavisandButthead.mp4';
+      // Use the correct filename from Archive.org
+      videoRef.current.src = 'https://archive.org/download/TheVistaGroup-MarilynMansonGetYourGunnonBeavisandButthead/Marilyn%20Manson%20-%20Get%20Your%20Gunn%20on%20Beavis%20and%20Butthead%20VHS%20%E2%80%A2%2060%20FPS%201996.mp4';
+      videoRef.current.crossOrigin = 'anonymous';
       videoRef.current.load();
       setIsLoaded(true);
     }
@@ -110,14 +112,31 @@ export function EasterEgg({ isActive, onClose }: EasterEggProps) {
         animationRef.current = requestAnimationFrame(kaleidoscope);
       };
 
-      video.addEventListener('loadeddata', () => {
-        video.play();
-        kaleidoscope();
+      const playVideo = async () => {
+        try {
+          await video.play();
+          kaleidoscope();
+        } catch (error) {
+          console.log('Video autoplay failed, waiting for user interaction');
+          // Fallback: start animation even without video
+          kaleidoscope();
+        }
+      };
+
+      video.addEventListener('loadeddata', playVideo);
+      video.addEventListener('canplay', playVideo);
+
+      // Add click to play fallback
+      video.addEventListener('click', async () => {
+        try {
+          await video.play();
+        } catch (error) {
+          console.log('Manual play failed:', error);
+        }
       });
 
       if (video.readyState >= 2) {
-        video.play();
-        kaleidoscope();
+        playVideo();
       }
     };
 
@@ -141,6 +160,8 @@ export function EasterEgg({ isActive, onClose }: EasterEggProps) {
         crossOrigin="anonymous"
         muted
         loop
+        playsInline
+        preload="metadata"
       />
       
       {/* Trippy canvas overlay */}
@@ -164,6 +185,7 @@ export function EasterEgg({ isActive, onClose }: EasterEggProps) {
       <div className="absolute bottom-4 left-4 right-4 text-center text-white text-sm opacity-75 z-10">
         <p>🌀 ACID TRIP MODE ACTIVATED 🌀</p>
         <p>Press ESC or click X to exit</p>
+        {!isLoaded && <p>Loading Marilyn Manson...</p>}
       </div>
     </div>
   );
