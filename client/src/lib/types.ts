@@ -1,4 +1,4 @@
-export type BrandSkin = 'diner' | 'ebn';
+export type BrandSkin = 'waffle' | 'ebn';
 
 export interface SearchState {
   query: string;

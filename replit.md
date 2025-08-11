@@ -10,10 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Transformed "Diner Mode" to "WAFFLE HOUSE MODE" with authentic diner color scheme
+- Added yellow/amber color palette inspired by classic Waffle House menu design
+- Updated all UI components to use Waffle House theme colors and styling
+- Enhanced glass morphism effects with warm golden tints and improved shadows
 - Updated header with bold typography inspired by official Static Buffet logo design
-- Added glass morphism effects and modern gradient backgrounds for professional appearance
-- Enhanced card designs with hover animations and backdrop blur effects
-- Improved brand hierarchy with proper Trash Team × Nulltone.TV attribution
+- Added theme switcher component for easy switching between Waffle House and EBN modes
 - Complete professional VJ controls with real-time audio and video processing
 - Added keyboard shortcuts for effect presets (1-4 keys for instant switching)
 - Implemented fullscreen mode with auto-hiding controls and keyboard shortcuts

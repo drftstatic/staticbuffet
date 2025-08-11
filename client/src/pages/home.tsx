@@ -10,6 +10,7 @@ import { EffectsPanel } from '@/components/EffectsPanel';
 import { EffectPresetNotification } from '@/components/EffectPresetNotification';
 import { BottomHUD } from '@/components/BottomHUD';
 import { BrandSkinToggle } from '@/components/BrandSkinToggle';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { EmergencyMix } from '@/components/EmergencyMix';
 import { AudioReactive } from '@/components/AudioReactive';
 import { useStore } from '@/lib/store';
@@ -72,8 +73,8 @@ export default function Home() {
   useEffect(() => {
     const body = document.body;
     
-    if (brandSkin === 'diner') {
-      body.className = 'bg-orange-50 dark:bg-gray-900 font-inter transition-colors duration-300';
+    if (brandSkin === 'waffle') {
+      body.className = 'bg-yellow-50 dark:bg-gray-900 font-inter transition-colors duration-300';
     } else {
       body.className = 'bg-gray-900 font-mono transition-colors duration-300';
     }
@@ -85,12 +86,12 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen transition-all duration-300 ${
-      brandSkin === 'diner' ? 'diner-gradient' : 'ebn-gradient'
+      brandSkin === 'waffle' ? 'waffle-gradient' : 'ebn-gradient'
     }`}>
       {/* Top Bar */}
       <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${
-        brandSkin === 'diner' 
-          ? 'glass border-amber-200/50' 
+        brandSkin === 'waffle' 
+          ? 'glass border-yellow-400/50' 
           : 'glass-dark border-lime-500/30'
       }`}>
         <div className="max-w-full px-6 py-5">
@@ -111,14 +112,14 @@ export default function Home() {
                 >
                   TRASH TEAM
                 </a>
-                <span className={brandSkin === 'diner' ? 'text-gray-400' : 'text-gray-500'}>×</span>
+                <span className={brandSkin === 'waffle' ? 'text-amber-600' : 'text-gray-500'}>×</span>
                 <a 
                   href="https://nulltone.tv" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className={`hover:underline transition-colors ${
-                    brandSkin === 'diner' 
-                      ? 'text-gray-600 hover:text-red-600' 
+                    brandSkin === 'waffle' 
+                      ? 'text-amber-800 hover:text-red-700' 
                       : 'text-gray-400 hover:text-lime-400'
                   }`}
                 >
@@ -128,12 +129,12 @@ export default function Home() {
               
               {/* Main Logo */}
               <div className="flex items-center space-x-3">
-                <div className={`${brandSkin === 'diner' ? 'text-red-600' : 'text-lime-500'}`}>
+                <div className={`${brandSkin === 'waffle' ? 'text-amber-600' : 'text-lime-500'}`}>
                   <Tv size={28} />
                 </div>
                 <div>
                   <h1 className={`font-black text-2xl font-inter tracking-tight leading-none ${
-                    brandSkin === 'diner' ? 'text-gray-800 logo-text' : 'text-gray-100 logo-text-dark'
+                    brandSkin === 'waffle' ? 'text-amber-900 logo-text' : 'text-gray-100 logo-text-dark'
                   }`}>
                     STATIC<br/>BUFFET
                   </h1>
@@ -142,7 +143,7 @@ export default function Home() {
               
               {/* Tagline */}
               <p className={`text-sm font-medium ${
-                brandSkin === 'diner' ? 'text-gray-600' : 'text-gray-400'
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-400'
               }`}>
                 All-you-can-eat video chaos, straight from the public domain.
               </p>
@@ -153,9 +154,9 @@ export default function Home() {
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-2">
+              <ThemeSwitcher />
               <EmergencyMix />
               <AudioReactive />
-              <BrandSkinToggle />
             </div>
           </div>
 
@@ -168,14 +169,14 @@ export default function Home() {
       <div className="flex h-[calc(100vh-120px)] overflow-hidden gap-2 p-2">
         {/* Results Grid */}
         <div className={`flex-1 overflow-y-auto rounded-xl shadow-lg ${
-          brandSkin === 'diner' ? 'glass' : 'glass-dark'
+          brandSkin === 'waffle' ? 'glass' : 'glass-dark'
         }`}>
           <ResultsGrid onVideoSelect={handleVideoSelect} />
         </div>
 
         {/* Effects Panel */}
         <div className={`w-80 overflow-y-auto rounded-xl shadow-lg ${
-          brandSkin === 'diner' ? 'glass' : 'glass-dark'
+          brandSkin === 'waffle' ? 'glass' : 'glass-dark'
         }`}>
           <EffectsPanel />
         </div>

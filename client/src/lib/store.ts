@@ -39,7 +39,7 @@ interface AppStore extends AppState {
 
 export const useStore = create<AppStore>((set, get) => ({
   // Initial state
-  brandSkin: 'diner',
+  brandSkin: 'waffle',
   searchState: {
     query: '',
     yearFrom: '1950',

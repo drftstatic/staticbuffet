@@ -23,8 +23,8 @@ export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
   return (
     <div
       className={`rounded-xl overflow-hidden shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:shadow-2xl group ${
-        brandSkin === 'diner' 
-          ? 'bg-white/80 backdrop-blur-sm border border-amber-200/50 hover:bg-white/90' 
+        brandSkin === 'waffle' 
+          ? 'bg-yellow-50/90 backdrop-blur-sm border-2 border-yellow-400/40 hover:bg-yellow-50/95 hover:border-yellow-500/60' 
           : 'bg-gray-800/80 backdrop-blur-sm border border-lime-500/20 hover:bg-gray-800/90'
       }`}
       onClick={() => onSelect(video)}

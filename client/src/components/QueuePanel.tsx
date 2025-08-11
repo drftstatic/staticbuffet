@@ -50,12 +50,12 @@ export function QueuePanel() {
 
   return (
     <div className={`h-full overflow-y-auto rounded-xl shadow-lg ${
-      brandSkin === 'diner' ? 'glass' : 'glass-dark'
+      brandSkin === 'waffle' ? 'glass' : 'glass-dark'
     }`}>
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className={`text-lg font-semibold font-inter ${
-            brandSkin === 'diner' ? 'text-gray-800' : 'text-gray-100'
+            brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
           }`}>
             Queue
           </h2>

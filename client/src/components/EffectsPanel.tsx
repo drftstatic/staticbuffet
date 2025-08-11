@@ -151,14 +151,14 @@ export function EffectsPanel() {
     <div className="space-y-6 p-6 max-h-[600px] overflow-y-auto">
       <div className="flex items-center space-x-3">
         <div className={`p-2 rounded-lg ${
-          brandSkin === 'diner' 
-            ? 'bg-red-100 text-red-600' 
+          brandSkin === 'waffle' 
+            ? 'bg-yellow-100 text-amber-700' 
             : 'bg-lime-900/30 text-lime-400'
         }`}>
           <Zap className="h-5 w-5" />
         </div>
         <h3 className={`text-xl font-bold ${
-          brandSkin === 'diner' ? 'text-gray-800' : 'text-gray-100'
+          brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
         }`}>
           Effects Studio
         </h3>

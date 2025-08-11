@@ -97,8 +97,9 @@
   .glass {
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background-color: rgba(255, 255, 255, 0.75);
-    border: 1px solid rgba(209, 213, 219, 0.3);
+    background-color: rgba(255, 235, 59, 0.15);
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 193, 7, 0.1);
   }
 
   .glass-dark {
@@ -109,11 +110,13 @@
   }
 
   /* Enhanced gradient backgrounds */
-  .diner-gradient {
+  .waffle-gradient {
     background: linear-gradient(135deg, 
-      rgba(254, 242, 242, 1) 0%, 
-      rgba(255, 251, 235, 1) 50%, 
-      rgba(254, 242, 242, 1) 100%);
+      rgba(255, 248, 220, 1) 0%, 
+      rgba(255, 235, 59, 0.1) 25%,
+      rgba(255, 248, 220, 1) 50%, 
+      rgba(255, 193, 7, 0.1) 75%,
+      rgba(255, 248, 220, 1) 100%);
   }
 
   .ebn-gradient {
