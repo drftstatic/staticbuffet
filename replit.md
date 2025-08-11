@@ -32,8 +32,9 @@ Preferred communication style: Simple, everyday language.
 - **Audio Reactive**: Web Audio API with real-time frequency analysis.
 
 ### Theme System
-- **Eight Complete Visual Themes**: Test Card (Default), Waffle House, EBN Hijack, Heavy Metal, NWO Hollywood, D-Generation X, Max Headroom, and Mario Plumber. Each theme has distinct visual effects, gradients, and animations.
+- **Ten Complete Visual Themes**: Test Card (Default), Waffle House, EBN Hijack, Heavy Metal, NWO Hollywood, D-Generation X, Max Headroom, Mario Plumber, Dodge Dakota, and Blondie. Each theme has distinct visual effects, gradients, and animations.
 - **Interactive Easter Eggs**: Triple-click activations for theme-specific soundboards and visual transformations.
+- **Complete Soundboard System**: Seven themes feature fully implemented soundboards with 8 sounds each, using toast notification feedback and triple-click activation pattern.
 - **Styling**: CSS Variables for theming, Inter and JetBrains Mono fonts, and theme-specific CSS overlays.
 - **UI/UX Decisions**: Panel-based layout inspired by professional media workstations (e.g., Adobe Premiere, Resolume), distinct work zones (Search/Results, Preview/Player, Queue/Timeline, Effects/Mix), professional player interface with LIVE indicator and timecode, and timeline-based queue.
 
