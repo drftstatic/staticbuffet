@@ -111,13 +111,6 @@ export default function Home() {
                 <h1 className={`font-bold text-lg ${brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'}`}>
                   STATIC BUFFET
                 </h1>
-                <span className={`text-xs px-2 py-1 rounded border ${
-                  brandSkin === 'waffle' 
-                    ? 'text-amber-700 border-amber-400 bg-amber-100/50' 
-                    : 'text-yellow-200 border-yellow-400/50 bg-yellow-400/10'
-                }`}>
-                  v0.3.0
-                </span>
               </div>
               <div className="flex items-center space-x-1 text-xs opacity-75">
                 <a href="https://trashteam.tv" target="_blank" rel="noopener noreferrer" 
