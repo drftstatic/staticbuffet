@@ -65,7 +65,7 @@ export function Footer() {
     version: '0.3.0',
     build: '2025.08.11',
     engine: 'FS9000',
-    audio: 'Web Audio API',
+    audio: 'web.A.ap1',
     video: 'HTML5 + CSS Filters'
   };
 
@@ -116,7 +116,7 @@ export function Footer() {
 
         {/* Right side - Tech info */}
         <div className="flex items-center space-x-4">
-          <span>AUDIO: {buildInfo.audio}</span>
+          <span className="text-right">AUDIO: {buildInfo.audio}</span>
           <span>VIDEO: {buildInfo.video}</span>
           <span className="text-xs opacity-70">
             Trash Team × <a 
