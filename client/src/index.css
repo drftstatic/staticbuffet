@@ -969,4 +969,100 @@
     0%, 100% { border-color: rgba(59, 130, 246, 0.05); }
     50% { border-color: rgba(59, 130, 246, 0.15); }
   }
+
+  /* 9. Dakota Theme - 1996 Dodge Dakota truck aesthetic */
+  .brand-dakota {
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 5%;
+    --secondary-foreground: 0 0% 90%;
+    --accent: 0 0% 10%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 0% 15%;
+    --destructive-foreground: 0 0% 85%;
+    --border: 0 0% 15%;
+    --input: 0 0% 8%;
+    --ring: 0 0% 20%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 90%;
+    --popover: 0 0% 2%;
+    --popover-foreground: 0 0% 95%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 60%;
+  }
+
+  .brand-dakota .bg-gradient-to-br {
+    background: linear-gradient(135deg, #000000, #111111, #222222) !important;
+  }
+
+  .brand-dakota .text-blue-300 {
+    color: #cccccc !important;
+  }
+
+  .brand-dakota .border-blue-400 {
+    border-color: #333333 !important;
+  }
+
+  .brand-dakota .bg-blue-400 {
+    background-color: #111111 !important;
+  }
+
+  /* Dakota Vanilla Filter Effect */
+  .dakota-vanilla-filter {
+    filter: sepia(20%) saturate(80%) brightness(110%) contrast(95%) !important;
+    backdrop-filter: blur(0.5px) brightness(105%) !important;
+  }
+
+  /* 10. Blondie Theme - Mixtape and blunt vibes */
+  .brand-blondie {
+    --primary: 20 30% 25%;
+    --primary-foreground: 45 85% 95%;
+    --secondary: 25 25% 30%;
+    --secondary-foreground: 45 80% 90%;
+    --accent: 35 40% 35%;
+    --accent-foreground: 45 75% 85%;
+    --destructive: 15 70% 40%;
+    --destructive-foreground: 45 85% 95%;
+    --border: 30 25% 40%;
+    --input: 25 20% 20%;
+    --ring: 35 35% 45%;
+    --background: 20 15% 12%;
+    --foreground: 45 80% 90%;
+    --card: 25 20% 18%;
+    --card-foreground: 45 75% 85%;
+    --popover: 20 20% 15%;
+    --popover-foreground: 45 80% 90%;
+    --muted: 30 15% 25%;
+    --muted-foreground: 40 40% 65%;
+  }
+
+  .brand-blondie .bg-gradient-to-br {
+    background: linear-gradient(135deg, #2d1b0f, #3d2817, #4d3520, #5d4228) !important;
+  }
+
+  .brand-blondie .text-blue-300 {
+    color: #d4a574 !important;
+  }
+
+  .brand-blondie .border-blue-400 {
+    border-color: #8b6914 !important;
+  }
+
+  .brand-blondie .bg-blue-400 {
+    background-color: #4d3520 !important;
+  }
+
+  /* Blondie Geometry Changes */
+  .blondie-geometry {
+    border-radius: 0 !important;
+    clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%) !important;
+    transform: skew(-2deg, 0deg) !important;
+  }
+
+  .blondie-geometry-alt {
+    border-radius: 50% 20% 50% 20% !important;
+    transform: rotate(1deg) !important;
+  }
 }

@@ -22,6 +22,10 @@ export function ThemeSwitcher() {
           ? 'border-red-500/50 bg-black/80 text-red-200'
           : brandSkin === 'mario'
           ? 'border-red-500/50 bg-red-900/50 text-yellow-200'
+          : brandSkin === 'dakota'
+          ? 'border-gray-500/50 bg-black/80 text-gray-200'
+          : brandSkin === 'blondie'
+          ? 'border-amber-500/50 bg-amber-900/50 text-amber-200'
           : 'border-yellow-400/50 bg-gray-800/80 text-yellow-200'
       }`}>
         <SelectValue />
@@ -35,6 +39,8 @@ export function ThemeSwitcher() {
         <SelectItem value="dx">🤘 D-Generation X</SelectItem>
         <SelectItem value="maxheadroom">📺 Max Headroom</SelectItem>
         <SelectItem value="mario">🍄 Mario Plumber</SelectItem>
+        <SelectItem value="dakota">🚚 Dodge Dakota</SelectItem>
+        <SelectItem value="blondie">🎵 Blondie</SelectItem>
       </SelectContent>
     </Select>
   );

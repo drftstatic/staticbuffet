@@ -205,6 +205,8 @@ export function WelcomeModal() {
               <Badge variant="outline" className="border-purple-400/50 text-purple-300">D-Generation X</Badge>
               <Badge variant="outline" className="border-cyan-400/50 text-cyan-300">Max Headroom</Badge>
               <Badge variant="outline" className="border-red-400/50 text-red-300">Sexy Mario 🍄</Badge>
+              <Badge variant="outline" className="border-gray-400/50 text-gray-300">Dodge Dakota 🚚</Badge>
+              <Badge variant="outline" className="border-amber-400/50 text-amber-300">Blondie 🎵</Badge>
             </div>
             <p className="text-center text-sm opacity-75">
               Each theme has unique easter eggs, soundboards, and visual effects!

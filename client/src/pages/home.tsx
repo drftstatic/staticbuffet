@@ -26,6 +26,8 @@ import { OzzyButton } from '@/components/OzzyButton';
 import { EBNButton } from '@/components/EBNButton';
 import { MaxButton } from '@/components/MaxButton';
 import { MarioButton } from '@/components/MarioButton';
+import { DakotaButton } from '@/components/DakotaButton';
+import { BlondieButton } from '@/components/BlondieButton';
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { LiveVideoMode } from '@/components/LiveVideoMode';
 import { WorkspaceLayoutSaver } from '@/components/WorkspaceLayoutSaver';
@@ -53,6 +55,8 @@ export default function Home() {
     isDXMode,
     isMarioMode,
     isAsciiMode,
+    isDakotaVanillaMode,
+    isBlondieGeometryMode,
     isResizableMode,
     setResizableMode,
   } = useStore();
@@ -146,7 +150,17 @@ export default function Home() {
         ? 'dx-gradient dx-pulse'
         : brandSkin === 'maxheadroom' && isAsciiMode
         ? 'maxheadroom-gradient terminal-flicker ascii-mode'
-        : 'maxheadroom-gradient terminal-flicker'
+        : brandSkin === 'maxheadroom'
+        ? 'maxheadroom-gradient terminal-flicker'
+        : brandSkin === 'dakota' && isDakotaVanillaMode
+        ? 'brand-dakota dakota-vanilla-filter'
+        : brandSkin === 'dakota'
+        ? 'brand-dakota'
+        : brandSkin === 'blondie' && isBlondieGeometryMode
+        ? 'brand-blondie blondie-geometry'
+        : brandSkin === 'blondie'
+        ? 'brand-blondie'
+        : 'brand-testcard'
     }`}>
       {/* Top Bar */}
       <header className={`flex-shrink-0 border-b transition-all duration-300 ${
@@ -160,6 +174,10 @@ export default function Home() {
           ? 'glass-ozzy border-red-500/50'
           : brandSkin === 'mario'
           ? 'glass-mario border-yellow-400/50'
+          : brandSkin === 'dakota'
+          ? 'glass border-gray-400/50'
+          : brandSkin === 'blondie'
+          ? 'glass border-amber-400/50'
           : 'glass-hogan border-yellow-400/50'
       }`}>
         <div className="max-w-full px-4 py-2 space-y-3">
@@ -174,6 +192,8 @@ export default function Home() {
                   brandSkin === 'ebn' ? 'text-yellow-300' :
                   brandSkin === 'ozzy' ? 'text-red-400' :
                   brandSkin === 'mario' ? 'text-red-500' :
+                  brandSkin === 'dakota' ? 'text-gray-400' :
+                  brandSkin === 'blondie' ? 'text-amber-400' :
                   'text-yellow-400'
                 } />
                 <h1 className={`font-bold text-lg ${
@@ -182,11 +202,17 @@ export default function Home() {
                   brandSkin === 'ebn' ? 'text-yellow-300' :
                   brandSkin === 'ozzy' ? 'text-red-200' :
                   brandSkin === 'mario' ? 'text-yellow-200' :
+                  brandSkin === 'dakota' ? 'text-gray-200' :
+                  brandSkin === 'blondie' ? 'text-amber-200' :
                   'text-yellow-300'
                 }`}>
 {brandSkin === 'hogan' && isHulksterMode ? 'HULKSTER BUFFET' : 
                 brandSkin === 'dx' && isDXMode ? 'DX BUFFET' : 
                 brandSkin === 'mario' && isMarioMode ? 'SEXY MARIO BUFFET' :
+                brandSkin === 'dakota' && isDakotaVanillaMode ? 'VANILLA BUFFET' :
+                brandSkin === 'dakota' ? 'DAKOTA BUFFET' :
+                brandSkin === 'blondie' && isBlondieGeometryMode ? 'GEOMETRIC BUFFET' :
+                brandSkin === 'blondie' ? 'BLONDIE BUFFET' :
                 'STATIC BUFFET'}
                 </h1>
               </div>
@@ -275,6 +301,8 @@ export default function Home() {
               <EBNButton />
               <MaxButton />
               <MarioButton />
+              <DakotaButton />
+              <BlondieButton />
               <GroupedControls />
             </div>
           </div>

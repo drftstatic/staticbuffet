@@ -66,6 +66,10 @@ interface AppStore extends AppState {
   setAsciiMode: (enabled: boolean) => void;
   isMarioMode: boolean;
   setMarioMode: (enabled: boolean) => void;
+  isDakotaVanillaMode: boolean;
+  setDakotaVanillaMode: (enabled: boolean) => void;
+  isBlondieGeometryMode: boolean;
+  setBlondieGeometryMode: (enabled: boolean) => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
@@ -75,6 +79,8 @@ export const useStore = create<AppStore>((set, get) => ({
   isDXMode: false,
   isAsciiMode: false,
   isMarioMode: false,
+  isDakotaVanillaMode: false,
+  isBlondieGeometryMode: false,
   isResizableMode: true,
   panelSizes: [30, 40, 30],
   
@@ -431,4 +437,10 @@ export const useStore = create<AppStore>((set, get) => ({
 
   // Mario Mode implementation
   setMarioMode: (enabled) => set({ isMarioMode: enabled }),
+  
+  // Dakota Vanilla Mode implementation
+  setDakotaVanillaMode: (enabled) => set({ isDakotaVanillaMode: enabled }),
+  
+  // Blondie Geometry Mode implementation
+  setBlondieGeometryMode: (enabled) => set({ isBlondieGeometryMode: enabled }),
 }));
