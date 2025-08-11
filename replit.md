@@ -1,7 +1,22 @@
 # Static Buffet - Trash Team × Nulltone.TV
+**Version:** 0.1.0-alpha (Pre-release)
+**Release Date:** January 11, 2025
 
 ## Overview
-Static Buffet is a VJ-focused web application designed for searching, previewing, and queuing free-to-use video content from Archive.org. It enables real-time video mixing with public domain and Creative Commons licensed footage. The application features dual brand themes, audio-reactive capabilities, and playlist export functionality. Built as a full-stack TypeScript application, it serves as a "video chaos buffet" for VJs and content creators needing immediate access to royalty-free footage with proper licensing compliance, embodying the vision of turning discarded culture into something new and providing alternative programming.
+Static Buffet is a professional VJ-focused web application designed for searching, previewing, and queuing free-to-use video content from Archive.org. It enables real-time video mixing with public domain and Creative Commons licensed footage. The application features ten complete visual themes, enhanced drag-and-drop functionality, comprehensive keyboard shortcuts, audio-reactive capabilities, and professional EDL recording. Built as a full-stack TypeScript application, it serves as a "video chaos buffet" for VJs and content creators needing immediate access to royalty-free footage with proper licensing compliance, embodying the vision of turning discarded culture into something new and providing alternative programming.
+
+## Recent Changes (v0.1.0-alpha)
+- ✅ Enhanced license badges with detailed tooltips and external Creative Commons/Public Domain links
+- ✅ Implemented comprehensive drag-and-drop system from search results to queue
+- ✅ Added hover information overlays on video cards with license and duration details
+- ✅ Created smart queue drop zone for empty states with theme-aware styling
+- ✅ Integrated saved searches functionality with persistent storage
+- ✅ Built complete keyboard shortcuts system with "?" overlay and Command-K palette
+- ✅ Enhanced video preloading with LRU cache for zero-hitch transitions
+- ✅ Added cancellable requests and intelligent thumbnail retry logic
+- ✅ Implemented sessionStorage metadata caching with 15-minute TTL
+- ✅ Created skeleton loaders for all content types with theme integration
+- ✅ Completed first-run guided tour covering essential VJ workflow
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -33,35 +48,43 @@ Preferred communication style: Simple, everyday language.
 - **EDL Recording**: Professional Edit Decision List system for capturing every cut, effect, and timing during live sets.
 - **First-Run Tour**: 4-step guided workflow tour for new users covering Search → Preview/Trim → Add to Queue → Emergency Mix.
 
-### Theme System
+### Theme System (v0.1.0-alpha Complete)
 - **Ten Complete Visual Themes**: Test Card (Default), Waffle House, EBN Hijack, Heavy Metal, NWO Hollywood, D-Generation X, Max Headroom, Mario Plumber, Dodge Dakota, and Blondie. Each theme has distinct visual effects, gradients, and animations.
-- **Theme Consistency**: All 10 themes have equal visual treatment across all pages (Home, About) with comprehensive styling for headers, panels, text, icons, and interactive elements.
-- **Theme Access**: Dakota and Blondie themes accessible only via dropdown theme selector (not main UI buttons) for cleaner interface.
-- **Interactive Easter Eggs**: Triple-click activations for theme-specific soundboards and visual transformations.
+- **Universal Theme Integration**: All 10 themes fully integrated across every component including new license badges, drag-and-drop overlays, queue drop zones, saved searches UI, and keyboard shortcut overlays.
+- **Theme Consistency**: Complete visual treatment across all pages (Home, About) with comprehensive styling for headers, panels, text, icons, interactive elements, tooltips, and modal overlays.
+- **Theme Access**: Dakota and Blondie themes accessible via dropdown theme selector for cleaner interface, all other themes via dedicated buttons.
+- **Interactive Easter Eggs**: Triple-click activations for theme-specific soundboards and visual transformations with complete audio feedback.
 - **Complete Soundboard System**: Seven themes feature fully implemented soundboards with 8 sounds each, using toast notification feedback and triple-click activation pattern.
-- **Styling**: CSS Variables for theming, Inter and JetBrains Mono fonts, theme-specific CSS overlays, and comprehensive theme function for consistent styling across components.
-- **UI/UX Decisions**: Panel-based layout inspired by professional media workstations (e.g., Adobe Premiere, Resolume), distinct work zones (Search/Results, Preview/Player, Queue/Timeline, Effects/Mix), professional player interface with LIVE indicator and timecode, and timeline-based queue.
+- **Enhanced UI Components**: All new components (license badges, drag overlays, drop zones) inherit theme styling automatically through CSS variables and theme functions.
+- **Styling Architecture**: CSS Variables for theming, Inter and JetBrains Mono fonts, theme-specific CSS overlays, and comprehensive theme function for consistent styling across components.
+- **Professional Layout**: Panel-based layout inspired by professional media workstations (Adobe Premiere, Resolume), distinct work zones (Search/Results, Preview/Player, Queue/Timeline, Effects/Mix), professional player interface with LIVE indicator and timecode, and timeline-based queue.
 
 ### Licensing and Compliance
 - **License Filtering**: Filters for Public Domain, CC0, and CC-BY content.
 - **Attribution Tracking**: Automatic attribution data extraction for exports.
 - **Export Formats**: JSON and M3U playlists with licensing metadata.
 
-### Professional VJ Features
+### Professional VJ Features (v0.1.0-alpha)
+- **Enhanced Drag-and-Drop Workflow**: Direct drag from search results to queue with visual feedback and theme-aware drop zones.
+- **Intelligent License Management**: Enhanced license badges with tooltips, external links, and clear Creative Commons/Public Domain identification.
+- **Saved Search Patterns**: Persistent storage of common search filters and terms for efficient workflow.
+- **Comprehensive Keyboard Shortcuts**: Professional keyboard navigation with "?" help overlay and Command-K palette for quick actions.
 - **EDL Recording System**: Complete session recording with event logging for professional set documentation and reconstruction.
 - **First-Run Tour**: Guided 4-step onboarding covering essential VJ workflow (Search → Preview/Trim → Queue → Emergency Mix).
 - **Session Management**: Persistent storage of recording sessions with venue info, statistics, and export capabilities.
+- **Zero-Hitch Video Transitions**: Intelligent preloading system ensures smooth transitions between queue items.
 
-### Performance Optimizations
-- **Debounced Search**: Reduces API calls.
-- **Infinite Scroll**: Lazy loading with intersection observer.
-- **Image Optimization**: Archive.org thumbnail service integration.
-- **Caching**: React Query caching for API responses.
-- **Video Preloading**: Automatic preloading of next queue item for smooth transitions.
-- **Metadata Caching**: SessionStorage-based caching of search results and metadata with 15-minute TTL.
-- **Thumbnail Retry Logic**: Smart retry system for failed thumbnails with exponential backoff.
-- **Cancellable Requests**: AbortController-based request cancellation for responsive UX.
-- **Skeleton Loaders**: Theme-aware loading states for all content types (videos, thumbnails, search results).
+### Performance Optimizations (v0.1.0-alpha Complete)
+- **Advanced Video Preloading**: LRU cache system with intelligent queue preloading for zero-hitch transitions.
+- **Smart Request Management**: AbortController-based cancellable requests with proper cleanup for responsive UX.
+- **Enhanced Caching**: SessionStorage-based metadata caching with 15-minute TTL for instant navigation.
+- **Robust Thumbnail System**: Smart retry logic with exponential backoff for reliable thumbnail loading.
+- **Theme-Aware Skeleton Loaders**: Complete loading states for all content types (videos, thumbnails, search results) with theme integration.
+- **Debounced Search**: Optimized API calls with proper request cancellation.
+- **Infinite Scroll**: Lazy loading with intersection observer for smooth browsing.
+- **Image Optimization**: Archive.org thumbnail service integration with fallback handling.
+- **React Query Caching**: Comprehensive caching for API responses with intelligent invalidation.
+- **Drag Performance**: Optimized drag-and-drop with smooth animations and visual feedback.
 
 ## External Dependencies
 
