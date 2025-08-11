@@ -40,9 +40,10 @@ export function Player() {
   useEffect(() => {
     if (videoRef.current && currentVideo) {
       videoRef.current.src = currentVideo.videoUrl;
+      videoRef.current.volume = volume[0] / 100;
       videoRef.current.load();
     }
-  }, [currentVideo]);
+  }, [currentVideo, volume]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -319,16 +320,31 @@ export function Player() {
       videoRef.current.pause();
       setIsPlaying(false);
     } else {
-      // Initialize audio effects on first play
-      if (!audioContextRef.current) {
-        await initializeAudioEffects();
-      }
-      
       try {
+        // Ensure volume is set
+        videoRef.current.volume = volume[0] / 100;
+        
+        // Initialize audio effects on first play (but don't block playback)
+        if (!audioContextRef.current) {
+          initializeAudioEffects().catch(console.warn);
+        }
+        
         await videoRef.current.play();
         setIsPlaying(true);
+        
+        console.log('Video playing with volume:', videoRef.current.volume);
       } catch (error) {
         console.error('Play error:', error);
+        // Try to resume audio context if suspended
+        if (audioContextRef.current?.state === 'suspended') {
+          try {
+            await audioContextRef.current.resume();
+            await videoRef.current.play();
+            setIsPlaying(true);
+          } catch (resumeError) {
+            console.error('Resume error:', resumeError);
+          }
+        }
       }
     }
   };
@@ -342,12 +358,16 @@ export function Player() {
 
   const handleVolumeChange = (value: number[]) => {
     setVolume(value);
+    const volumeLevel = value[0] / 100;
+    
     if (videoRef.current) {
-      videoRef.current.volume = value[0] / 100;
+      videoRef.current.volume = volumeLevel;
+      console.log('Volume set to:', volumeLevel);
     }
-    // Update Web Audio API gain
+    
+    // Update Web Audio API gain if available
     if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = value[0] / 100;
+      gainNodeRef.current.gain.value = volumeLevel;
     }
   };
 
@@ -491,6 +511,9 @@ export function Player() {
         <video
           ref={videoRef}
           className="w-full h-full object-contain"
+          controls={false}
+          preload="metadata"
+          crossOrigin="anonymous"
           style={{ 
             display: isAudioReactive ? 'none' : 'block',
             filter: generateFilterString(),
