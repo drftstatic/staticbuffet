@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState, type VideoEffects, type AudioEffects, type WorkspaceLayout, type PanelStates } from './types';
+import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState, type VideoEffects, type AudioEffects, type WorkspaceLayout, type PanelStates, type FloatingPanelStates, type PanelPosition } from './types';
 
 interface AppStore extends AppState {
   // Theme actions
@@ -43,6 +43,14 @@ interface AppStore extends AppState {
   togglePanelCollapse: (panel: 'search' | 'player' | 'queue' | 'effects') => void;
   resetPanels: () => void;
   
+  // Floating panels
+  floatingPanelStates: FloatingPanelStates;
+  isFloatingMode: boolean;
+  setFloatingMode: (enabled: boolean) => void;
+  updatePanelPosition: (panel: keyof FloatingPanelStates, position: Partial<PanelPosition>) => void;
+  togglePanelLock: (panel: keyof FloatingPanelStates) => void;
+  bringPanelToFront: (panel: keyof FloatingPanelStates) => void;
+  
   // Adaptive color actions
   setAdaptiveColorsEnabled: (enabled: boolean) => void;
   setAdaptiveIntensity: (intensity: number) => void;
@@ -83,6 +91,47 @@ export const useStore = create<AppStore>((set, get) => ({
   isBlondieGeometryMode: false,
   isResizableMode: true,
   panelSizes: [30, 40, 30],
+  
+  // Floating panel states
+  isFloatingMode: false,
+  floatingPanelStates: {
+    search: {
+      x: 20,
+      y: 100,
+      width: 400,
+      height: 600,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+    },
+    player: {
+      x: 440,
+      y: 100,
+      width: 500,
+      height: 400,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+    },
+    queue: {
+      x: 960,
+      y: 100,
+      width: 400,
+      height: 600,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+    },
+    effects: {
+      x: 440,
+      y: 520,
+      width: 500,
+      height: 300,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+    },
+  },
   
   // Adaptive colors state
   adaptiveColorsEnabled: false,
@@ -439,4 +488,40 @@ export const useStore = create<AppStore>((set, get) => ({
   
   // Blondie Geometry Mode implementation
   setBlondieGeometryMode: (enabled) => set({ isBlondieGeometryMode: enabled }),
+
+  // Floating panel actions
+  setFloatingMode: (enabled) => set({ isFloatingMode: enabled }),
+  
+  updatePanelPosition: (panel, position) => set((state) => ({
+    floatingPanelStates: {
+      ...state.floatingPanelStates,
+      [panel]: {
+        ...state.floatingPanelStates[panel],
+        ...position,
+      },
+    },
+  })),
+  
+  togglePanelLock: (panel) => set((state) => ({
+    floatingPanelStates: {
+      ...state.floatingPanelStates,
+      [panel]: {
+        ...state.floatingPanelStates[panel],
+        isLocked: !state.floatingPanelStates[panel].isLocked,
+      },
+    },
+  })),
+  
+  bringPanelToFront: (panel) => set((state) => {
+    const maxZ = Math.max(...Object.values(state.floatingPanelStates).map(p => p.zIndex));
+    return {
+      floatingPanelStates: {
+        ...state.floatingPanelStates,
+        [panel]: {
+          ...state.floatingPanelStates[panel],
+          zIndex: maxZ + 1,
+        },
+      },
+    };
+  }),
 }));

@@ -19,6 +19,7 @@ import { Player } from '@/components/Player';
 import { Footer } from '@/components/Footer';
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { ResizablePanels } from '@/components/ResizablePanels';
+import { FloatingPanelsManager } from '@/components/FloatingPanelsManager';
 import { DockingGuides } from '@/components/DockingGuides';
 import { DevicePrompt } from '@/components/DevicePrompt';
 import { useStore } from '@/lib/store';
@@ -54,6 +55,8 @@ export default function Home() {
     isBlondieGeometryMode,
     isResizableMode,
     setResizableMode,
+    isFloatingMode,
+    setFloatingMode,
   } = useStore();
 
   const [isDragging, setIsDragging] = useState(false);
@@ -227,6 +230,29 @@ export default function Home() {
               <Button 
                 variant="ghost" 
                 size="sm" 
+                onClick={() => setFloatingMode(!isFloatingMode)}
+                data-testid="button-toggle-floating-mode"
+                className={`flex items-center space-x-1 ${
+                  isFloatingMode
+                    ? (brandSkin === 'testcard' ? 'text-green-300 bg-green-400/20' :
+                       brandSkin === 'waffle' ? 'text-amber-800 bg-green-100/50' :
+                       brandSkin === 'ebn' ? 'text-green-300 bg-purple-900/50' :
+                       brandSkin === 'ozzy' ? 'text-green-300 bg-red-900/30' :
+                       'text-green-300 bg-gray-800/50')
+                    : (brandSkin === 'testcard' ? 'text-blue-400 hover:bg-blue-400/10' :
+                       brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' :
+                       brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
+                       brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
+                       'text-yellow-300 hover:bg-gray-800/50')
+                }`}
+              >
+                {isFloatingMode ? <Move size={14} /> : <Layout size={14} />}
+                <span>{isFloatingMode ? 'Float' : 'Dock'}</span>
+              </Button>
+              
+              <Button 
+                variant="ghost" 
+                size="sm" 
                 onClick={() => setResizableMode(!isResizableMode)}
                 data-testid="button-toggle-resizable-mode"
                 className={`flex items-center space-x-1 ${
@@ -295,7 +321,20 @@ export default function Home() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Content Area */}
         <div className="flex-1 overflow-hidden">
-          {isResizableMode ? (
+          {isFloatingMode ? (
+            <>
+              <FloatingPanelsManager />
+              <div className="h-full w-full bg-black/20 backdrop-blur-sm">
+                <div className="flex items-center justify-center h-full text-white/60">
+                  <div className="text-center">
+                    <Move size={48} className="mx-auto mb-4 opacity-50" />
+                    <p className="text-lg">Floating Panel Mode</p>
+                    <p className="text-sm opacity-75">Drag panels by their headers • Click lock icons to lock/unlock</p>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : isResizableMode ? (
             <>
               <DockingGuides isDragging={isDragging} dragPosition={dragPosition} />
               <ResizablePanels

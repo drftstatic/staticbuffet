@@ -81,6 +81,23 @@ export interface PanelStates {
   effectsCollapsed: boolean;
 }
 
+export interface PanelPosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  zIndex: number;
+  isLocked: boolean;
+  isDocked: boolean;
+}
+
+export interface FloatingPanelStates {
+  search: PanelPosition;
+  player: PanelPosition;
+  queue: PanelPosition;
+  effects: PanelPosition;
+}
+
 export interface WorkspaceLayout {
   id: string;
   name: string;
@@ -115,6 +132,8 @@ export interface AppState {
   savedWorkspaceLayouts: WorkspaceLayout[];
   isResizableMode: boolean;
   panelSizes: number[];
+  floatingPanelStates: FloatingPanelStates;
+  isFloatingMode: boolean;
 }
 
 export interface QueueItem {
