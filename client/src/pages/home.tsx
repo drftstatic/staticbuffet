@@ -115,7 +115,7 @@ export default function Home() {
       
       <div className={`h-screen flex flex-col overflow-hidden transition-all duration-300 relative ${
       brandSkin === 'waffle' 
-        ? 'waffle-gradient' 
+        ? 'waffle-gradient waffle-texture' 
         : brandSkin === 'ebn'
         ? 'ebn-gradient scanlines'
         : brandSkin === 'ozzy'
@@ -125,16 +125,16 @@ export default function Home() {
         : brandSkin === 'hogan'
         ? 'hogan-gradient nwo-stripes'
         : brandSkin === 'mario' && isMarioMode
-        ? 'mario-gradient mario-powerup mario-mode mario-pipe-effect'
+        ? 'mario-gradient mario-sparkles mario-powerup mario-mode mario-pipe-effect'
         : brandSkin === 'mario'
-        ? 'mario-gradient mario-powerup'
+        ? 'mario-gradient mario-sparkles mario-powerup'
         : brandSkin === 'dx' && isDXMode
-        ? 'dx-gradient dx-mode'
+        ? 'dx-gradient dx-pulse dx-mode'
         : brandSkin === 'dx'
-        ? 'dx-gradient'
+        ? 'dx-gradient dx-pulse'
         : brandSkin === 'maxheadroom' && isAsciiMode
-        ? 'maxheadroom-gradient ascii-mode'
-        : 'maxheadroom-gradient'
+        ? 'maxheadroom-gradient terminal-flicker ascii-mode'
+        : 'maxheadroom-gradient terminal-flicker'
     }`}>
       {/* Top Bar */}
       <header className={`flex-shrink-0 border-b transition-all duration-300 ${

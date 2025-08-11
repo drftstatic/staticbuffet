@@ -137,57 +137,91 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 211, 0, 0.1);
   }
 
-  /* Enhanced gradient backgrounds */
+  /* DRAMATICALLY DIFFERENT THEME BACKGROUNDS */
+  
+  /* 1. WAFFLE HOUSE - Bright Diner Colors */
   .waffle-gradient {
-    background: linear-gradient(135deg, 
-      rgba(255, 248, 220, 1) 0%, 
-      rgba(255, 235, 59, 0.1) 25%,
-      rgba(255, 248, 220, 1) 50%, 
-      rgba(255, 193, 7, 0.1) 75%,
-      rgba(255, 248, 220, 1) 100%);
+    background: 
+      radial-gradient(circle at 25% 25%, rgba(255, 193, 7, 0.4) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(245, 158, 11, 0.3) 0%, transparent 50%),
+      linear-gradient(135deg, 
+        #fffbeb 0%,    /* cream */
+        #fef3c7 20%,   /* light yellow */
+        #fde68a 40%,   /* yellow */ 
+        #fcd34d 60%,   /* golden */
+        #f59e0b 80%,   /* amber */
+        #d97706 100%); /* dark amber */
   }
 
+  /* 2. EBN HIJACK - Electric Purple/Lime Cyberpunk */
   .ebn-gradient {
-    background: linear-gradient(135deg, 
-      #5C0099 0%, 
-      #3D0066 50%, 
-      #1A0029 100%);
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(132, 204, 22, 0.3) 0%, transparent 60%),
+      radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
+      linear-gradient(135deg, 
+        #0c0a09 0%,    /* almost black */
+        #1c1917 15%,   /* dark brown */
+        #292524 30%,   /* brown */
+        #451a03 45%,   /* amber dark */
+        #7c2d12 60%,   /* orange dark */
+        #a855f7 80%,   /* purple */
+        #84cc16 100%); /* lime */
   }
 
+  /* 3. HEAVY METAL - Blood Red/Black Industrial */
   .ozzy-gradient {
-    background: linear-gradient(135deg, 
-      #0D0D0D 0%, 
-      #1A0D1A 25%,
-      #330D33 50%, 
-      #1A0D1A 75%,
-      #0D0D0D 100%);
+    background: 
+      radial-gradient(circle at 30% 30%, rgba(220, 38, 38, 0.5) 0%, transparent 70%),
+      radial-gradient(circle at 70% 70%, rgba(127, 29, 29, 0.4) 0%, transparent 60%),
+      linear-gradient(135deg, 
+        #0c0a09 0%,    /* deepest black */
+        #1c0a0a 20%,   /* dark red black */
+        #450a0a 40%,   /* dark red */
+        #7f1d1d 60%,   /* red */
+        #b91c1c 80%,   /* bright red */
+        #dc2626 100%); /* blood red */
   }
 
+  /* 4. NWO HOLLYWOOD - Wrestling Red/Gold */
   .hogan-gradient {
-    background: linear-gradient(135deg, 
-      #2D2D2D 0%, 
-      #1A1A1A 25%,
-      #FF0000 50%, 
-      #1A1A1A 75%,
-      #2D2D2D 100%);
+    background: 
+      radial-gradient(circle at 40% 10%, rgba(234, 179, 8, 0.4) 0%, transparent 60%),
+      radial-gradient(circle at 60% 90%, rgba(220, 38, 38, 0.3) 0%, transparent 50%),
+      linear-gradient(135deg, 
+        #1c1917 0%,    /* dark brown */
+        #451a03 20%,   /* amber dark */
+        #7c2d12 40%,   /* orange dark */
+        #dc2626 60%,   /* red */
+        #f59e0b 80%,   /* amber */
+        #eab308 100%); /* yellow */
   }
 
+  /* 5. D-GENERATION X - Blue/Pink Attitude Era */
   .dx-gradient {
-    background: linear-gradient(135deg, 
-      #0a0a0a 0%, 
-      #1a1a2e 25%, 
-      #16213e 50%, 
-      #0f3460 75%, 
-      #e94560 100%);
+    background: 
+      radial-gradient(circle at 15% 85%, rgba(233, 69, 96, 0.4) 0%, transparent 70%),
+      radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.3) 0%, transparent 60%),
+      linear-gradient(135deg, 
+        #0c0a09 0%,    /* black */
+        #1e1b4b 20%,   /* dark blue */
+        #3730a3 40%,   /* blue */
+        #6366f1 60%,   /* indigo */
+        #a855f7 80%,   /* purple */
+        #ec4899 100%); /* pink */
   }
 
+  /* 6. MAX HEADROOM - Matrix Green Terminal */
   .maxheadroom-gradient {
-    background: linear-gradient(135deg, 
-      #000000 0%, 
-      #1a1a1a 25%, 
-      #333333 50%, 
-      #4d4d4d 75%, 
-      #00ff00 100%);
+    background: 
+      radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.3) 0%, transparent 70%),
+      radial-gradient(circle at 25% 75%, rgba(0, 255, 0, 0.15) 0%, transparent 50%),
+      linear-gradient(135deg, 
+        #000000 0%,    /* pure black */
+        #0a0a0a 20%,   /* dark gray */
+        #1a1a1a 40%,   /* gray */
+        #2d2d2d 60%,   /* lighter gray */
+        #22c55e 80%,   /* green */
+        #00ff00 100%); /* matrix green */
   }
 
   /* ASCII Mode for Max Headroom theme */
@@ -287,7 +321,36 @@
     box-shadow: 0 4px 12px rgba(255, 211, 0, 0.2);
   }
 
-  /* Scanlines for EBN theme */
+  /* THEME-SPECIFIC VISUAL EFFECTS */
+  
+  /* 1. Waffle House - Diner Menu Texture */
+  .waffle-texture::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 8px,
+        rgba(245, 158, 11, 0.05) 8px,
+        rgba(245, 158, 11, 0.05) 16px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 8px,
+        rgba(217, 119, 6, 0.03) 8px,
+        rgba(217, 119, 6, 0.03) 16px
+      );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* 2. EBN Hijack - Animated Scanlines + Glitch */
   .scanlines::before {
     content: '';
     position: absolute;
@@ -299,14 +362,45 @@
       0deg,
       transparent,
       transparent 2px,
-      rgba(132, 204, 22, 0.03) 2px,
-      rgba(132, 204, 22, 0.03) 4px
+      rgba(132, 204, 22, 0.06) 2px,
+      rgba(132, 204, 22, 0.06) 4px
     );
     pointer-events: none;
     z-index: 1000;
+    animation: scanlineFlicker 3s ease-in-out infinite;
   }
 
-  /* Heavy Metal effects for Ozzy theme */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(168, 85, 247, 0.1) 50%,
+        transparent 100%
+      );
+    pointer-events: none;
+    z-index: 1001;
+    animation: cyberpunkSweep 6s ease-in-out infinite;
+  }
+
+  @keyframes scanlineFlicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  @keyframes cyberpunkSweep {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* 3. Heavy Metal - Brutal Industrial Texture */
   .metal-texture::before {
     content: '';
     position: absolute;
@@ -314,18 +408,39 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 1px,
-      rgba(139, 0, 0, 0.02) 1px,
-      rgba(139, 0, 0, 0.02) 2px
-    );
+    background: 
+      repeating-linear-gradient(
+        30deg,
+        transparent,
+        transparent 1px,
+        rgba(220, 38, 38, 0.1) 1px,
+        rgba(220, 38, 38, 0.1) 2px
+      ),
+      repeating-linear-gradient(
+        -30deg,
+        transparent,
+        transparent 1px,
+        rgba(127, 29, 29, 0.08) 1px,
+        rgba(127, 29, 29, 0.08) 2px
+      ),
+      repeating-radial-gradient(
+        circle at 50% 50%,
+        transparent,
+        transparent 3px,
+        rgba(185, 28, 28, 0.03) 3px,
+        rgba(185, 28, 28, 0.03) 6px
+      );
     pointer-events: none;
     z-index: 1000;
+    animation: metalPulse 4s ease-in-out infinite;
   }
 
-  /* NWO Wrestling effects for Hogan theme */
+  @keyframes metalPulse {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.001); }
+  }
+
+  /* 4. NWO Hollywood - Wrestling Stripes + Gold Glow */
   .nwo-stripes::before {
     content: '';
     position: absolute;
@@ -333,15 +448,30 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 8px,
-      rgba(255, 0, 0, 0.05) 8px,
-      rgba(255, 0, 0, 0.05) 16px
-    );
+    background: 
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 12px,
+        rgba(220, 38, 38, 0.15) 12px,
+        rgba(220, 38, 38, 0.15) 24px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 60px,
+        rgba(234, 179, 8, 0.08) 60px,
+        rgba(234, 179, 8, 0.08) 62px
+      );
     pointer-events: none;
     z-index: 1000;
+    animation: wrestlingPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes wrestlingPulse {
+    0%, 100% { opacity: 0.9; }
+    33% { opacity: 1; }
+    66% { opacity: 0.8; }
   }
 
   /* HULKSTER mode special effects */
@@ -458,14 +588,19 @@
     -webkit-line-clamp: 2;
   }
 
-  /* Mario Plumber Theme Styles */
+  /* 7. MARIO PLUMBER - Nintendo Rainbow Colors */
   .mario-gradient {
-    background: linear-gradient(135deg, 
-      #e74c3c 0%,   /* Mario Red */
-      #3498db 25%,  /* Mario Blue */
-      #f39c12 50%,  /* Gold Coins */
-      #27ae60 75%,  /* Green Pipes */
-      #e74c3c 100%  /* Back to Red */
+    background: 
+      radial-gradient(circle at 35% 35%, rgba(243, 156, 18, 0.4) 0%, transparent 60%),
+      radial-gradient(circle at 65% 65%, rgba(231, 76, 60, 0.3) 0%, transparent 50%),
+      linear-gradient(135deg, 
+        #e74c3c 0%,   /* Mario Red */
+        #3498db 16%,  /* Mario Blue */
+        #f39c12 32%,  /* Gold Coins */
+        #27ae60 48%,  /* Green Pipes */
+        #9b59b6 64%,  /* Purple Power */
+        #e67e22 80%,  /* Orange Fire */
+        #e74c3c 100%  /* Back to Red */
     );
   }
 
@@ -642,5 +777,128 @@
       contrast(1.1) 
       brightness(1.05)
       sepia(0.05);
+  }
+
+  /* ADDITIONAL UNIQUE THEME EFFECTS */
+  
+  /* 5. D-Generation X - Attitude Era Pulse */
+  .dx-pulse::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(
+        circle at 30% 70%,
+        rgba(233, 69, 96, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 70% 30%,
+        rgba(59, 130, 246, 0.08) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
+    z-index: 1000;
+    animation: attitudeEra 2.5s ease-in-out infinite;
+  }
+
+  @keyframes attitudeEra {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+  }
+
+  /* 6. Max Headroom - Terminal Flicker */
+  .terminal-flicker::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 1px,
+        rgba(34, 197, 94, 0.05) 1px,
+        rgba(34, 197, 94, 0.05) 2px
+      );
+    pointer-events: none;
+    z-index: 1000;
+    animation: terminalPulse 1.5s linear infinite;
+  }
+
+  .terminal-flicker::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(
+        45deg,
+        transparent 0%,
+        rgba(0, 255, 0, 0.03) 25%,
+        transparent 50%,
+        rgba(34, 197, 94, 0.02) 75%,
+        transparent 100%
+      );
+    pointer-events: none;
+    z-index: 1001;
+    animation: matrixFlow 8s linear infinite;
+  }
+
+  @keyframes terminalPulse {
+    0%, 98% { opacity: 1; }
+    99% { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes matrixFlow {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  /* 7. Mario Plumber - Power-Up Sparkles */
+  .mario-sparkles::before {
+    content: '⭐✨🍄';
+    position: absolute;
+    top: 5%;
+    left: -10%;
+    font-size: 14px;
+    opacity: 0.6;
+    animation: marioFloat 12s linear infinite;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .mario-sparkles::after {
+    content: '🔥💫🍀';
+    position: absolute;
+    bottom: 5%;
+    right: -10%;
+    font-size: 12px;
+    opacity: 0.5;
+    animation: marioFloat2 15s linear infinite reverse;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  @keyframes marioFloat {
+    0% { left: -10%; opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { left: 110%; opacity: 0; }
+  }
+
+  @keyframes marioFloat2 {
+    0% { right: -10%; opacity: 0; }
+    10% { opacity: 0.5; }
+    90% { opacity: 0.5; }
+    100% { right: 110%; opacity: 0; }
   }
 }
