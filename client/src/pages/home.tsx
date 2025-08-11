@@ -29,7 +29,7 @@ import { MarioButton } from '@/components/MarioButton';
 
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { LiveVideoMode } from '@/components/LiveVideoMode';
-import { WorkspaceLayoutSaver } from '@/components/WorkspaceLayoutSaver';
+import { MediaControls } from '@/components/MediaControls';
 import { ResizablePanels } from '@/components/ResizablePanels';
 import { DockingGuides } from '@/components/DockingGuides';
 import { useStore } from '@/lib/store';
@@ -240,7 +240,7 @@ export default function Home() {
 
             {/* Controls */}
             <div className="flex items-center space-x-2">
-              <WorkspaceLayoutSaver />
+              <MediaControls />
               
               <Button 
                 variant="ghost" 
