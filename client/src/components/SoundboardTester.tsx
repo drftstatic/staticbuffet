@@ -299,91 +299,73 @@ export function SoundboardTester() {
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className={`sm:max-w-3xl ${getThemeClasses()}`}>
+        <DialogContent className={`sm:max-w-lg ${getThemeClasses()}`}>
           <DialogHeader>
             <div className="flex items-center justify-between">
-              <DialogTitle className="text-2xl font-bold">Soundboard & Audio Compatibility Test</DialogTitle>
+              <DialogTitle className="text-lg font-bold">Audio Test</DialogTitle>
               <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
                 <X className="w-4 h-4" />
               </Button>
             </div>
           </DialogHeader>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Browser Capabilities */}
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Browser Capabilities</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Browser Capabilities</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center space-x-2">
-                    {getCapabilityIcon(capabilities.audioContext)}
+              <CardContent className="space-y-2">
+                <div className="grid grid-cols-1 gap-2 text-sm">
+                  <div className="flex items-center justify-between">
                     <span>Audio Context</span>
+                    {getCapabilityIcon(capabilities.audioContext)}
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {getCapabilityIcon(capabilities.mediaDevices)}
-                    <span>Media Devices API</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {getCapabilityIcon(capabilities.getUserMedia)}
-                    <span>getUserMedia</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {getCapabilityIcon(capabilities.audioPlayback)}
-                    <span>Audio Playback</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {getCapabilityIcon(capabilities.webAudioAPI)}
+                  <div className="flex items-center justify-between">
                     <span>Web Audio API</span>
+                    {getCapabilityIcon(capabilities.webAudioAPI)}
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-between">
+                    <span>Microphone</span>
                     {getPermissionIcon(micPermission)}
-                    <span>Microphone: {micPermission}</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Audio Context Status */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Audio Context Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-4">
-                  <Badge variant={audioContextState === 'running' ? 'default' : 'secondary'}>
-                    {audioContextState}
-                  </Badge>
-                  <Button
-                    onClick={initializeAudioContext}
-                    variant="outline"
-                    size="sm"
-                    disabled={audioContextState === 'running'}
-                  >
-                    {audioContextState === 'running' ? 'Audio Ready' : 'Initialize Audio'}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="flex items-center justify-between">
+              <Badge variant={audioContextState === 'running' ? 'default' : 'secondary'}>
+                Audio: {audioContextState}
+              </Badge>
+              <Button
+                onClick={initializeAudioContext}
+                variant="outline"
+                size="sm"
+                disabled={audioContextState === 'running'}
+              >
+                {audioContextState === 'running' ? 'Ready' : 'Initialize'}
+              </Button>
+            </div>
 
             {/* Test Sounds */}
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Test Audio Playback</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Test Audio Playback</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  {TEST_SOUNDS.map((sound) => (
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  {TEST_SOUNDS.slice(0, 2).map((sound) => (
                     <Button
                       key={sound.id}
                       onClick={() => playTestSound(sound)}
                       variant="outline"
-                      className="flex items-center space-x-2"
+                      size="sm"
+                      className="text-xs"
                       data-testid={`button-test-sound-${sound.id}`}
                     >
-                      <Play className="w-4 h-4" />
-                      <span>{sound.name}</span>
+                      <Play className="w-3 h-3 mr-1" />
+                      {sound.name.split(' ')[0]}
                     </Button>
                   ))}
                 </div>
@@ -392,6 +374,7 @@ export function SoundboardTester() {
                   onClick={runFullAudioTest}
                   disabled={isTestingAudio}
                   className="w-full"
+                  size="sm"
                   data-testid="button-run-full-test"
                 >
                   {isTestingAudio ? (
@@ -405,36 +388,22 @@ export function SoundboardTester() {
                 </Button>
 
                 {isTestingAudio && (
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-3 space-y-2">
                     <Progress value={testProgress} className="w-full" />
-                    <p className="text-sm text-center opacity-70">{currentTest}</p>
+                    <p className="text-xs text-center opacity-70">{currentTest}</p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Troubleshooting */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Troubleshooting Tips</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Alert>
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    <strong>If audio isn't working:</strong>
-                    <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                      <li>Click anywhere on the page first (browsers require user interaction)</li>
-                      <li>Check your browser's audio/autoplay settings</li>
-                      <li>Disable ad blockers or privacy extensions temporarily</li>
-                      <li>Try a different browser (Chrome, Firefox, Safari, Edge)</li>
-                      <li>Make sure JavaScript is enabled</li>
-                      <li>Allow microphone access for audio-reactive features</li>
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
+            {/* Quick Tips */}
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="text-sm">
+                <strong>Quick Fix:</strong> Click anywhere on the page first, then test sounds. 
+                Allow microphone access for audio-reactive features.
+              </AlertDescription>
+            </Alert>
           </div>
         </DialogContent>
       </Dialog>
