@@ -38,9 +38,6 @@ interface AppStore extends AppState {
   
   // Panel actions
   togglePanelCollapse: (panel: 'search' | 'player' | 'queue' | 'effects') => void;
-  
-  // Panel actions
-  togglePanelCollapse: (panel: 'search' | 'player' | 'queue' | 'effects') => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({

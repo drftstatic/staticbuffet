@@ -139,24 +139,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         file.name?.match(/\.(mp4|mov|avi|mkv|webm)$/i)
       ) || [];
       
-      // Also look for any file that might be a video based on name patterns
-      const allPossibleVideos = data.files?.filter((file: any) => 
-        videoFiles.includes(file) || 
-        file.name?.match(/\.(mp4|mov|avi|mkv|webm|flv|ogv)$/i) ||
-        (file.size && parseInt(file.size) > 1000000) // Larger than 1MB
-      ) || [];
+      // Sort by quality preference: full resolution first, then 512kb, then others
+      const sortedVideoFiles = videoFiles.sort((a: any, b: any) => {
+        const aName = a.name?.toLowerCase() || '';
+        const bName = b.name?.toLowerCase() || '';
+        
+        // Prefer files without quality suffixes (original)
+        const aHasQuality = aName.includes('_512kb') || aName.includes('_256kb') || aName.includes('_thumb');
+        const bHasQuality = bName.includes('_512kb') || bName.includes('_256kb') || bName.includes('_thumb');
+        
+        if (!aHasQuality && bHasQuality) return -1;
+        if (aHasQuality && !bHasQuality) return 1;
+        
+        // If both have quality indicators, prefer higher quality
+        if (aName.includes('_512kb') && bName.includes('_256kb')) return -1;
+        if (aName.includes('_256kb') && bName.includes('_512kb')) return 1;
+        
+        return 0;
+      });
       
-      const bestFile = videoFiles.find((file: any) => file.format === 'h.264') || 
-                      videoFiles.find((file: any) => file.format === 'MPEG4') || 
-                      videoFiles.find((file: any) => file.name?.endsWith('.mp4')) ||
-                      allPossibleVideos[0];
+      const bestVideoFile = sortedVideoFiles[0];
+      const streamUrl = bestVideoFile ? 
+        `https://archive.org/download/${identifier}/${bestVideoFile.name}` : 
+        null;
       
       res.json({
         metadata: data.metadata,
         files: data.files,
-        videoFile: bestFile,
-        videoFiles: allPossibleVideos,
-        streamUrl: bestFile ? `https://archive.org/download/${identifier}/${bestFile.name}` : null,
+        videoFile: bestVideoFile,
+        videoFiles: sortedVideoFiles,
+        streamUrl: streamUrl,
         detailsUrl: `https://archive.org/details/${identifier}`
       });
       
