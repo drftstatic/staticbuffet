@@ -19,6 +19,7 @@ import { Player } from '@/components/Player';
 import { Footer } from '@/components/Footer';
 import { DXButton } from '@/components/DXButton';
 import { DXSoundboard } from '@/components/DXSoundboard';
+import { HulksterButton } from '@/components/HulksterButton';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
@@ -201,6 +202,7 @@ export default function Home() {
               </Link>
               <ThemeSwitcher />
               <DXButton />
+              <HulksterButton />
               <GroupedControls />
             </div>
           </div>
