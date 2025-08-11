@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { useStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import DonationCTA from '@/components/DonationCTA';
+import { ChangelogModal } from '@/components/ChangelogModal';
 
 export default function About() {
   const { brandSkin, isHulksterMode } = useStore();
@@ -41,6 +42,7 @@ export default function About() {
               About Static Buffet
             </h1>
           </div>
+          <ChangelogModal />
         </div>
       </header>
 
