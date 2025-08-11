@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Volume2 } from 'lucide-react';
 import { useStore } from '@/lib/store';
+import { ttsService } from '@/lib/text-to-speech';
 
 interface DXSound {
   id: string;
@@ -25,39 +26,17 @@ export function DXSoundboard() {
 
   const playSound = async (sound: DXSound) => {
     try {
-      // Create audio context if needed
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioContextClass) {
-        throw new Error('Web Audio API not supported');
+      // Speak the quote with DX character voice (aggressive, attitude-era style)
+      if (ttsService.isSupported()) {
+        await ttsService.speak(sound.text, 'dx');
+      } else {
+        throw new Error('Text-to-speech not supported');
       }
-
-      const audioContext = new AudioContextClass();
-      if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-      }
-
-      // Create an attitude-era wrestling entrance sound
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      // Aggressive, mid-range frequency for attitude era sound
-      const frequency = 250 + (sound.id.length * 70);
-      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-      oscillator.type = 'sawtooth';
-
-      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.6);
-
+      
       console.log('🔊 DX Quote:', sound.text);
     } catch (error) {
-      console.error('Audio playback failed:', error);
-      console.log('🔊 DX Quote (no audio):', sound.text);
+      console.error('Text-to-speech failed:', error);
+      console.log('🔊 DX Quote (no speech):', sound.text);
     }
   };
 

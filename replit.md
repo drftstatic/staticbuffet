@@ -17,7 +17,8 @@ Static Buffet is a professional VJ-focused web application designed for searchin
 - ✅ Implemented sessionStorage metadata caching with 15-minute TTL
 - ✅ Created skeleton loaders for all content types with theme integration
 - ✅ Completed first-run guided tour covering essential VJ workflow
-- ✅ **NEW**: Responsive Layout Hint Animations - Interactive UI that shows layout adaptations across mobile/tablet/desktop with smooth transitions and visual cues
+- ✅ Responsive Layout Hint Animations - Interactive UI that shows layout adaptations across mobile/tablet/desktop with smooth transitions and visual cues
+- ✅ **NEW**: Text-to-Speech Soundboards - All soundboards now use browser speech synthesis with character-specific voice configurations for authentic audio playback
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -55,7 +56,7 @@ Preferred communication style: Simple, everyday language.
 - **Theme Consistency**: Complete visual treatment across all pages (Home, About) with comprehensive styling for headers, panels, text, icons, interactive elements, tooltips, and modal overlays.
 - **Theme Access**: Dakota and Blondie themes accessible via dropdown theme selector for cleaner interface, all other themes via dedicated buttons.
 - **Interactive Easter Eggs**: Triple-click activations for theme-specific soundboards and visual transformations with complete audio feedback.
-- **Complete Soundboard System**: Seven themes feature fully implemented soundboards with 8 sounds each, using toast notification feedback and triple-click activation pattern.
+- **Complete Soundboard System**: Seven themes feature fully implemented soundboards with 8 sounds each, using actual text-to-speech audio with character-specific voice configurations and toast notification feedback via triple-click activation pattern.
 - **Enhanced UI Components**: All new components (license badges, drag overlays, drop zones) inherit theme styling automatically through CSS variables and theme functions.
 - **Styling Architecture**: CSS Variables for theming, Inter and JetBrains Mono fonts, theme-specific CSS overlays, and comprehensive theme function for consistent styling across components.
 - **Professional Layout**: Panel-based layout inspired by professional media workstations (Adobe Premiere, Resolume), distinct work zones (Search/Results, Preview/Player, Queue/Timeline, Effects/Mix), professional player interface with LIVE indicator and timecode, and timeline-based queue.

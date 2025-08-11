@@ -20,6 +20,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useStore } from '@/lib/store';
+import { ttsService } from '@/lib/text-to-speech';
 
 interface BrowserCapabilities {
   audioContext: boolean;
@@ -368,6 +369,19 @@ export function SoundboardTester() {
                       {sound.name.split(' ')[0]}
                     </Button>
                   ))}
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2 mb-3">
+                  <Button
+                    onClick={() => ttsService.speak('Testing speech synthesis', 'mario')}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                    data-testid="button-test-tts"
+                  >
+                    <Volume2 className="w-3 h-3 mr-1" />
+                    Test Speech
+                  </Button>
                 </div>
                 
                 <Button

@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { ttsService } from '@/lib/text-to-speech';
 
 interface OzzySound {
   id: string;
@@ -36,67 +37,24 @@ export function OzzySoundboard({ isOpen, onClose }: OzzySoundboardProps) {
 
   const playSound = async (sound: OzzySound) => {
     try {
-      // Create audio context if needed
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioContextClass) {
-        throw new Error('Web Audio API not supported');
-      }
-
-      const audioContext = new AudioContextClass();
-      if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-      }
-
-      // Create a heavy metal-style distorted sound
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      const distortion = audioContext.createWaveShaper();
-
-      // Create distortion curve for metal sound
-      const makeDistortionCurve = (amount: number) => {
-        const samples = 44100;
-        const curve = new Float32Array(samples);
-        const deg = Math.PI / 180;
-        for (let i = 0; i < samples; i++) {
-          const x = (i * 2) / samples - 1;
-          curve[i] = ((3 + amount) * x * 20 * deg) / (Math.PI + amount * Math.abs(x));
-        }
-        return curve;
-      };
-
-      distortion.curve = makeDistortionCurve(400);
-      distortion.oversample = '4x';
-
-      oscillator.connect(distortion);
-      distortion.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      // Heavy, low frequency for metal sound
-      const frequency = 80 + (sound.id.length * 30);
-      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-      oscillator.type = 'sawtooth';
-
-      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.5);
-
+      // Show toast immediately
       toast({
         title: `🦇 OZZY SAYS:`,
         description: sound.text,
         duration: 3000,
       });
 
-      // Clean up
-      setTimeout(() => {
-        audioContext.close();
-      }, 1000);
+      // Speak the quote with Ozzy character voice (low pitch, British accent)
+      if (ttsService.isSupported()) {
+        await ttsService.speak(sound.text, 'ozzy');
+      } else {
+        throw new Error('Text-to-speech not supported');
+      }
     } catch (error) {
-      console.error('Audio playback failed:', error);
+      console.error('Text-to-speech failed:', error);
       toast({
         title: `🦇 OZZY SAYS:`,
-        description: sound.text + ' (Audio not available - check browser settings)',
+        description: sound.text + ' (Speech not available - check browser settings)',
         duration: 3000,
       });
     }

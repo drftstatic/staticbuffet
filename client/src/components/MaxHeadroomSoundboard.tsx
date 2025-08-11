@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { ttsService } from '@/lib/text-to-speech';
 
 interface MaxSound {
   id: string;
@@ -36,60 +37,24 @@ export function MaxHeadroomSoundboard({ isOpen, onClose }: MaxHeadroomSoundboard
 
   const playSound = async (sound: MaxSound) => {
     try {
-      // Create audio context if needed
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioContextClass) {
-        throw new Error('Web Audio API not supported');
-      }
-
-      const audioContext = new AudioContextClass();
-      if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-      }
-
-      // Create a glitchy, digital Max Headroom-style sound
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      const filter = audioContext.createBiquadFilter();
-
-      oscillator.connect(filter);
-      filter.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      // Digital, glitchy frequency pattern
-      const baseFreq = 300 + (sound.id.length * 60);
-      oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
-      oscillator.frequency.setValueAtTime(baseFreq * 0.7, audioContext.currentTime + 0.05);
-      oscillator.frequency.setValueAtTime(baseFreq * 1.3, audioContext.currentTime + 0.1);
-      oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime + 0.15);
-      oscillator.type = 'square';
-
-      // Add digital filtering
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(800, audioContext.currentTime);
-      filter.Q.setValueAtTime(10, audioContext.currentTime);
-
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.3);
-
+      // Show toast immediately
       toast({
         title: `📺 MAX HEADROOM:`,
         description: sound.text,
         duration: 3000,
       });
 
-      // Clean up
-      setTimeout(() => {
-        audioContext.close();
-      }, 1000);
+      // Speak the quote with Max Headroom character voice (digital, slightly robotic)
+      if (ttsService.isSupported()) {
+        await ttsService.speak(sound.text, 'maxheadroom');
+      } else {
+        throw new Error('Text-to-speech not supported');
+      }
     } catch (error) {
-      console.error('Audio playback failed:', error);
+      console.error('Text-to-speech failed:', error);
       toast({
         title: `📺 MAX HEADROOM:`,
-        description: sound.text + ' (Audio not available - check browser settings)',
+        description: sound.text + ' (Speech not available - check browser settings)',
         duration: 3000,
       });
     }
