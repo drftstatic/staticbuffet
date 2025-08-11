@@ -23,6 +23,40 @@ export interface VideoResult {
   thumbnail?: string;
 }
 
+export interface VideoEffects {
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  hue: number;
+  blur: number;
+  opacity: number;
+  grayscale: number;
+  invert: number;
+  sepia: number;
+  rotate: number;
+  scaleX: number;
+  scaleY: number;
+  glitchIntensity: number;
+  chromaticAberration: number;
+  scanlines: boolean;
+  datamosh: boolean;
+  pixelate: number;
+}
+
+export interface AudioEffects {
+  gain: number;
+  bass: number;
+  mid: number;
+  treble: number;
+  distortion: number;
+  reverb: number;
+  delay: number;
+  chorus: number;
+  bitcrush: number;
+  lowpass: number;
+  highpass: number;
+}
+
 export interface AppState {
   brandSkin: BrandSkin;
   searchState: SearchState;
@@ -35,6 +69,8 @@ export interface AppState {
   isAudioReactive: boolean;
   isLoading: boolean;
   totalResults: number;
+  videoEffects: VideoEffects;
+  audioEffects: AudioEffects;
 }
 
 export interface QueueItem {

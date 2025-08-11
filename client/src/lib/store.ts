@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState } from './types';
+import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState, type VideoEffects, type AudioEffects } from './types';
 
 interface AppStore extends AppState {
   // Theme actions
@@ -31,6 +31,10 @@ interface AppStore extends AppState {
   // Audio reactive
   setAudioReactive: (reactive: boolean) => void;
   setQueueItems: (items: QueueItem[]) => void;
+  
+  // Effects
+  setVideoEffects: (effects: VideoEffects) => void;
+  setAudioEffects: (effects: AudioEffects) => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
@@ -54,6 +58,40 @@ export const useStore = create<AppStore>((set, get) => ({
   isAudioReactive: false,
   isLoading: false,
   totalResults: 0,
+  
+  // Effects state
+  videoEffects: {
+    brightness: 100,
+    contrast: 100,
+    saturation: 100,
+    hue: 0,
+    blur: 0,
+    opacity: 100,
+    grayscale: 0,
+    invert: 0,
+    sepia: 0,
+    rotate: 0,
+    scaleX: 100,
+    scaleY: 100,
+    glitchIntensity: 0,
+    chromaticAberration: 0,
+    scanlines: false,
+    datamosh: false,
+    pixelate: 0,
+  },
+  audioEffects: {
+    gain: 100,
+    bass: 0,
+    mid: 0,
+    treble: 0,
+    distortion: 0,
+    reverb: 0,
+    delay: 0,
+    chorus: 0,
+    bitcrush: 0,
+    lowpass: 20000,
+    highpass: 20,
+  },
 
   // Theme actions
   setBrandSkin: (skin) => set({ brandSkin: skin }),
@@ -133,4 +171,8 @@ export const useStore = create<AppStore>((set, get) => ({
   
   // Set entire queue
   setQueueItems: (items) => set({ queueItems: items }),
+  
+  // Effects actions
+  setVideoEffects: (effects) => set({ videoEffects: effects }),
+  setAudioEffects: (effects) => set({ audioEffects: effects }),
 }));

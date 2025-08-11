@@ -18,7 +18,9 @@ export function Player() {
     setCurrentQueueIndex,
     nextTrack,
     previousTrack,
-    isAudioReactive
+    isAudioReactive,
+    videoEffects,
+    audioEffects
   } = useStore();
 
   const currentVideo = queueItems[currentQueueIndex];
@@ -113,6 +115,32 @@ export function Player() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // Generate CSS filter string from video effects
+  const generateFilterString = () => {
+    const filters = [
+      `brightness(${videoEffects.brightness}%)`,
+      `contrast(${videoEffects.contrast}%)`,
+      `saturate(${videoEffects.saturation}%)`,
+      `hue-rotate(${videoEffects.hue}deg)`,
+      `blur(${videoEffects.blur}px)`,
+      `opacity(${videoEffects.opacity}%)`,
+      `grayscale(${videoEffects.grayscale}%)`,
+      `invert(${videoEffects.invert}%)`,
+      `sepia(${videoEffects.sepia}%)`
+    ];
+    return filters.join(' ');
+  };
+
+  // Generate transform string from video effects
+  const generateTransformString = () => {
+    const transforms = [
+      `rotate(${videoEffects.rotate}deg)`,
+      `scaleX(${videoEffects.scaleX / 100})`,
+      `scaleY(${videoEffects.scaleY / 100})`
+    ];
+    return transforms.join(' ');
+  };
+
   if (!currentVideo) {
     return (
       <div className="bg-black rounded-lg p-8 text-center text-gray-400">
@@ -129,15 +157,69 @@ export function Player() {
         <video
           ref={videoRef}
           className="w-full h-full object-contain"
-          style={{ display: isAudioReactive ? 'none' : 'block' }}
+          style={{ 
+            display: isAudioReactive ? 'none' : 'block',
+            filter: generateFilterString(),
+            transform: generateTransformString(),
+            willChange: 'filter, transform'
+          }}
         />
         <canvas
           ref={canvasRef}
           width={640}
           height={360}
           className="w-full h-full object-contain"
-          style={{ display: isAudioReactive ? 'block' : 'none' }}
+          style={{ 
+            display: isAudioReactive ? 'block' : 'none',
+            filter: generateFilterString(),
+            transform: generateTransformString()
+          }}
         />
+        
+        {/* VJ Effects Overlays */}
+        {videoEffects.scanlines && (
+          <div 
+            className="absolute inset-0 opacity-30 pointer-events-none"
+            style={{
+              background: `repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 0, 0.1) 2px,
+                rgba(0, 255, 0, 0.1) 4px
+              )`
+            }}
+          />
+        )}
+        
+        {videoEffects.glitchIntensity > 0 && (
+          <div 
+            className="absolute inset-0 pointer-events-none mix-blend-difference"
+            style={{
+              background: `linear-gradient(90deg, 
+                rgba(255, 0, 0, ${videoEffects.glitchIntensity / 400}) 0%, 
+                transparent 33%, 
+                rgba(0, 255, 0, ${videoEffects.glitchIntensity / 400}) 66%, 
+                transparent 100%
+              )`,
+              animation: videoEffects.glitchIntensity > 50 ? 'glitch 0.1s infinite' : 'none'
+            }}
+          />
+        )}
+        
+        {videoEffects.chromaticAberration > 0 && (
+          <div 
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              mixBlendMode: 'screen',
+              background: `radial-gradient(circle, 
+                rgba(255, 0, 0, ${videoEffects.chromaticAberration / 300}) 0%, 
+                transparent 50%, 
+                rgba(0, 0, 255, ${videoEffects.chromaticAberration / 300}) 100%
+              )`
+            }}
+          />
+        )}
         
         {/* Video Info Overlay */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">

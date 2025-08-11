@@ -6,6 +6,7 @@ import { Filters } from '@/components/Filters';
 import { ResultsGrid } from '@/components/ResultsGrid';
 import { QueuePanel } from '@/components/QueuePanel';
 import { DetailDrawer } from '@/components/DetailDrawer';
+import { EffectsPanel } from '@/components/EffectsPanel';
 import { BottomHUD } from '@/components/BottomHUD';
 import { BrandSkinToggle } from '@/components/BrandSkinToggle';
 import { EmergencyMix } from '@/components/EmergencyMix';
@@ -135,6 +136,15 @@ export default function Home() {
           brandSkin === 'diner' ? 'bg-orange-50' : 'bg-gray-900'
         }`}>
           <ResultsGrid onVideoSelect={handleVideoSelect} />
+        </div>
+
+        {/* Effects Panel */}
+        <div className={`w-80 border-r overflow-y-auto ${
+          brandSkin === 'diner' 
+            ? 'bg-white border-amber-200' 
+            : 'bg-gray-800 border-lime-500/20'
+        }`}>
+          <EffectsPanel />
         </div>
 
         {/* Queue Panel */}
