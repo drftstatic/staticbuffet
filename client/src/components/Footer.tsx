@@ -119,7 +119,14 @@ export function Footer() {
           <span>AUDIO: {buildInfo.audio}</span>
           <span>VIDEO: {buildInfo.video}</span>
           <span className="text-xs opacity-70">
-            Trash Team × Nulltone.TV
+            Trash Team × <a 
+              href="https://twitter.com/nulltonetv" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              Nulltone.TV
+            </a>
           </span>
         </div>
       </div>

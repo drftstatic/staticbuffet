@@ -102,12 +102,11 @@ export default function Home() {
           : 'glass-dark border-lime-500/30'
       }`}>
         <div className="max-w-full px-4 py-3">
-          {/* First Row - Brand and Controls */}
-          <div className="flex items-center justify-between mb-3">
-            {/* Logo and Brand */}
-            <div className="flex flex-col space-y-1">
-              {/* Brand Attribution */}
-              <div className="flex items-center space-x-2 text-xs font-medium tracking-wider">
+          <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-4 lg:gap-8 items-center">
+            {/* Brand Information */}
+            <div className="flex flex-col space-y-3">
+              {/* Attribution Links */}
+              <div className="flex items-center space-x-2 text-sm">
                 <a 
                   href="https://trashteam.tv" 
                   target="_blank" 
@@ -163,6 +162,11 @@ export default function Home() {
               </p>
             </div>
 
+            {/* Search Bar - Center, Much Bigger */}
+            <div className="w-full">
+              <SearchBar onSearch={handleSearch} />
+            </div>
+
             {/* Action Buttons */}
             <div className="flex items-center space-x-2">
               <Link href="/about">
@@ -188,13 +192,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Second Row - Search Bar (Much Bigger) */}
-          <div className="mb-3">
-            <SearchBar onSearch={handleSearch} />
-          </div>
-
-          {/* Third Row - Filters */}
-          <div>
+          {/* Filters Row */}
+          <div className="mt-4">
             <Filters onFiltersChange={handleFiltersChange} />
           </div>
         </div>
