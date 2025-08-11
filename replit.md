@@ -13,6 +13,16 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 
 ## Recent Changes
 
+### Version 0.1.6 Release (January 11, 2025)
+- **Critical Video Playback Fix**: Resolved complete video playback failure that was blocking all functionality
+  - Root cause: Browser compatibility issues with Archive.org video formats and CORS restrictions
+  - Solution: Implemented server-side video proxy with strict browser-compatible format filtering
+  - Technical details: HTML5 video elements cannot handle AVI files or follow Archive.org redirects
+- **Browser-Compatible Format Selection**: Server now filters to only MP4, WebM, and compatible MOV files
+- **Video Proxy System**: Express server streams Archive.org videos through `/api/video/:identifier/:filename` endpoint
+- **Enhanced Error Logging**: Added comprehensive video error debugging with error codes and network states
+- **Confirmed Working**: Videos now load and play successfully with proper duration, dimensions, and playback controls
+
 ### Version 0.1.5 Release (January 11, 2025)
 - **Efficient Header Layout**: Redesigned header with three-row structure for optimal space usage
   - Row 1: Compact brand logo + controls on right
