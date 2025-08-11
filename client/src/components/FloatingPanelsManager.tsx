@@ -8,7 +8,7 @@ import { Player } from './Player';
 import { QueuePanel } from './QueuePanel';
 import { EffectsPanel } from './EffectsPanel';
 import { ResultsGrid } from './ResultsGrid';
-import { SearchBar } from './SearchBar';
+
 
 export function FloatingPanelsManager() {
   const { brandSkin, isFloatingMode, floatingPanelStates } = useStore();
@@ -26,7 +26,7 @@ export function FloatingPanelsManager() {
           title="Search Results"
           brandSkin={brandSkin}
         >
-          <ResultsGrid />
+          <ResultsGrid onVideoSelect={() => {}} />
         </FloatingPanel>
       </div>
 

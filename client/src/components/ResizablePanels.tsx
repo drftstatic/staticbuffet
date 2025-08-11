@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle, ImperativePanelHandle } from 'react-resizable-panels';
 import { GripVertical, GripHorizontal } from 'lucide-react';
-import { SearchBar } from '@/components/SearchBar';
+
 import { Filters } from '@/components/Filters';
 import { ResultsGrid } from '@/components/ResultsGrid';
 import { Player } from '@/components/Player';
@@ -86,7 +86,9 @@ export function ResizablePanels({
             
             <div className="flex-1 overflow-hidden flex flex-col p-4 space-y-4">
               <div className="space-y-3">
-                <SearchBar onSearch={onSearch} />
+                <div className="p-2">
+                  <div className="text-sm text-center opacity-70">Search controls are in the header</div>
+                </div>
                 <Filters onFiltersChange={() => {}} />
               </div>
               
