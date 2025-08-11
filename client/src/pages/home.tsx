@@ -11,6 +11,7 @@ import { EffectsPanel } from '@/components/EffectsPanel';
 import { EffectPresetNotification } from '@/components/EffectPresetNotification';
 import { BottomHUD } from '@/components/BottomHUD';
 import { DevicePrompt } from '@/components/DevicePrompt';
+import { WelcomeModal } from '@/components/WelcomeModal';
 import { BrandSkinToggle } from '@/components/BrandSkinToggle';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Button } from '@/components/ui/button';
@@ -446,6 +447,9 @@ export default function Home() {
 
       {/* DX Soundboard */}
       <DXSoundboard />
+
+      {/* Welcome Modal */}
+      <WelcomeModal />
     </div>
     </>
   );
