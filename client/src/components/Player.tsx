@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useAdaptiveColors } from '@/hooks/use-adaptive-colors';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
@@ -36,6 +37,9 @@ export function Player() {
   } = useStore();
 
   const currentVideo = queueItems[currentQueueIndex];
+  
+  // Initialize adaptive colors
+  const { analyzeCurrentFrame } = useAdaptiveColors(videoRef);
 
   useEffect(() => {
     if (videoRef.current && currentVideo) {

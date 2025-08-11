@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AdaptiveColorControls } from '@/components/AdaptiveColorControls';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -502,6 +503,19 @@ export function EffectsPanel() {
             <Button variant="outline" size="sm" onClick={resetAudioEffects} className="w-full">
               Reset Audio Effects
             </Button>
+          </AccordionContent>
+        </AccordionItem>
+        
+        {/* Adaptive Color Scheme */}
+        <AccordionItem value="adaptive-colors">
+          <AccordionTrigger className="text-sm">
+            <div className="flex items-center space-x-2">
+              <Palette className="w-4 h-4" />
+              <span>Adaptive Colors</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <AdaptiveColorControls />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

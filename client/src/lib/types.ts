@@ -65,6 +65,9 @@ export interface AudioEffects {
 
 export interface AppState {
   brandSkin: BrandSkin;
+  adaptiveColorsEnabled: boolean;
+  adaptiveIntensity: number;
+  currentVideoPalette: any | null;
   searchState: SearchState;
   searchResults: VideoResult[];
   selectedVideo: VideoResult | null;

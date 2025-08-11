@@ -3,6 +3,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Adaptive Color Variables - Dynamically updated by video analysis */
+:root {
+  --adaptive-primary: var(--primary);
+  --adaptive-secondary: var(--secondary);
+  --adaptive-accent: var(--accent);
+  --adaptive-background: var(--background);
+  --adaptive-text: var(--foreground);
+  --adaptive-muted: var(--muted);
+  --adaptive-intensity: 0.7;
+}
+
 :root {
   --background: hsl(36, 100%, 99%);
   --foreground: hsl(20, 14.3%, 4.1%);

@@ -39,11 +39,21 @@ interface AppStore extends AppState {
   // Panel actions
   togglePanelCollapse: (panel: 'search' | 'player' | 'queue' | 'effects') => void;
   resetPanels: () => void;
+  
+  // Adaptive color actions
+  setAdaptiveColorsEnabled: (enabled: boolean) => void;
+  setAdaptiveIntensity: (intensity: number) => void;
+  setCurrentVideoPalette: (palette: any) => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
   // Initial state
   brandSkin: 'waffle',
+  
+  // Adaptive colors state
+  adaptiveColorsEnabled: false,
+  adaptiveIntensity: 0.7,
+  currentVideoPalette: null,
   searchState: {
     query: '',
     yearFrom: '1950',
@@ -231,4 +241,9 @@ export const useStore = create<AppStore>((set, get) => ({
       effectsCollapsed: false,
     }
   })),
+  
+  // Adaptive color actions
+  setAdaptiveColorsEnabled: (enabled: boolean) => set({ adaptiveColorsEnabled: enabled }),
+  setAdaptiveIntensity: (intensity: number) => set({ adaptiveIntensity: intensity }),
+  setCurrentVideoPalette: (palette: any) => set({ currentVideoPalette: palette }),
 }));
