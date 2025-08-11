@@ -19,7 +19,7 @@ import { useStore } from '@/lib/store';
 import { ThemeSelector } from './ThemeSelector';
 import { ResponsiveLayoutHints } from './ResponsiveLayoutHints';
 import { LayoutControls } from './LayoutControls';
-import { EmergencyMix } from './EmergencyMix';
+
 import { getThemeClasses } from '@/lib/theme-utils';
 
 interface MasterControlPanelProps {
@@ -144,19 +144,16 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
 
               <div>
                 <h4 className={`font-medium mb-3 ${themeClasses.text}`}>Quick Actions</h4>
-                <div className="space-y-2">
-                  <EmergencyMix />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={resetPanels}
-                    className="w-full flex items-center space-x-2"
-                    data-testid="button-reset-panels"
-                  >
-                    <Tv size={14} />
-                    <span>Reset Layout</span>
-                  </Button>
-                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetPanels}
+                  className="w-full flex items-center space-x-2"
+                  data-testid="button-reset-panels"
+                >
+                  <Tv size={14} />
+                  <span>Reset Layout</span>
+                </Button>
               </div>
 
               <div>

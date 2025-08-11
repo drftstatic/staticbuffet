@@ -231,9 +231,25 @@ export function EffectsPanel() {
 
   return (
     <div className="space-y-3 p-3 max-h-[600px] overflow-y-auto">
-      <div className="flex items-center space-x-2">
-        <Zap className="h-4 w-4" />
-        <h3 className="font-medium text-sm">Effects (1-8)</h3>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Zap className="h-4 w-4" />
+          <h3 className="font-medium text-sm">Effects (1-8)</h3>
+        </div>
+        <Button 
+          size="sm" 
+          variant="outline"
+          onClick={() => {
+            // Simple emergency mix - generate quick queue
+            console.log('Emergency Mix triggered!');
+          }}
+          className="h-6 px-2 text-xs flex items-center space-x-1 bg-red-600/10 hover:bg-red-600/20 border-red-500/20"
+          title="Generate Emergency Mix"
+          data-testid="button-emergency-mix"
+        >
+          <span>⚡</span>
+          <span>MIX</span>
+        </Button>
       </div>
       
       {/* Ultra-Compact Quick Presets */}
