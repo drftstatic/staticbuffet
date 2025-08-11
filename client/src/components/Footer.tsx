@@ -62,7 +62,7 @@ export function Footer() {
   };
 
   const buildInfo = {
-    version: '0.1.0',
+    version: '0.3.0',
     build: '2025.01.11.001',
     engine: 'Static Buffet VJ Engine',
     audio: 'Web Audio API',
