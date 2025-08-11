@@ -86,9 +86,6 @@ export function ResizablePanels({
             
             <div className="flex-1 overflow-hidden flex flex-col p-4 space-y-4">
               <div className="space-y-3">
-                <div className="p-2">
-                  <div className="text-sm text-center opacity-70">Search controls are in the header</div>
-                </div>
                 <Filters onFiltersChange={() => {}} />
               </div>
               
