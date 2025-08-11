@@ -188,7 +188,7 @@ export function SourceToggles({ onSourcesChange }: SourceTogglesProps) {
       </Button>
 
       {isExpanded && (
-        <div className={`absolute z-50 mt-8 p-3 rounded-lg border ${theme.bg} ${theme.border} min-w-64 shadow-lg`}>
+        <div className={`absolute z-50 mt-8 p-3 rounded-lg border bg-white dark:bg-gray-900 ${theme.border} min-w-64 shadow-lg backdrop-blur-sm`}>
           <div className="space-y-3">
             <div className={`text-xs font-medium ${theme.text} mb-2`}>
               Video Sources
