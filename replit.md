@@ -25,6 +25,8 @@ Static Buffet is a professional VJ-focused web application designed for searchin
 - ✅ **THEME CONSISTENCY**: Comprehensive theme audit - Created centralized theme-utils.ts with unified color system, fixed hardcoded colors across all components, implemented consistent theming for all 10 brand themes across home.tsx, about.tsx, SourceToggles.tsx and other components
 - ✅ **EFFECTS STUDIO**: Complete cleanup and enhancement - Removed non-functional placeholder elements, implemented 4 new advanced effects (Video Vortex, Demonic Portal, Fractal Storm, Time Warp) with keyboard shortcuts 5-8, streamlined interface to focus on working effects only
 - ✅ **CLEVER BRANDING**: Theme-specific title variations - Each brand theme now displays a unique clever variation of "STATIC BUFFET": Syrup Buffet (Waffle House), Hijack Buffet (EBN), Metal Buffet (Heavy Metal), Brother/Hulkster Buffet (Hollywood Hogan), Rebel/DX Buffet (D-Generation X), Digital Buffet (Max Headroom), Power-Up/Sexy Mario Buffet (Mario), Vanilla Buffet (Dodge Dakota), Atomic/Parallel Buffet (Blondie)
+- ✅ **NEW**: Independent Floating Windows - Complete floating panel system with drag, resize, and individual lock controls for each panel (search, player, queue, effects)
+- ✅ **NEW**: Master Control Panel - Unified control interface consolidating all theme, layout, responsive, and help controls into a single organized panel with tabbed interface
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.

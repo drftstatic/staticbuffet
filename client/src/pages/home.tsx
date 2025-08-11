@@ -20,6 +20,7 @@ import { Footer } from '@/components/Footer';
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { ResizablePanels } from '@/components/ResizablePanels';
 import { FloatingPanelsManager } from '@/components/FloatingPanelsManager';
+import { MasterControlPanel } from '@/components/MasterControlPanel';
 import { DockingGuides } from '@/components/DockingGuides';
 import { DevicePrompt } from '@/components/DevicePrompt';
 import { useStore } from '@/lib/store';
@@ -227,79 +228,7 @@ export default function Home() {
             <div className="flex items-center space-x-2">
               <MediaControls />
               
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setFloatingMode(!isFloatingMode)}
-                data-testid="button-toggle-floating-mode"
-                className={`flex items-center space-x-1 ${
-                  isFloatingMode
-                    ? (brandSkin === 'testcard' ? 'text-green-300 bg-green-400/20' :
-                       brandSkin === 'waffle' ? 'text-amber-800 bg-green-100/50' :
-                       brandSkin === 'ebn' ? 'text-green-300 bg-purple-900/50' :
-                       brandSkin === 'ozzy' ? 'text-green-300 bg-red-900/30' :
-                       'text-green-300 bg-gray-800/50')
-                    : (brandSkin === 'testcard' ? 'text-blue-400 hover:bg-blue-400/10' :
-                       brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' :
-                       brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
-                       brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
-                       'text-yellow-300 hover:bg-gray-800/50')
-                }`}
-              >
-                {isFloatingMode ? <Move size={14} /> : <Layout size={14} />}
-                <span>{isFloatingMode ? 'Float' : 'Dock'}</span>
-              </Button>
-              
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setResizableMode(!isResizableMode)}
-                data-testid="button-toggle-resizable-mode"
-                className={`flex items-center space-x-1 ${
-                  isResizableMode
-                    ? (brandSkin === 'testcard' ? 'text-blue-300 bg-blue-400/20' :
-                       brandSkin === 'waffle' ? 'text-amber-800 bg-yellow-100/50' :
-                       brandSkin === 'ebn' ? 'text-yellow-300 bg-purple-900/50' :
-                       brandSkin === 'ozzy' ? 'text-red-300 bg-red-900/30' :
-                       'text-yellow-300 bg-gray-800/50')
-                    : (brandSkin === 'testcard' ? 'text-blue-400 hover:bg-blue-400/10' :
-                       brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' :
-                       brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
-                       brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
-                       'text-yellow-300 hover:bg-gray-800/50')
-                }`}
-              >
-                {isResizableMode ? <Maximize2 size={14} /> : <Layout size={14} />}
-                <span>{isResizableMode ? 'Panels' : 'Grid'}</span>
-              </Button>
-              
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={resetPanels}
-                data-testid="button-reset-panels"
-                className={`flex items-center space-x-1 ${
-                  brandSkin === 'testcard' ? 'text-blue-400 hover:bg-blue-400/10' :
-                  brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 
-                  brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
-                  brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
-                  'text-yellow-300 hover:bg-gray-800/50'
-                }`}
-              >
-                <Tv size={14} />
-                <span>Reset</span>
-              </Button>
-              <Link href="/about">
-                <Button variant="ghost" size="sm" className={`flex items-center space-x-1 ${
-                  brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 
-                  brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
-                  brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
-                  'text-yellow-300 hover:bg-gray-800/50'
-                }`}>
-                  <Info size={14} />
-                  <span>About</span>
-                </Button>
-              </Link>
+              {/* Simplified controls - only media controls now */}
               {/* Theme controls now handled by ThemeSelector in top-right */}
             </div>
           </div>
@@ -481,8 +410,10 @@ export default function Home() {
       {/* Effect Preset Notifications */}
       <EffectPresetNotification />
 
-      {/* Device Prompt */}
-      <DevicePrompt />
+      {/* Device Prompt - positioned lower to avoid control panel overlap */}
+      <div className="absolute top-20 right-4 z-30">
+        <DevicePrompt />
+      </div>
 
       {/* Footer */}
       <div className="flex-shrink-0">
@@ -500,14 +431,8 @@ export default function Home() {
       {/* Core Soundboards (theme-aware) */}
       <CoreSoundboards />
       
-      {/* Layout Controls (consolidated) */}
-      <LayoutControls />
-      
-      {/* Theme Selector (top-right) */}
-      <ThemeSelector />
-      
-      {/* Responsive Layout Hints */}
-      <ResponsiveLayoutHints />
+      {/* Master Control Panel - consolidates theme, layout, and help controls */}
+      <MasterControlPanel />
     </div>
     </ResponsiveLayoutManager>
   );
