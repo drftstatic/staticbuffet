@@ -212,11 +212,16 @@ export default function Home() {
           }`}>
             <PanelHeader
               title="PREVIEW / PLAYER"
-              status="TRASH TEAM × NULLTONE.TV"
+              status="LIVE"
               isCollapsed={panelStates.playerCollapsed}
               onToggleCollapse={() => togglePanelCollapse('player')}
-              statusClassName="opacity-40"
-            />
+            >
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${
+                  brandSkin === 'waffle' ? 'bg-red-500' : 'bg-red-400'
+                } animate-pulse`}></div>
+              </div>
+            </PanelHeader>
             {!panelStates.playerCollapsed && (
               <div className="flex-1 bg-black relative min-h-0">
                 <Player />
