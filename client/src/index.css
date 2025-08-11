@@ -50,6 +50,22 @@
   --ebn-blue: hsl(188, 95%, 42%);
   --ebn-orange: hsl(43, 96%, 56%);
   
+  /* Ozzy Heavy Metal theme colors */
+  --ozzy-bg: hsl(0, 0%, 5%);
+  --ozzy-card: hsl(0, 0%, 10%);
+  --ozzy-red: hsl(0, 85%, 45%);
+  --ozzy-silver: hsl(0, 0%, 70%);
+  --ozzy-black: hsl(0, 0%, 8%);
+  --ozzy-purple: hsl(280, 100%, 25%);
+  
+  /* Hogan NWO theme colors */
+  --hogan-bg: hsl(0, 0%, 15%);
+  --hogan-card: hsl(0, 0%, 20%);
+  --hogan-red: hsl(0, 100%, 50%);
+  --hogan-white: hsl(0, 0%, 95%);
+  --hogan-black: hsl(0, 0%, 10%);
+  --hogan-gold: hsl(45, 100%, 50%);
+  
   --font-inter: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -136,6 +152,24 @@
       #5C0099 0%, 
       #3D0066 50%, 
       #1A0029 100%);
+  }
+
+  .ozzy-gradient {
+    background: linear-gradient(135deg, 
+      #0D0D0D 0%, 
+      #1A0D1A 25%,
+      #330D33 50%, 
+      #1A0D1A 75%,
+      #0D0D0D 100%);
+  }
+
+  .hogan-gradient {
+    background: linear-gradient(135deg, 
+      #2D2D2D 0%, 
+      #1A1A1A 25%,
+      #FF0000 50%, 
+      #1A1A1A 75%,
+      #2D2D2D 100%);
   }
 
   /* Bold industrial typography effects */

@@ -14,13 +14,19 @@ export function ThemeSwitcher() {
       <SelectTrigger className={`w-56 ${
         brandSkin === 'waffle' 
           ? 'border-yellow-400/50 bg-yellow-50/50' 
-          : 'border-lime-500/30 bg-gray-800/50'
+          : brandSkin === 'ebn'
+          ? 'border-lime-500/30 bg-gray-800/50'
+          : brandSkin === 'ozzy'
+          ? 'border-red-500/50 bg-black/80 text-red-200'
+          : 'border-yellow-400/50 bg-gray-800/80 text-yellow-200'
       }`}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="waffle">🧇 Waffle House</SelectItem>
         <SelectItem value="ebn">📺 EBN Hijack</SelectItem>
+        <SelectItem value="ozzy">🦇 Heavy Metal</SelectItem>
+        <SelectItem value="hogan">💪 NWO Hollywood</SelectItem>
       </SelectContent>
     </Select>
   );

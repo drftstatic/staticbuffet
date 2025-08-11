@@ -1,4 +1,4 @@
-export type BrandSkin = 'waffle' | 'ebn';
+export type BrandSkin = 'waffle' | 'ebn' | 'ozzy' | 'hogan';
 
 export interface SearchState {
   query: string;
@@ -81,6 +81,7 @@ export interface WorkspaceLayout {
 
 export interface AppState {
   brandSkin: BrandSkin;
+  isHulksterMode: boolean;
   adaptiveColorsEnabled: boolean;
   adaptiveIntensity: number;
   currentVideoPalette: any | null;

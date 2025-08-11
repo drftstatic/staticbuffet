@@ -53,11 +53,15 @@ interface AppStore extends AppState {
   loadWorkspaceLayout: (layoutId: string) => void;
   deleteWorkspaceLayout: (layoutId: string) => void;
   updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates'>>) => void;
+  
+  // Easter Egg actions
+  setHulksterMode: (enabled: boolean) => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
   // Initial state
   brandSkin: 'waffle',
+  isHulksterMode: false,
   
   // Adaptive colors state
   adaptiveColorsEnabled: false,
@@ -192,6 +196,7 @@ export const useStore = create<AppStore>((set, get) => ({
 
   // Theme actions
   setBrandSkin: (skin) => set({ brandSkin: skin }),
+  setHulksterMode: (enabled) => set({ isHulksterMode: enabled }),
 
   // Search actions
   setSearchState: (updates) => set((state) => ({

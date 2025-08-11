@@ -95,13 +95,23 @@ export default function Home() {
 
   return (
     <div className={`h-screen flex flex-col overflow-hidden transition-all duration-300 ${
-      brandSkin === 'waffle' ? 'waffle-gradient' : 'ebn-gradient'
+      brandSkin === 'waffle' 
+        ? 'waffle-gradient' 
+        : brandSkin === 'ebn'
+        ? 'ebn-gradient'
+        : brandSkin === 'ozzy'
+        ? 'ozzy-gradient'
+        : 'hogan-gradient'
     }`}>
       {/* Top Bar */}
       <header className={`flex-shrink-0 border-b transition-all duration-300 ${
         brandSkin === 'waffle' 
           ? 'glass border-yellow-400/50' 
-          : 'glass-dark border-lime-500/30'
+          : brandSkin === 'ebn'
+          ? 'glass-dark border-lime-500/30'
+          : brandSkin === 'ozzy'
+          ? 'glass-dark border-red-500/50'
+          : 'glass-dark border-yellow-400/50'
       }`}>
         <div className="max-w-full px-4 py-2 space-y-3">
           {/* Top Row - Compact Brand + Controls */}
@@ -109,19 +119,39 @@ export default function Home() {
             {/* Compact Brand */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Tv size={20} className={brandSkin === 'waffle' ? 'text-amber-600' : 'text-yellow-300'} />
-                <h1 className={`font-bold text-lg ${brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'}`}>
+                <Tv size={20} className={
+                  brandSkin === 'waffle' ? 'text-amber-600' : 
+                  brandSkin === 'ebn' ? 'text-yellow-300' :
+                  brandSkin === 'ozzy' ? 'text-red-400' :
+                  'text-yellow-400'
+                } />
+                <h1 className={`font-bold text-lg ${
+                  brandSkin === 'waffle' ? 'text-amber-900' : 
+                  brandSkin === 'ebn' ? 'text-yellow-300' :
+                  brandSkin === 'ozzy' ? 'text-red-200' :
+                  'text-yellow-300'
+                }`}>
                   STATIC BUFFET
                 </h1>
               </div>
               <div className="flex items-center space-x-1 text-xs opacity-75">
                 <a href="https://trashteam.tv" target="_blank" rel="noopener noreferrer" 
-                   className={`hover:underline ${brandSkin === 'waffle' ? 'text-amber-700' : 'text-yellow-200'}`}>
+                   className={`hover:underline ${
+                     brandSkin === 'waffle' ? 'text-amber-700' : 
+                     brandSkin === 'ebn' ? 'text-yellow-200' :
+                     brandSkin === 'ozzy' ? 'text-red-300' :
+                     'text-yellow-200'
+                   }`}>
                   TRASH TEAM
                 </a>
                 <span>×</span>
                 <a href="https://nulltone.tv" target="_blank" rel="noopener noreferrer"
-                   className={`hover:underline ${brandSkin === 'waffle' ? 'text-amber-700' : 'text-yellow-200'}`}>
+                   className={`hover:underline ${
+                     brandSkin === 'waffle' ? 'text-amber-700' : 
+                     brandSkin === 'ebn' ? 'text-yellow-200' :
+                     brandSkin === 'ozzy' ? 'text-red-300' :
+                     'text-yellow-200'
+                   }`}>
                   NULLTONE.TV
                 </a>
               </div>
@@ -135,7 +165,10 @@ export default function Home() {
                 onClick={resetPanels}
                 data-testid="button-reset-panels"
                 className={`flex items-center space-x-1 ${
-                  brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 'text-yellow-300 hover:bg-purple-900/50'
+                  brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 
+                  brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
+                  brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
+                  'text-yellow-300 hover:bg-gray-800/50'
                 }`}
               >
                 <Tv size={14} />
@@ -143,7 +176,10 @@ export default function Home() {
               </Button>
               <Link href="/about">
                 <Button variant="ghost" size="sm" className={`flex items-center space-x-1 ${
-                  brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 'text-yellow-300 hover:bg-purple-900/50'
+                  brandSkin === 'waffle' ? 'text-amber-800 hover:bg-yellow-100/50' : 
+                  brandSkin === 'ebn' ? 'text-yellow-300 hover:bg-purple-900/50' :
+                  brandSkin === 'ozzy' ? 'text-red-300 hover:bg-red-900/30' :
+                  'text-yellow-300 hover:bg-gray-800/50'
                 }`}>
                   <Info size={14} />
                   <span>About</span>
