@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Tv, Info, Layout, Maximize2 } from 'lucide-react';
-import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Link } from 'wouter';
 import { SearchBar } from '@/components/SearchBar';
 import { Filters } from '@/components/Filters';
 import { SavedSearches } from '@/components/SavedSearches';
@@ -11,38 +12,23 @@ import { DetailDrawer } from '@/components/DetailDrawer';
 import { EffectsPanel } from '@/components/EffectsPanel';
 import { EffectPresetNotification } from '@/components/EffectPresetNotification';
 import { BottomHUD } from '@/components/BottomHUD';
-import { DevicePrompt } from '@/components/DevicePrompt';
-import { WelcomeModal } from '@/components/WelcomeModal';
-import { BrandSkinToggle } from '@/components/BrandSkinToggle';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-import { Button } from '@/components/ui/button';
-import { GroupedControls } from '@/components/GroupedControls';
+import { StreamlinedWelcome } from '@/components/StreamlinedWelcome';
+import { ThemeSelector } from '@/components/ThemeSelector';
+import { MediaControls } from '@/components/MediaControls';
 import { Player } from '@/components/Player';
 import { Footer } from '@/components/Footer';
-import { DXButton } from '@/components/DXButton';
-import { DXSoundboard } from '@/components/DXSoundboard';
-import { HulksterButton } from '@/components/HulksterButton';
-import { WaffleButton } from '@/components/WaffleButton';
-import { OzzyButton } from '@/components/OzzyButton';
-import { EBNButton } from '@/components/EBNButton';
-import { MaxButton } from '@/components/MaxButton';
-import { MarioButton } from '@/components/MarioButton';
-
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
-import { LiveVideoMode } from '@/components/LiveVideoMode';
-import { MediaControls } from '@/components/MediaControls';
 import { ResizablePanels } from '@/components/ResizablePanels';
 import { DockingGuides } from '@/components/DockingGuides';
+import { DevicePrompt } from '@/components/DevicePrompt';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
 import { PanelHeader } from '@/components/PanelHeader';
 import { FirstRunTour } from '@/components/FirstRunTour';
-import { ResponsiveLayoutHintsSimple } from '@/components/ResponsiveLayoutHintsSimple';
 import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
-import { ResponsiveBreakpointIndicator } from '@/components/ResponsiveBreakpointIndicator';
-import { SoundboardTester } from '@/components/SoundboardTester';
-import { LayoutDemonstrator } from '@/components/LayoutDemonstrator';
+import { CoreSoundboards } from '@/components/CoreSoundboards';
+import { LayoutControls } from '@/components/LayoutControls';
 import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
 
 export default function Home() {
@@ -306,15 +292,7 @@ export default function Home() {
                   <span>About</span>
                 </Button>
               </Link>
-              <ThemeSwitcher />
-              <DXButton />
-              <HulksterButton />
-              <WaffleButton />
-              <OzzyButton />
-              <EBNButton />
-              <MaxButton />
-              <MarioButton />
-              <GroupedControls />
+              {/* Theme controls now handled by ThemeSelector in top-right */}
             </div>
           </div>
 
@@ -496,19 +474,19 @@ export default function Home() {
       <DXSoundboard />
 
       {/* Welcome Modal */}
-      <WelcomeModal />
+      <StreamlinedWelcome />
       
-      {/* Responsive Layout Hints */}
-      <ResponsiveLayoutHintsSimple />
+      {/* First Run Tour */}
+      <FirstRunTour />
       
-      {/* Responsive Breakpoint Indicator */}
-      <ResponsiveBreakpointIndicator />
+      {/* Core Soundboards (theme-aware) */}
+      <CoreSoundboards />
       
-      {/* Soundboard Tester */}
-      <SoundboardTester />
+      {/* Layout Controls (consolidated) */}
+      <LayoutControls />
       
-      {/* Layout Demonstrator */}
-      <LayoutDemonstrator />
+      {/* Theme Selector (top-right) */}
+      <ThemeSelector />
     </div>
     </ResponsiveLayoutManager>
   );
