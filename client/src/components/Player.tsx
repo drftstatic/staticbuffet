@@ -435,6 +435,16 @@ export function Player() {
           e.preventDefault();
           applyPreset('noir');
           break;
+        case 'KeyP':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            // Trigger pop-out player (handled by PopOutPlayer component)
+            const popOutButton = document.querySelector('[data-testid="button-pop-out-player"]') as HTMLButtonElement;
+            if (popOutButton) {
+              popOutButton.click();
+            }
+          }
+          break;
       }
     };
 
@@ -815,7 +825,7 @@ export function Player() {
 
                 {/* Keyboard Shortcuts Hint */}
                 <div className="text-center text-gray-400 text-sm">
-                  F: fullscreen • Space: play/pause • ← →: seek • ↑ ↓: volume • ESC: exit<br/>
+                  F: fullscreen • Space: play/pause • ← →: seek • ↑ ↓: volume • ESC: exit • Ctrl+P: pop-out<br/>
                   1: Cyberpunk • 2: Vintage • 3: Glitch • 4: Film Noir
                 </div>
               </div>
@@ -883,6 +893,8 @@ export function Player() {
               >
                 <Maximize className="h-4 w-4" />
               </Button>
+              
+              <div className="border-l border-gray-300 dark:border-gray-600 mx-2 h-6"></div>
               
               <PopOutPlayer currentVideo={currentVideo} />
             </div>
