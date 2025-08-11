@@ -3,22 +3,28 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Volume2 } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
-const DX_QUOTES = [
-  "Are you ready?",
-  "Suck it!",
-  "We got two words for ya!",
-  "D-Generation X!",
-  "Break it down!",
-  "If you ain't down with that, we got two words for ya!",
-  "Crotch chop!",
-  "Are you ready to rumble?"
+interface DXSound {
+  id: string;
+  label: string;
+  text: string;
+}
+
+const DX_SOUNDS: DXSound[] = [
+  { id: 'ready', label: 'Are You Ready?', text: 'Are you ready?' },
+  { id: 'suckit', label: 'Suck It!', text: 'Suck it!' },
+  { id: 'twowords', label: 'Two Words', text: 'We got two words for ya!' },
+  { id: 'dx', label: 'D-Generation X!', text: 'D-Generation X!' },
+  { id: 'breakdown', label: 'Break It Down', text: 'Break it down!' },
+  { id: 'aintdown', label: 'Ain\'t Down', text: 'If you ain\'t down with that, we got two words for ya!' },
+  { id: 'crotchchop', label: 'Crotch Chop', text: 'Crotch chop!' },
+  { id: 'rumble', label: 'Ready to Rumble', text: 'Are you ready to rumble?' }
 ];
 
 export function DXSoundboard() {
   const { isDXMode, setDXMode, brandSkin } = useStore();
 
-  const playQuote = (quote: string) => {
-    console.log('🔊 DX Quote:', quote);
+  const playSound = (sound: DXSound) => {
+    console.log('🔊 DX Quote:', sound.text);
     // Note: Audio playback would require actual sound files
     // For now, we'll just log the quote
   };
@@ -46,15 +52,15 @@ export function DXSoundboard() {
           </div>
           
           <div className="grid grid-cols-2 gap-3">
-            {DX_QUOTES.map((quote, index) => (
+            {DX_SOUNDS.map((sound) => (
               <Button
-                key={index}
-                onClick={() => playQuote(quote)}
+                key={sound.id}
+                onClick={() => playSound(sound)}
                 className="bg-blue-600 hover:bg-blue-500 text-white h-auto py-3 px-2 text-xs font-bold flex items-center gap-2"
-                data-testid={`button-dx-quote-${index}`}
+                data-testid={`button-dx-quote-${sound.id}`}
               >
                 <Volume2 size={12} />
-                <span className="leading-tight">{quote}</span>
+                <span className="leading-tight">{sound.label}</span>
               </Button>
             ))}
           </div>

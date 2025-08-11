@@ -4,6 +4,7 @@ import { useStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import DonationCTA from '@/components/DonationCTA';
 import { ChangelogModal } from '@/components/ChangelogModal';
+import { ThemeExplanations } from '@/components/ThemeExplanations';
 
 export default function About() {
   const { brandSkin, isHulksterMode } = useStore();
@@ -154,126 +155,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="mb-8">
-            <h3 className={`text-2xl font-bold mb-6 ${
-              brandSkin === 'waffle' ? 'text-amber-900' : 
-              brandSkin === 'ebn' ? 'text-gray-100' :
-              brandSkin === 'ozzy' ? 'text-red-300' :
-              'text-yellow-300'
-            }`}>
-              Visual Themes
-            </h3>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className={`p-6 rounded-lg ${
-                brandSkin === 'waffle' 
-                  ? 'bg-yellow-50/50 border border-yellow-400/30' 
-                  : brandSkin === 'ebn'
-                  ? 'bg-gray-800/50 border border-lime-500/30'
-                  : brandSkin === 'ozzy'
-                  ? 'bg-red-950/30 border border-red-500/30'
-                  : 'bg-gray-800/50 border border-yellow-400/30'
-              }`}>
-                <h4 className={`text-lg font-bold mb-3 ${
-                  brandSkin === 'waffle' ? 'text-amber-900' : 
-                  brandSkin === 'ebn' ? 'text-gray-100' :
-                  brandSkin === 'ozzy' ? 'text-red-300' :
-                  'text-yellow-300'
-                }`}>
-                  🧇 Waffle House
-                </h4>
-                <p className={`${
-                  brandSkin === 'waffle' ? 'text-amber-800' : 
-                  brandSkin === 'ebn' ? 'text-gray-300' :
-                  brandSkin === 'ozzy' ? 'text-red-200' :
-                  'text-yellow-200'
-                } leading-relaxed`}>
-                  Inspired by the Waffle House menu, the unofficial after-gig hangout for every VJ. Cozy colors, laminated-menu vibes, late-night comfort.
-                </p>
-              </div>
-
-              <div className={`p-6 rounded-lg ${
-                brandSkin === 'waffle' 
-                  ? 'bg-yellow-50/50 border border-yellow-400/30' 
-                  : brandSkin === 'ebn'
-                  ? 'bg-gray-800/50 border border-lime-500/30'
-                  : brandSkin === 'ozzy'
-                  ? 'bg-red-950/30 border border-red-500/30'
-                  : 'bg-gray-800/50 border border-yellow-400/30'
-              }`}>
-                <h4 className={`text-lg font-bold mb-3 ${
-                  brandSkin === 'waffle' ? 'text-amber-900' : 
-                  brandSkin === 'ebn' ? 'text-gray-100' :
-                  brandSkin === 'ozzy' ? 'text-red-300' :
-                  'text-yellow-300'
-                }`}>
-                  📺 EBN Hijack
-                </h4>
-                <p className={`${
-                  brandSkin === 'waffle' ? 'text-amber-800' : 
-                  brandSkin === 'ebn' ? 'text-gray-300' :
-                  brandSkin === 'ozzy' ? 'text-red-200' :
-                  'text-yellow-200'
-                } leading-relaxed`}>
-                  A nod to the pioneers at Emergency Broadcast Network. Tactical overlays, neon alerts, hacked-broadcast energy.
-                </p>
-              </div>
-
-              <div className={`p-6 rounded-lg ${
-                brandSkin === 'waffle' 
-                  ? 'bg-yellow-50/50 border border-yellow-400/30' 
-                  : brandSkin === 'ebn'
-                  ? 'bg-gray-800/50 border border-lime-500/30'
-                  : brandSkin === 'ozzy'
-                  ? 'bg-red-950/30 border border-red-500/30'
-                  : 'bg-gray-800/50 border border-yellow-400/30'
-              }`}>
-                <h4 className={`text-lg font-bold mb-3 ${
-                  brandSkin === 'waffle' ? 'text-amber-900' : 
-                  brandSkin === 'ebn' ? 'text-gray-100' :
-                  brandSkin === 'ozzy' ? 'text-red-300' :
-                  'text-yellow-300'
-                }`}>
-                  🦇 Heavy Metal
-                </h4>
-                <p className={`${
-                  brandSkin === 'waffle' ? 'text-amber-800' : 
-                  brandSkin === 'ebn' ? 'text-gray-300' :
-                  brandSkin === 'ozzy' ? 'text-red-200' :
-                  'text-yellow-200'
-                } leading-relaxed`}>
-                  A tribute to Ozzy Osbourne and the heavy metal aesthetic. Dark metallic textures, blood-red accents, and industrial brutality for the headbanging VJ.
-                </p>
-              </div>
-
-              <div className={`p-6 rounded-lg ${
-                brandSkin === 'waffle' 
-                  ? 'bg-yellow-50/50 border border-yellow-400/30' 
-                  : brandSkin === 'ebn'
-                  ? 'bg-gray-800/50 border border-lime-500/30'
-                  : brandSkin === 'ozzy'
-                  ? 'bg-red-950/30 border border-red-500/30'
-                  : 'bg-gray-800/50 border border-yellow-400/30'
-              }`}>
-                <h4 className={`text-lg font-bold mb-3 ${
-                  brandSkin === 'waffle' ? 'text-amber-900' : 
-                  brandSkin === 'ebn' ? 'text-gray-100' :
-                  brandSkin === 'ozzy' ? 'text-red-300' :
-                  'text-yellow-300'
-                }`}>
-                  💪 NWO Hollywood
-                </h4>
-                <p className={`${
-                  brandSkin === 'waffle' ? 'text-amber-800' : 
-                  brandSkin === 'ebn' ? 'text-gray-300' :
-                  brandSkin === 'ozzy' ? 'text-red-200' :
-                  'text-yellow-200'
-                } leading-relaxed`}>
-                  Channel the Hollywood Hogan era with NWO red, black, and gold. Triple-click the HH button to unlock HULKSTER mode with classic soundboard quotes, brother!
-                </p>
-              </div>
-            </div>
-          </div>
+          <ThemeExplanations />
 
           <div className="mb-8">
             <h3 className={`text-2xl font-bold mb-6 ${
