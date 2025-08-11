@@ -74,10 +74,10 @@ export function QueuePanel() {
                         }`}
                       >
                         <div className="truncate w-full text-center px-1">
-                          {item.video.title.slice(0, 10)}
+                          {item.title.slice(0, 10)}
                         </div>
                         <div className="text-xs opacity-70">
-                          {Math.floor(item.video.runtime / 60)}m
+                          {item.duration}
                         </div>
                         <button
                           onClick={() => removeFromQueue(item.id)}
