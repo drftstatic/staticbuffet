@@ -14,7 +14,7 @@ Preferred communication style: Simple, everyday language.
 - **UI Components**: Shadcn/ui (built on Radix UI primitives) with Tailwind CSS.
 - **Routing**: Wouter.
 - **Data Fetching**: TanStack Query (React Query).
-- **Video Playback**: Native HTML5 video elements with custom controls and Web Audio API integration.
+- **Video Playback**: Native HTML5 video elements with custom controls, Web Audio API integration, and intelligent preloading system.
 - **Drag & Drop**: @hello-pangea/dnd for queue management.
 
 ### Backend Architecture
@@ -57,6 +57,11 @@ Preferred communication style: Simple, everyday language.
 - **Infinite Scroll**: Lazy loading with intersection observer.
 - **Image Optimization**: Archive.org thumbnail service integration.
 - **Caching**: React Query caching for API responses.
+- **Video Preloading**: Automatic preloading of next queue item for smooth transitions.
+- **Metadata Caching**: SessionStorage-based caching of search results and metadata with 15-minute TTL.
+- **Thumbnail Retry Logic**: Smart retry system for failed thumbnails with exponential backoff.
+- **Cancellable Requests**: AbortController-based request cancellation for responsive UX.
+- **Skeleton Loaders**: Theme-aware loading states for all content types (videos, thumbnails, search results).
 
 ## External Dependencies
 

@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { ResultCard } from './ResultCard';
 import { useStore } from '@/lib/store';
-import { searchVideos, getVideoMetadata } from '@/lib/archive-api';
+import { searchVideos, getVideoMetadata, cancelCurrentSearch } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
+import { SearchResultsSkeleton } from './SkeletonLoader';
 
 interface ResultsGridProps {
   onVideoSelect: (video: VideoResult) => void;
@@ -35,12 +36,20 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
     if (node) observerRef.current.observe(node);
   }, [isLoading, searchResults.length, totalResults]);
 
-  const { data: searchData, error } = useQuery({
+  const { data: searchData, error, isLoading: isQueryLoading } = useQuery({
     queryKey: ['/api/search', searchState],
     enabled: !!searchState.query,
     refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
     queryFn: () => searchVideos(searchState),
   });
+
+  // Cancel search on unmount
+  useEffect(() => {
+    return () => {
+      cancelCurrentSearch();
+    };
+  }, []);
 
   useEffect(() => {
     if (searchData) {
@@ -112,19 +121,8 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
         </h2>
       </div>
 
-      {searchResults.length === 0 && isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {Array(8).fill(0).map((_, i) => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm animate-pulse">
-              <div className="w-full h-32 bg-gray-200 dark:bg-gray-700"></div>
-              <div className="p-3">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-3/4"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-              </div>
-            </div>
-          ))}
-        </div>
+      {searchResults.length === 0 && (isLoading || isQueryLoading) ? (
+        <SearchResultsSkeleton count={8} />
       ) : searchResults.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-gray-400">
           <p className="text-lg mb-2">No results found</p>

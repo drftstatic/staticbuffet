@@ -5,6 +5,8 @@ import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize } from 'lucide-react';
 import { PopOutPlayer } from '@/components/PopOutPlayer';
+import { videoPreloader } from '@/lib/video-preloader';
+import { VideoPlayerSkeleton } from './SkeletonLoader';
 
 export function Player() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -24,6 +26,8 @@ export function Player() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isVideoLoading, setIsVideoLoading] = useState(false);
+  const [videoLoadError, setVideoLoadError] = useState(false);
 
   const { 
     queueItems, 
@@ -52,17 +56,35 @@ export function Player() {
       });
       
       const video = videoRef.current;
+      setIsVideoLoading(true);
+      setVideoLoadError(false);
       
-      // Reset video element
-      video.src = '';
-      video.load();
+      // Check if we have a preloaded video
+      const preloadedVideo = videoPreloader.getPreloadedVideo(currentVideo.videoUrl);
       
-      // Set new source and properties
-      video.src = currentVideo.videoUrl;
-      video.volume = volume[0] / 100;
-      video.muted = false;
-      video.autoplay = false;
-      video.preload = 'metadata';
+      if (preloadedVideo) {
+        console.log('🚀 Using preloaded video for smooth transition');
+        // Copy properties from preloaded video
+        video.src = preloadedVideo.src;
+        video.currentTime = preloadedVideo.currentTime;
+        video.volume = volume[0] / 100;
+        video.muted = false;
+        setIsVideoLoading(false);
+      } else {
+        // Reset video element
+        video.src = '';
+        video.load();
+        
+        // Set new source and properties
+        video.src = currentVideo.videoUrl;
+        video.volume = volume[0] / 100;
+        video.muted = false;
+        video.autoplay = false;
+        video.preload = 'metadata';
+      }
+      
+      // Preload next video in queue
+      videoPreloader.preloadNext(queueItems, currentQueueIndex);
       
       // Add comprehensive event listeners for debugging
       const handleCanPlay = () => {

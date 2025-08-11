@@ -1,9 +1,11 @@
+import { useState, useEffect, useCallback } from 'react';
 import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LicenseBadge } from './LicenseBadge';
 import { type VideoResult } from '@/lib/types';
-import { generateThumbnailUrl } from '@/lib/archive-api';
+import { generateThumbnailUrl, preloadThumbnail } from '@/lib/archive-api';
 import { useStore } from '@/lib/store';
+import { ThumbnailSkeleton } from './SkeletonLoader';
 
 interface ResultCardProps {
   video: VideoResult;
@@ -13,12 +15,45 @@ interface ResultCardProps {
 
 export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
   const { brandSkin } = useStore();
-  const thumbnailUrl = generateThumbnailUrl(video.identifier);
+  const [thumbnailLoaded, setThumbnailLoaded] = useState(false);
+  const [thumbnailError, setThumbnailError] = useState(false);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const maxRetries = 3;
 
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAddToQueue(video);
   };
+
+  // Preload thumbnail with retry logic
+  const loadThumbnail = useCallback(async () => {
+    if (retryCount >= maxRetries) return;
+
+    try {
+      setThumbnailError(false);
+      const url = await preloadThumbnail(video.identifier);
+      setThumbnailUrl(url);
+      setThumbnailLoaded(true);
+    } catch (error) {
+      console.warn(`Thumbnail load failed for ${video.identifier}:`, error);
+      setThumbnailError(true);
+      
+      // Retry with exponential backoff
+      if (retryCount < maxRetries) {
+        setTimeout(() => {
+          setRetryCount(prev => prev + 1);
+        }, Math.pow(2, retryCount) * 1000);
+      }
+    }
+  }, [video.identifier, retryCount, maxRetries]);
+
+  useEffect(() => {
+    loadThumbnail();
+  }, [loadThumbnail]);
+
+  // Fallback URL generation
+  const fallbackUrl = generateThumbnailUrl(video.identifier);
 
   return (
     <div
@@ -31,14 +66,23 @@ export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
       data-testid={`card-video-${video.identifier}`}
     >
       <div className="relative">
-        <img
-          src={thumbnailUrl}
-          alt={video.title}
-          className="w-full h-32 object-cover bg-gray-200 dark:bg-gray-700"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = `https://via.placeholder.com/400x225/e5e7eb/6b7280?text=${encodeURIComponent(video.title)}`;
-          }}
-        />
+        {!thumbnailLoaded && !thumbnailError ? (
+          <ThumbnailSkeleton className="w-full h-32" />
+        ) : (
+          <img
+            src={thumbnailUrl || fallbackUrl}
+            alt={video.title}
+            className="w-full h-32 object-cover bg-gray-200 dark:bg-gray-700"
+            onLoad={() => setThumbnailLoaded(true)}
+            onError={(e) => {
+              if (retryCount < maxRetries) {
+                setRetryCount(prev => prev + 1);
+              } else {
+                (e.target as HTMLImageElement).src = `https://via.placeholder.com/400x225/e5e7eb/6b7280?text=${encodeURIComponent(video.title)}`;
+              }
+            }}
+          />
+        )}
         <div className="absolute top-2 left-2">
           <LicenseBadge license={video.licenseurl} />
         </div>
