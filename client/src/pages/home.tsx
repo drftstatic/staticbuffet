@@ -193,9 +193,17 @@ export default function Home() {
                 brandSkin === 'dx' && isDXMode ? 'DX BUFFET' : 
                 brandSkin === 'mario' && isMarioMode ? 'SEXY MARIO BUFFET' :
                 brandSkin === 'dakota' && isDakotaVanillaMode ? 'VANILLA BUFFET' :
-                brandSkin === 'dakota' ? 'DAKOTA BUFFET' :
-                brandSkin === 'blondie' && isBlondieGeometryMode ? 'GEOMETRIC BUFFET' :
-                brandSkin === 'blondie' ? 'BLONDIE BUFFET' :
+                brandSkin === 'blondie' && isBlondieGeometryMode ? 'PARALLEL BUFFET' :
+                brandSkin === 'testcard' ? 'STATIC BUFFET' :
+                brandSkin === 'waffle' ? 'SYRUP BUFFET' :
+                brandSkin === 'ebn' ? 'HIJACK BUFFET' :
+                brandSkin === 'ozzy' ? 'METAL BUFFET' :
+                brandSkin === 'hogan' ? 'BROTHER BUFFET' :
+                brandSkin === 'dx' ? 'REBEL BUFFET' :
+                brandSkin === 'maxheadroom' ? 'DIGITAL BUFFET' :
+                brandSkin === 'mario' ? 'POWER-UP BUFFET' :
+                brandSkin === 'dakota' ? 'VANILLA BUFFET' :
+                brandSkin === 'blondie' ? 'ATOMIC BUFFET' :
                 'STATIC BUFFET'}
                 </h1>
               </div>

@@ -215,7 +215,24 @@ export default function About() {
         <div className={`rounded-xl shadow-lg p-8 mb-8 ${themeStyles.cardBg}`}>
           <div className="text-center mb-8">
             <h2 className={`font-black mb-4 text-[30px] ${themeStyles.titleText}`}>
-              Trash Team × Nulltone.TV present Static Buffet
+              Trash Team × Nulltone.TV present {
+                brandSkin === 'hogan' && isHulksterMode ? 'Hulkster Buffet' : 
+                brandSkin === 'dx' && isDXMode ? 'DX Buffet' : 
+                brandSkin === 'mario' && isMarioMode ? 'Sexy Mario Buffet' :
+                brandSkin === 'dakota' && isDakotaVanillaMode ? 'Vanilla Buffet' :
+                brandSkin === 'blondie' && isBlondieGeometryMode ? 'Parallel Buffet' :
+                brandSkin === 'testcard' ? 'Static Buffet' :
+                brandSkin === 'waffle' ? 'Syrup Buffet' :
+                brandSkin === 'ebn' ? 'Hijack Buffet' :
+                brandSkin === 'ozzy' ? 'Metal Buffet' :
+                brandSkin === 'hogan' ? 'Brother Buffet' :
+                brandSkin === 'dx' ? 'Rebel Buffet' :
+                brandSkin === 'maxheadroom' ? 'Digital Buffet' :
+                brandSkin === 'mario' ? 'Power-Up Buffet' :
+                brandSkin === 'dakota' ? 'Vanilla Buffet' :
+                brandSkin === 'blondie' ? 'Atomic Buffet' :
+                'Static Buffet'
+              }
             </h2>
             <div className="mb-4">
               <span className="inline-block bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-semibold px-3 py-1 rounded-full">
