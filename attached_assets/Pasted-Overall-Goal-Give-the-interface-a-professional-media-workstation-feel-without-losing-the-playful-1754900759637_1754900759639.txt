@@ -1,0 +1,49 @@
+Overall Goal:
+Give the interface a professional, “media workstation” feel without losing the playful, subversive Trash Team × Nulltone.TV aesthetic. Users should instantly feel like they’re inside a creative tool, not just browsing a website.
+
+⸻
+
+Core UX/UI Principles
+	1.	High-Contrast, Panel-Based Layout
+	•	Think Adobe Premiere, Resolume, or DaVinci Resolve: distinct panels for search/results, preview, and queue/timeline.
+	•	Clear visual hierarchy — no “floating” elements with no boundaries.
+	•	Consistent margins and padding so the app feels tight and deliberate.
+	2.	Dark Workspace Base
+	•	Use the EBN purple/black base for “pro mode” — darker UIs feel more like video tools and make video thumbnails pop.
+	•	Diner mode can still keep a “laminated menu” theme but use muted off-whites and a soft grid to maintain structure.
+	3.	Crisp, Minimal Iconography
+	•	Flat, single-color icons (white or neon accent) for play, pause, add-to-queue, etc.
+	•	Avoid overly cartoony or skeuomorphic graphics.
+	4.	Preview Panel as the Star
+	•	Large, prominent video player with overlay controls (timeline scrub, loop toggle, in/out markers).
+	•	Make the player look like a media deck: timecode display, “LIVE/PAUSE” status indicator, maybe even faux VU meters.
+	5.	Professional Interaction Details
+	•	Hover states for buttons (slight glow or border shift in accent color).
+	•	Drag-and-drop for adding clips to the queue.
+	•	Click-to-trim in/out points from the preview timeline.
+	6.	Queue = Mini Timeline
+	•	Don’t just stack thumbnails — represent them as segments in a horizontal mini-timeline.
+	•	Allow reordering by dragging segments left/right.
+	•	Optional clip duration indicators under each segment.
+	7.	Typography
+	•	Stick to two typefaces max:
+	•	Main UI: Clean, condensed sans-serif (e.g., Inter, IBM Plex Sans, Roboto Condensed).
+	•	Accent/Brand: Blocky display font for titles/headings (matching Diner or EBN theme).
+
+⸻
+
+Brand Personality Layer
+	•	Diner Mode: Rounded panels, softer color palette, subtle paper texture backgrounds, section headers in “menu tab” style.
+	•	EBN Mode: Angular panels, glitch overlays, static noise backgrounds, bold uppercase headings in neon yellow.
+
+⸻
+
+Key Phrases to Tell the Designer:
+
+“Make this feel like a cross between a pro VJ tool and an underground pirate TV station.”
+
+“I want a panel-based layout with clear work zones: search, preview, queue/timeline.”
+
+“Preview player should feel like a deck — controls, timecode, and a sense of ‘live broadcast’.”
+
+“Transitions and hovers should feel deliberate — no default browser styles.”
