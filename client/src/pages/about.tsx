@@ -1,6 +1,7 @@
 import { ArrowLeft, ExternalLink, Heart, Tv, Archive, Zap } from 'lucide-react';
 import { Link } from 'wouter';
 import { useStore } from '@/lib/store';
+import { getTextClasses, getThemeClasses, getPanelClasses } from '@/lib/theme-utils';
 import { Button } from '@/components/ui/button';
 import DonationCTA from '@/components/DonationCTA';
 import { ChangelogModal } from '@/components/ChangelogModal';
@@ -9,21 +10,25 @@ import { ThemeExplanations } from '@/components/ThemeExplanations';
 export default function About() {
   const { brandSkin, isHulksterMode, isDXMode, isMarioMode, isAsciiMode, isDakotaVanillaMode, isBlondieGeometryMode } = useStore();
 
-  // Theme-specific styling function
+  const theme = getThemeClasses(brandSkin);
+  
+  // Theme-specific styling function with fallback
   const getThemeStyles = () => {
+    const baseTheme = {
+      headerBg: 'glass ' + theme.borderSecondary,
+      cardBg: 'glass-dark',
+      titleText: theme.text,
+      bodyText: theme.textSecondary,
+      iconColor: theme.accent,
+      accentColor: theme.accent,
+      borderColor: theme.border,
+      panelBg: theme.bgSecondary + ' border ' + theme.borderSecondary,
+      linkStyle: theme.borderSecondary + ' ' + theme.bgSecondary + ' ' + theme.text + ' ' + theme.hover
+    };
+
     switch (brandSkin) {
       case 'testcard':
-        return {
-          headerBg: 'glass border-blue-400/50',
-          cardBg: 'glass-dark',
-          titleText: 'text-slate-200',
-          bodyText: 'text-gray-300',
-          iconColor: '#3B82F6', // blue-500
-          accentColor: '#60A5FA', // blue-400
-          borderColor: 'border-blue-400/50',
-          panelBg: 'bg-gray-800/50 border border-blue-400/30',
-          linkStyle: 'border-blue-500/30 bg-gray-800/50 text-blue-400 hover:bg-blue-900/50'
-        };
+        return baseTheme;
       case 'waffle':
         return {
           headerBg: 'glass border-yellow-400/50',
@@ -147,7 +152,7 @@ export default function About() {
     }
   };
 
-  const theme = getThemeStyles();
+  const themeStyles = getThemeStyles();
 
   return (
     <div className={`min-h-screen transition-all duration-300 relative ${
@@ -186,7 +191,7 @@ export default function About() {
       : 'testcard-gradient testcard-grid'
     }`}>
       {/* Header */}
-      <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${theme.headerBg}`}>
+      <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${themeStyles.headerBg}`}>
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/">
             <Button variant="ghost" className="flex items-center space-x-2">
@@ -196,8 +201,8 @@ export default function About() {
           </Link>
           
           <div className="flex items-center space-x-2">
-            <Tv className={theme.titleText} style={{ color: theme.iconColor }} size={24} />
-            <h1 className={`font-black text-xl ${theme.titleText}`}>
+            <Tv className={themeStyles.titleText} style={{ color: themeStyles.iconColor }} size={24} />
+            <h1 className={`font-black text-xl ${themeStyles.titleText}`}>
               About Static Buffet
             </h1>
           </div>
@@ -207,9 +212,9 @@ export default function About() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-6 py-12">
-        <div className={`rounded-xl shadow-lg p-8 mb-8 ${theme.cardBg}`}>
+        <div className={`rounded-xl shadow-lg p-8 mb-8 ${themeStyles.cardBg}`}>
           <div className="text-center mb-8">
-            <h2 className={`font-black mb-4 text-[30px] ${theme.titleText}`}>
+            <h2 className={`font-black mb-4 text-[30px] ${themeStyles.titleText}`}>
               Trash Team × Nulltone.TV present Static Buffet
             </h2>
             <div className="mb-4">
@@ -217,7 +222,7 @@ export default function About() {
                 v0.1.0-alpha
               </span>
             </div>
-            <p className={`text-xl ${theme.bodyText}`}>
+            <p className={`text-xl ${themeStyles.bodyText}`}>
               All-you-can-eat video chaos, straight from the public domain.
             </p>
           </div>

@@ -22,6 +22,7 @@ import { ResizablePanels } from '@/components/ResizablePanels';
 import { DockingGuides } from '@/components/DockingGuides';
 import { DevicePrompt } from '@/components/DevicePrompt';
 import { useStore } from '@/lib/store';
+import { getTextClasses, getThemeClasses } from '@/lib/theme-utils';
 import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
 import { PanelHeader } from '@/components/PanelHeader';
@@ -186,26 +187,8 @@ export default function Home() {
             {/* Compact Brand */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Tv size={20} className={
-                  brandSkin === 'testcard' ? 'text-blue-400' :
-                  brandSkin === 'waffle' ? 'text-amber-600' : 
-                  brandSkin === 'ebn' ? 'text-yellow-300' :
-                  brandSkin === 'ozzy' ? 'text-red-400' :
-                  brandSkin === 'mario' ? 'text-red-500' :
-                  brandSkin === 'dakota' ? 'text-gray-400' :
-                  brandSkin === 'blondie' ? 'text-amber-400' :
-                  'text-yellow-400'
-                } />
-                <h1 className={`font-bold text-lg ${
-                  brandSkin === 'testcard' ? 'text-slate-200' :
-                  brandSkin === 'waffle' ? 'text-amber-900' : 
-                  brandSkin === 'ebn' ? 'text-yellow-300' :
-                  brandSkin === 'ozzy' ? 'text-red-200' :
-                  brandSkin === 'mario' ? 'text-yellow-200' :
-                  brandSkin === 'dakota' ? 'text-gray-200' :
-                  brandSkin === 'blondie' ? 'text-amber-200' :
-                  'text-yellow-300'
-                }`}>
+                <Tv size={20} className={getThemeClasses(brandSkin).accent} />
+                <h1 className={`font-bold text-lg ${getTextClasses(brandSkin, 'primary')}`}>
 {brandSkin === 'hogan' && isHulksterMode ? 'HULKSTER BUFFET' : 
                 brandSkin === 'dx' && isDXMode ? 'DX BUFFET' : 
                 brandSkin === 'mario' && isMarioMode ? 'SEXY MARIO BUFFET' :
@@ -218,22 +201,12 @@ export default function Home() {
               </div>
               <div className="flex items-center space-x-1 text-xs opacity-75">
                 <a href="https://trashteam.tv" target="_blank" rel="noopener noreferrer" 
-                   className={`hover:underline ${
-                     brandSkin === 'waffle' ? 'text-amber-700' : 
-                     brandSkin === 'ebn' ? 'text-yellow-200' :
-                     brandSkin === 'ozzy' ? 'text-red-300' :
-                     'text-yellow-200'
-                   }`}>
+                   className={`hover:underline ${getTextClasses(brandSkin, 'secondary')}`}>
                   TRASH TEAM
                 </a>
                 <span>×</span>
                 <a href="https://nulltone.tv" target="_blank" rel="noopener noreferrer"
-                   className={`hover:underline ${
-                     brandSkin === 'waffle' ? 'text-amber-700' : 
-                     brandSkin === 'ebn' ? 'text-yellow-200' :
-                     brandSkin === 'ozzy' ? 'text-red-300' :
-                     'text-yellow-200'
-                   }`}>
+                   className={`hover:underline ${getTextClasses(brandSkin, 'secondary')}`}>
                   NULLTONE.TV
                 </a>
               </div>
@@ -349,9 +322,7 @@ export default function Home() {
                     onToggleCollapse={() => togglePanelCollapse('player')}
                   >
                     <div className="flex items-center space-x-2">
-                      <div className={`w-2 h-2 rounded-full ${
-                        brandSkin === 'waffle' ? 'bg-red-500' : 'bg-red-400'
-                      } animate-pulse`}></div>
+                      <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></div>
                     </div>
                   </PanelHeader>
                   {!panelStates.playerCollapsed && (

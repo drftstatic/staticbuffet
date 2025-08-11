@@ -65,9 +65,55 @@
   --hogan-white: hsl(0, 0%, 95%);
   --hogan-black: hsl(0, 0%, 10%);
   --hogan-gold: hsl(45, 100%, 50%);
+
+  /* DX theme colors */
+  --dx-bg: hsl(300, 50%, 10%);
+  --dx-card: hsl(300, 40%, 15%);
+  --dx-pink: hsl(300, 100%, 70%);
+  --dx-purple: hsl(270, 100%, 60%);
+  --dx-black: hsl(0, 0%, 5%);
+
+  /* Max Headroom theme colors */
+  --maxheadroom-bg: hsl(0, 0%, 5%);
+  --maxheadroom-card: hsl(0, 0%, 10%);
+  --maxheadroom-cyan: hsl(180, 100%, 50%);
+  --maxheadroom-yellow: hsl(60, 100%, 50%);
+  --maxheadroom-green: hsl(120, 100%, 40%);
+
+  /* Mario theme colors */
+  --mario-bg: hsl(0, 75%, 20%);
+  --mario-card: hsl(0, 65%, 25%);
+  --mario-red: hsl(0, 100%, 50%);
+  --mario-blue: hsl(220, 100%, 50%);
+  --mario-yellow: hsl(45, 100%, 50%);
+
+  /* Dakota theme colors */
+  --dakota-bg: hsl(0, 0%, 15%);
+  --dakota-card: hsl(0, 0%, 20%);
+  --dakota-beige: hsl(30, 20%, 60%);
+  --dakota-brown: hsl(30, 40%, 30%);
+  --dakota-tan: hsl(35, 30%, 70%);
+
+  /* Blondie theme colors */
+  --blondie-bg: hsl(45, 30%, 92%);
+  --blondie-card: hsl(45, 40%, 96%);
+  --blondie-gold: hsl(45, 80%, 50%);
+  --blondie-orange: hsl(30, 80%, 55%);
+  --blondie-cream: hsl(50, 50%, 90%);
   
   --font-inter: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* Dynamic theme variables - updated by theme system */
+  --theme-primary: var(--primary);
+  --theme-secondary: var(--secondary);
+  --theme-accent: var(--accent);
+  --theme-background: var(--background);
+  --theme-foreground: var(--foreground);
+  --theme-muted: var(--muted);
+  --theme-border: var(--border);
+  --theme-card: var(--card);
+  --theme-destructive: var(--destructive);
 }
 
 .dark {
@@ -112,6 +158,21 @@
 }
 
 @layer utilities {
+  /* Theme-aware classes */
+  .theme-bg { background-color: var(--theme-background); }
+  .theme-fg { color: var(--theme-foreground); }
+  .theme-primary { color: var(--theme-primary); }
+  .theme-secondary { color: var(--theme-secondary); }
+  .theme-accent { color: var(--theme-accent); }
+  .theme-muted { color: var(--theme-muted); }
+  .theme-border { border-color: var(--theme-border); }
+  .theme-card { background-color: var(--theme-card); }
+  
+  .theme-primary-bg { background-color: var(--theme-primary); }
+  .theme-secondary-bg { background-color: var(--theme-secondary); }
+  .theme-accent-bg { background-color: var(--theme-accent); }
+  .theme-muted-bg { background-color: var(--theme-muted); }
+  
   /* Enhanced noise background for diner theme */
   .noise-bg {
     background-image: 

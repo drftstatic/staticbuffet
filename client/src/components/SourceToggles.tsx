@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Archive, Rocket, Building, Camera } from 'lucide-react';
 import { useStore } from '@/lib/store';
+import { getThemeClasses } from '@/lib/theme-utils';
 import { type SearchSource } from '@/lib/types';
 
 const DEFAULT_SOURCES: SearchSource[] = [
@@ -60,89 +61,7 @@ export function SourceToggles({ onSourcesChange }: SourceTogglesProps) {
     }));
   });
 
-  const getThemeClasses = () => {
-    switch (brandSkin) {
-      case 'testcard':
-        return {
-          text: 'text-blue-400',
-          bg: 'bg-blue-400/10',
-          border: 'border-blue-400/30',
-          hover: 'hover:bg-blue-400/20'
-        };
-      case 'waffle':
-        return {
-          text: 'text-amber-800',
-          bg: 'bg-yellow-100/50',
-          border: 'border-yellow-400/30',
-          hover: 'hover:bg-yellow-100/70'
-        };
-      case 'ebn':
-        return {
-          text: 'text-lime-400',
-          bg: 'bg-lime-900/50',
-          border: 'border-lime-500/30',
-          hover: 'hover:bg-lime-900/70'
-        };
-      case 'ozzy':
-        return {
-          text: 'text-red-300',
-          bg: 'bg-red-900/30',
-          border: 'border-red-500/30',
-          hover: 'hover:bg-red-900/50'
-        };
-      case 'hogan':
-        return {
-          text: 'text-yellow-300',
-          bg: 'bg-yellow-900/50',
-          border: 'border-yellow-400/30',
-          hover: 'hover:bg-yellow-900/70'
-        };
-      case 'dx':
-        return {
-          text: 'text-pink-300',
-          bg: 'bg-pink-900/50',
-          border: 'border-pink-500/30',
-          hover: 'hover:bg-pink-900/70'
-        };
-      case 'maxheadroom':
-        return {
-          text: 'text-green-300',
-          bg: 'bg-green-900/50',
-          border: 'border-green-500/30',
-          hover: 'hover:bg-green-900/70'
-        };
-      case 'mario':
-        return {
-          text: 'text-yellow-300',
-          bg: 'bg-red-900/50',
-          border: 'border-yellow-400/30',
-          hover: 'hover:bg-red-900/70'
-        };
-      case 'dakota':
-        return {
-          text: 'text-gray-300',
-          bg: 'bg-gray-800/50',
-          border: 'border-gray-400/30',
-          hover: 'hover:bg-gray-800/70'
-        };
-      case 'blondie':
-        return {
-          text: 'text-amber-300',
-          bg: 'bg-amber-900/50',
-          border: 'border-amber-400/30',
-          hover: 'hover:bg-amber-900/70'
-        };
-      default:
-        return {
-          text: 'text-blue-400',
-          bg: 'bg-blue-400/10',
-          border: 'border-blue-400/30',
-          hover: 'hover:bg-blue-400/20'
-        };
-    }
-  };
-
-  const theme = getThemeClasses();
+  const theme = getThemeClasses(brandSkin);
 
   const getSourceIcon = (sourceId: string) => {
     switch (sourceId) {
@@ -179,7 +98,7 @@ export function SourceToggles({ onSourcesChange }: SourceTogglesProps) {
         variant="ghost"
         size="sm"
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`flex items-center space-x-1 px-2 py-1 text-xs ${theme.text} ${theme.hover} ${theme.border} border rounded`}
+        className={`flex items-center space-x-1 px-2 py-1 text-xs ${theme.text} ${theme.hover} ${theme.borderSecondary} border rounded`}
         data-testid="button-toggle-sources"
       >
         <Archive size={14} />
@@ -188,7 +107,7 @@ export function SourceToggles({ onSourcesChange }: SourceTogglesProps) {
       </Button>
 
       {isExpanded && (
-        <div className={`absolute z-50 mt-8 p-3 rounded-lg border bg-white dark:bg-gray-900 ${theme.border} min-w-64 shadow-lg backdrop-blur-sm`}>
+        <div className={`absolute z-50 mt-8 p-3 rounded-lg border bg-white dark:bg-gray-900 ${theme.borderSecondary} min-w-64 shadow-lg backdrop-blur-sm`}>
           <div className="space-y-3">
             <div className={`text-xs font-medium ${theme.text} mb-2`}>
               Video Sources
