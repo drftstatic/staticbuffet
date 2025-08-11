@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(36, 100%, 99%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --primary: hsl(346.8, 77.2%, 49.8%);
+  --primary-foreground: hsl(355.7, 100%, 97.3%);
+  --secondary: hsl(35, 35%, 85%);
+  --secondary-foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --accent: hsl(36, 100%, 97%);
+  --accent-foreground: hsl(346.8, 77.2%, 49.8%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(210, 20%, 98%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --ring: hsl(346.8, 77.2%, 49.8%);
+  --radius: 0.75rem;
+  
+  /* Diner theme colors */
+  --diner-bg: hsl(36, 100%, 99%);
+  --diner-card: hsl(0, 0%, 100%);
+  --diner-accent: hsl(346.8, 77.2%, 49.8%);
+  --diner-brown: hsl(35, 65%, 28%);
+  --diner-cream: hsl(36, 100%, 97%);
+  
+  /* EBN theme colors */
+  --ebn-bg: hsl(0, 0%, 12%);
+  --ebn-card: hsl(0, 0%, 16%);
+  --ebn-lime: hsl(84, 81%, 44%);
+  --ebn-blue: hsl(188, 95%, 42%);
+  --ebn-orange: hsl(43, 96%, 56%);
+  
+  --font-inter: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+.dark {
+  --background: hsl(0, 0%, 12%);
+  --foreground: hsl(0, 0%, 95%);
+  --card: hsl(0, 0%, 16%);
+  --card-foreground: hsl(0, 0%, 95%);
+  --popover: hsl(0, 0%, 12%);
+  --popover-foreground: hsl(0, 0%, 95%);
+  --primary: hsl(84, 81%, 44%);
+  --primary-foreground: hsl(0, 0%, 12%);
+  --secondary: hsl(0, 0%, 20%);
+  --secondary-foreground: hsl(0, 0%, 95%);
+  --muted: hsl(0, 0%, 18%);
+  --muted-foreground: hsl(0, 0%, 65%);
+  --accent: hsl(0, 0%, 18%);
+  --accent-foreground: hsl(84, 81%, 44%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(210, 20%, 98%);
+  --border: hsl(0, 0%, 20%);
+  --input: hsl(0, 0%, 18%);
+  --ring: hsl(84, 81%, 44%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-inter);
+  }
+  
+  .font-inter {
+    font-family: var(--font-inter);
+  }
+  
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  /* Noise background for diner theme */
+  .noise-bg {
+    background-image: 
+      radial-gradient(circle at 20% 50%, transparent 20%, rgba(255,255,255,0.1) 21%, rgba(255,255,255,0.1) 34%, transparent 35%, transparent),
+      linear-gradient(0deg, rgba(0,0,0,0.02) 50%, transparent 50%);
+    background-size: 4px 4px, 1px 1px;
+  }
+  
+  /* Scanlines for EBN theme */
+  .scanlines::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(132, 204, 22, 0.03) 2px,
+      rgba(132, 204, 22, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+  
+  /* Glitch text effect for EBN mode */
+  .glitch-text {
+    position: relative;
+  }
+  
+  .glitch-text::before,
+  .glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .glitch-text::before {
+    animation: glitch-1 0.2s infinite;
+    color: hsl(84, 81%, 44%);
+    z-index: -1;
+  }
+  
+  .glitch-text::after {
+    animation: glitch-2 0.2s infinite;
+    color: hsl(188, 95%, 42%);
+    z-index: -2;
+  }
+  
+  @keyframes glitch-1 {
+    0%, 14%, 15%, 49%, 50%, 99%, 100% { transform: translate(0); }
+    15%, 49% { transform: translate(-2px, 1px); }
+  }
+  
+  @keyframes glitch-2 {
+    0%, 20%, 21%, 62%, 63%, 99%, 100% { transform: translate(0); }
+    21%, 62% { transform: translate(2px, -1px); }
+  }
+  
+  /* Ticker animation */
+  @keyframes ticker {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+  
+  .animate-ticker {
+    animation: ticker 30s linear infinite;
+  }
+  
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}

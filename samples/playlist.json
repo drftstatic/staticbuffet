@@ -1,0 +1,43 @@
+{
+  "name": "Static Buffet Sample Playlist",
+  "items": [
+    {
+      "src": "https://archive.org/download/IndustrialSafetyInTheModernWorkplace1962/IndustrialSafetyInTheModernWorkplace1962.mp4",
+      "identifier": "IndustrialSafetyInTheModernWorkplace1962",
+      "title": "Industrial Safety in the Modern Workplace",
+      "start": "00:30",
+      "end": "03:45",
+      "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "U.S. Department of Labor"
+    },
+    {
+      "src": "https://archive.org/download/DuckAndCover1951/DuckAndCover1951.mp4",
+      "identifier": "DuckAndCover1951",
+      "title": "Duck and Cover: Civil Defense",
+      "start": "01:15",
+      "end": "06:30",
+      "license": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "attribution": "Federal Civil Defense Administration"
+    },
+    {
+      "src": "https://archive.org/download/KitchenMatic3000Commercial1974/KitchenMatic3000Commercial1974.mp4",
+      "identifier": "KitchenMatic3000Commercial1974",
+      "title": "KitchenMatic 3000 Commercial",
+      "start": "00:05",
+      "end": "02:18",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Generic Appliances Inc"
+    },
+    {
+      "src": "https://archive.org/download/VictoryNewsreel471943/VictoryNewsreel471943.mp4",
+      "identifier": "VictoryNewsreel471943",
+      "title": "Victory Newsreel #47",
+      "start": "02:00",
+      "end": "08:45",
+      "license": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "attribution": "Universal Newsreel"
+    }
+  ],
+  "totalDuration": "12:43",
+  "exportedAt": "2025-01-11T20:30:00.000Z"
+}

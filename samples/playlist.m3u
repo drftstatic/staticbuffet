@@ -1,0 +1,28 @@
+#EXTM3U
+# Static Buffet Sample Playlist
+# Exported from Static Buffet - 1/11/2025, 8:30:00 PM
+
+#EXTINF:195,Industrial Safety in the Modern Workplace - U.S. Department of Labor
+# License: https://creativecommons.org/publicdomain/zero/1.0/
+# Attribution: U.S. Department of Labor
+# Trim: 00:30 - 03:45
+https://archive.org/download/IndustrialSafetyInTheModernWorkplace1962/IndustrialSafetyInTheModernWorkplace1962.mp4
+
+#EXTINF:315,Duck and Cover: Civil Defense - Federal Civil Defense Administration
+# License: https://creativecommons.org/publicdomain/mark/1.0/
+# Attribution: Federal Civil Defense Administration
+# Trim: 01:15 - 06:30
+https://archive.org/download/DuckAndCover1951/DuckAndCover1951.mp4
+
+#EXTINF:133,KitchenMatic 3000 Commercial - Generic Appliances Inc
+# License: https://creativecommons.org/licenses/by/4.0/
+# Attribution: Generic Appliances Inc
+# Trim: 00:05 - 02:18
+https://archive.org/download/KitchenMatic3000Commercial1974/KitchenMatic3000Commercial1974.mp4
+
+#EXTINF:405,Victory Newsreel #47 - Universal Newsreel
+# License: https://creativecommons.org/publicdomain/mark/1.0/
+# Attribution: Universal Newsreel
+# Trim: 02:00 - 08:45
+https://archive.org/download/VictoryNewsreel471943/VictoryNewsreel471943.mp4
+
