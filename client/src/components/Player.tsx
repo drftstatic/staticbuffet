@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize } from 'lucide-react';
+import { PopOutPlayer } from '@/components/PopOutPlayer';
 
 export function Player() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -860,6 +861,8 @@ export function Player() {
               >
                 <Maximize className="h-4 w-4" />
               </Button>
+              
+              <PopOutPlayer currentVideo={currentVideo} />
             </div>
 
             {/* Volume Control */}
