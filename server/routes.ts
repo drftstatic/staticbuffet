@@ -58,15 +58,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const searchUrl = new URL("https://archive.org/advancedsearch.php");
       searchUrl.searchParams.set("q", query);
       searchUrl.searchParams.set("output", "json");
-      searchUrl.searchParams.set("fl[]", "identifier");
-      searchUrl.searchParams.set("fl[]", "title");
-      searchUrl.searchParams.set("fl[]", "creator");
-      searchUrl.searchParams.set("fl[]", "year");
-      searchUrl.searchParams.set("fl[]", "mediatype");
-      searchUrl.searchParams.set("fl[]", "licenseurl");
-      searchUrl.searchParams.set("fl[]", "downloads");
-      searchUrl.searchParams.set("fl[]", "date");
-      searchUrl.searchParams.set("fl[]", "description");
+      // Use comma-separated fields instead of fl[] array
+      searchUrl.searchParams.set("fl", "identifier,title,creator,year,mediatype,licenseurl,downloads,date,description,collection");
       searchUrl.searchParams.set("rows", filters.rows.toString());
       searchUrl.searchParams.set("page", filters.page.toString());
       searchUrl.searchParams.set("sort[]", filters.sort === 'downloads' ? 'downloads desc' : 
@@ -81,10 +74,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const data = await response.json();
       
       // Log the first few docs for debugging
-      console.log("Sample docs from Archive.org:", JSON.stringify(data.response?.docs?.slice(0, 2), null, 2));
+      console.log("Full API URL:", searchUrl.toString());
+      console.log("Sample docs from Archive.org:", JSON.stringify(data.response?.docs?.slice(0, 1), null, 2));
       
-      // Return all docs for now to debug the filtering issue
-      const filteredDocs = data.response?.docs || [];
+      // Filter and enrich docs with proper video data
+      const filteredDocs = (data.response?.docs || [])
+        .filter((doc: any) => {
+          // Must have identifier and title
+          if (!doc.identifier || !doc.title) return false;
+          
+          // For development, be more permissive with licensing
+          return true;
+        })
+        .map((doc: any) => ({
+          identifier: doc.identifier,
+          title: doc.title || 'Untitled',
+          creator: doc.creator || 'Unknown',
+          year: doc.year || doc.date?.substring(0, 4) || '',
+          description: doc.description || '',
+          duration: doc.duration || '',
+          licenseurl: doc.licenseurl || '',
+          downloads: parseInt(doc.downloads) || 0,
+          date: doc.date || '',
+          collection: Array.isArray(doc.collection) ? doc.collection.join(', ') : doc.collection || '',
+          thumbnail: `https://archive.org/services/img/${doc.identifier}`,
+        }));
       
       console.log(`Original docs count: ${data.response?.docs?.length}, Filtered count: ${filteredDocs.length}`);
       
@@ -113,20 +127,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const data = await response.json();
       
-      // Find best video file (prefer MP4 H.264)
+      // Find best video file (prefer MP4, H.264, or any video format)
       const videoFiles = data.files?.filter((file: any) => 
-        file.format === 'MPEG4' || file.format === 'h.264' || file.name?.endsWith('.mp4')
+        file.format === 'MPEG4' || 
+        file.format === 'h.264' || 
+        file.format === 'MPEG-4' ||
+        file.format === 'QuickTime' ||
+        file.name?.endsWith('.mp4') ||
+        file.name?.endsWith('.mov') ||
+        file.name?.endsWith('.avi') ||
+        file.name?.match(/\.(mp4|mov|avi|mkv|webm)$/i)
+      ) || [];
+      
+      // Also look for any file that might be a video based on name patterns
+      const allPossibleVideos = data.files?.filter((file: any) => 
+        videoFiles.includes(file) || 
+        file.name?.match(/\.(mp4|mov|avi|mkv|webm|flv|ogv)$/i) ||
+        (file.size && parseInt(file.size) > 1000000) // Larger than 1MB
       ) || [];
       
       const bestFile = videoFiles.find((file: any) => file.format === 'h.264') || 
                       videoFiles.find((file: any) => file.format === 'MPEG4') || 
-                      videoFiles[0];
+                      videoFiles.find((file: any) => file.name?.endsWith('.mp4')) ||
+                      allPossibleVideos[0];
       
       res.json({
         metadata: data.metadata,
         files: data.files,
         videoFile: bestFile,
-        streamUrl: bestFile ? `https://archive.org/download/${identifier}/${bestFile.name}` : null
+        videoFiles: allPossibleVideos,
+        streamUrl: bestFile ? `https://archive.org/download/${identifier}/${bestFile.name}` : null,
+        detailsUrl: `https://archive.org/details/${identifier}`
       });
       
     } catch (error) {
