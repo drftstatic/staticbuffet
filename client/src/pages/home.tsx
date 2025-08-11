@@ -13,8 +13,7 @@ import { BottomHUD } from '@/components/BottomHUD';
 import { BrandSkinToggle } from '@/components/BrandSkinToggle';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Button } from '@/components/ui/button';
-import { EmergencyMix } from '@/components/EmergencyMix';
-import { AudioReactive } from '@/components/AudioReactive';
+import { GroupedControls } from '@/components/GroupedControls';
 import { Player } from '@/components/Player';
 import { Footer } from '@/components/Footer';
 import { useStore } from '@/lib/store';
@@ -149,8 +148,7 @@ export default function Home() {
                 </Button>
               </Link>
               <ThemeSwitcher />
-              <EmergencyMix />
-              <AudioReactive />
+              <GroupedControls />
             </div>
           </div>
 

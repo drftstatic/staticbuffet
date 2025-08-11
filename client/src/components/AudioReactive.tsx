@@ -86,14 +86,14 @@ export function AudioReactive() {
       <Button
         onClick={handleToggle}
         data-testid="button-audio-reactive"
-        className={`px-3 py-2 rounded-lg transition-all duration-200 ${
+        className={`px-2 py-2 rounded-lg transition-all duration-200 ${
           isAudioReactive
             ? 'bg-red-600 hover:bg-red-700 dark:bg-lime-500 dark:hover:bg-lime-400 text-white dark:text-black'
             : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
         }`}
+        title={isAudioReactive ? "Disable Audio Reactive" : "Enable Audio Reactive"}
       >
-        {isAudioReactive ? <Mic size={16} className="mr-1" /> : <MicOff size={16} className="mr-1" />}
-        <span className="hidden md:inline">Audio</span>
+        {isAudioReactive ? <Mic size={16} /> : <MicOff size={16} />}
       </Button>
 
       {/* Settings Dialog */}
