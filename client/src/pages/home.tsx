@@ -89,7 +89,7 @@ export default function Home() {
   }, [brandSkin]);
 
   return (
-    <div className={`min-h-screen transition-all duration-300 ${
+    <div className={`min-h-screen flex flex-col transition-all duration-300 ${
       brandSkin === 'waffle' ? 'waffle-gradient' : 'ebn-gradient'
     }`}>
       {/* Top Bar */}
@@ -193,13 +193,13 @@ export default function Home() {
       </header>
 
       {/* Professional Media Workstation Layout */}
-      <div className="h-[calc(100vh-180px)] grid grid-cols-12 grid-rows-12 gap-1 p-1">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 auto-rows-auto lg:grid-rows-12 gap-2 lg:gap-1 p-2 lg:p-1 min-h-0">
         {/* Search/Results Panel - Left Column */}
-        <div className={`col-span-4 row-span-8 rounded-lg border-2 ${
+        <div className={`col-span-1 lg:col-span-4 row-span-1 lg:row-span-8 rounded-lg border-2 ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
-        }`}>
+        } min-h-[300px] lg:min-h-0`}>
           <div className={`h-full flex flex-col ${
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
@@ -219,11 +219,11 @@ export default function Home() {
         </div>
 
         {/* Preview/Player Panel - Center/Right */}
-        <div className={`col-span-8 row-span-8 rounded-lg border-2 ${
+        <div className={`col-span-1 lg:col-span-8 row-span-1 lg:row-span-8 rounded-lg border-2 ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
-        }`}>
+        } min-h-[400px] lg:min-h-0`}>
           <div className={`h-full flex flex-col ${
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
@@ -249,11 +249,11 @@ export default function Home() {
         </div>
 
         {/* Queue/Timeline Panel - Bottom Row */}
-        <div className={`col-span-8 row-span-4 rounded-lg border-2 ${
+        <div className={`col-span-1 lg:col-span-8 row-span-1 lg:row-span-4 rounded-lg border-2 ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
-        }`}>
+        } min-h-[200px] lg:min-h-0`}>
           <div className={`h-full flex flex-col ${
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
@@ -273,11 +273,11 @@ export default function Home() {
         </div>
 
         {/* Effects Panel - Bottom Right */}
-        <div className={`col-span-4 row-span-4 rounded-lg border-2 ${
+        <div className={`col-span-1 lg:col-span-4 row-span-1 lg:row-span-4 rounded-lg border-2 ${
           brandSkin === 'waffle' 
             ? 'bg-yellow-50/80 border-yellow-400/50' 
             : 'bg-purple-950/80 border-yellow-400/50'
-        }`}>
+        } min-h-[200px] lg:min-h-0`}>
           <div className={`h-full flex flex-col ${
             brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
           }`}>
