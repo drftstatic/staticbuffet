@@ -1,5 +1,5 @@
 # Static Buffet - Trash Team × Nulltone.TV
-**Version: 0.3.0**
+**Version: 6.0**
 
 ## Overview
 
@@ -12,6 +12,15 @@ Preferred communication style: Simple, everyday language.
 Project description: Trash Team × Nulltone.TV present Static Buffet — all-you-can-eat video chaos, straight from the public domain. Trash Team is an audio/visual collaboration dedicated to turning discarded culture into something worth watching again. Nulltone.TV is the broadcast arm of the resistance — a streaming experiment for alternative programming, glitch aesthetics, and strange transmissions. Built by Fladry Creative (fladrycreative.co).
 
 ## Recent Changes
+
+### Version 6.0 Release (August 11, 2025)
+- **Sexy Mario Plumber Theme**: Seventh complete visual theme with meme-based humor and Nintendo-inspired aesthetics
+  - **Mario Water Pipe Effect**: Unexpected visual distortion with floating mushrooms, stars, and peppers
+  - **Sexy Mario Soundboard**: 8 inappropriate-but-funny quotes with Italian accent and corny plumber double entendres
+  - **Triple-Click MA Button**: Activates "SEXY MARIO MODE" with title transformation to "SEXY MARIO BUFFET"
+  - **Rainbow Gradient Background**: Red, blue, gold, and green Mario colors with power-up animations
+  - **Coin Sparkle Effects**: Theme-specific visual effects throughout the interface
+  - **Complete Seven-Theme System**: Professional VJ toolkit with distinct visual experiences and audio identity
 
 ### Version 5.0 Release (August 11, 2025)
 - **New Wrestling Themes & Easter Eggs**: Extended theme system with D-Generation X and Max Headroom

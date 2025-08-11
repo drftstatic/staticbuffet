@@ -18,6 +18,8 @@ export function ThemeSwitcher() {
           ? 'border-lime-500/30 bg-gray-800/50'
           : brandSkin === 'ozzy'
           ? 'border-red-500/50 bg-black/80 text-red-200'
+          : brandSkin === 'mario'
+          ? 'border-red-500/50 bg-red-900/50 text-yellow-200'
           : 'border-yellow-400/50 bg-gray-800/80 text-yellow-200'
       }`}>
         <SelectValue />

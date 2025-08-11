@@ -18,7 +18,13 @@ export default function About() {
         ? 'ozzy-gradient metal-texture'
         : brandSkin === 'hogan' && isHulksterMode
         ? 'hogan-gradient nwo-stripes hulkster-mode'
-        : 'hogan-gradient nwo-stripes'
+        : brandSkin === 'hogan'
+        ? 'hogan-gradient nwo-stripes'
+        : brandSkin === 'mario'
+        ? 'mario-gradient mario-powerup'
+        : brandSkin === 'dx'
+        ? 'dx-gradient'
+        : 'maxheadroom-gradient'
     }`}>
       {/* Header */}
       <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${
@@ -134,7 +140,7 @@ export default function About() {
                 'Emergency Mix button for instant content',
                 'Audio-reactive video effects',
                 'Export playlists with licensing metadata',
-                'Dual themes: Waffle House & EBN Hijack'
+                'Seven visual themes with unique soundboards and easter eggs'
               ].map((feature, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <div className={`w-2 h-2 rounded-full ${

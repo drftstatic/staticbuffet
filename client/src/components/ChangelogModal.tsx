@@ -14,6 +14,20 @@ import { useStore } from '@/lib/store';
 
 const CHANGELOG_ENTRIES = [
   {
+    version: "6.0",
+    date: "August 11, 2025",
+    title: "Sexy Mario Plumber Theme & Meme Easter Eggs",
+    changes: [
+      "Added Sexy Mario Plumber theme with Italian-American charm and Nintendo colors",
+      "Mario Water Pipe Effect: Unexpected visual distortion with floating power-ups",
+      "Sexy Mario Soundboard: 8 inappropriate-but-funny quotes with Italian accent",
+      "Triple-click MA button activates SEXY MARIO MODE with title transformation",
+      "Rainbow gradient background with red, blue, gold, and green Mario colors",
+      "Coin sparkle effects and power-up animations throughout interface",
+      "Seven complete visual themes now available for professional VJ use"
+    ]
+  },
+  {
     version: "5.0",
     date: "August 11, 2025",
     title: "New Wrestling Themes & Easter Eggs",

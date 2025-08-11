@@ -62,7 +62,7 @@ export function Footer() {
   };
 
   const buildInfo = {
-    version: '5.0',
+    version: '6.0',
     build: '2025.08.11',
     engine: 'FS9000',
     audio: 'web.A.ap1',
