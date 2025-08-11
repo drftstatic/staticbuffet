@@ -21,6 +21,8 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 - Enhanced glass morphism effects with warm golden tints and improved shadows
 - Updated header with bold typography inspired by official Static Buffet logo design
 - Added theme switcher component for easy switching between Waffle House and EBN modes
+- Updated EBN theme with cyberpunk color scheme: deep purple, neon yellow, electric green
+- Enhanced About page with detailed theme explanations and visual descriptions
 - Complete professional VJ controls with real-time audio and video processing
 - Added keyboard shortcuts for effect presets (1-4 keys for instant switching)
 - Implemented fullscreen mode with auto-hiding controls and keyboard shortcuts

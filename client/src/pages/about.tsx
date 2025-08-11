@@ -119,13 +119,57 @@ export default function About() {
               ].map((feature, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <div className={`w-2 h-2 rounded-full ${
-                    brandSkin === 'waffle' ? 'bg-amber-600' : 'bg-lime-500'
-                  }`} />
+                    brandSkin === 'waffle' ? 'bg-amber-600' : ''
+                  }`} style={brandSkin !== 'waffle' ? { backgroundColor: '#B6FF00' } : {}} />
                   <span className={brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'}>
                     {feature}
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h3 className={`text-2xl font-bold mb-6 ${
+              brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+            }`}>
+              Visual Themes
+            </h3>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className={`p-6 rounded-lg ${
+                brandSkin === 'waffle' 
+                  ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                  : 'bg-gray-800/50 border border-lime-500/30'
+              }`}>
+                <h4 className={`text-lg font-bold mb-3 ${
+                  brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+                }`}>
+                  🧇 Waffle House Mode
+                </h4>
+                <p className={`${
+                  brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+                } leading-relaxed`}>
+                  Inspired by the Waffle House menu, the unofficial after-gig hangout for every VJ. Cozy colors, laminated-menu vibes, late-night comfort.
+                </p>
+              </div>
+
+              <div className={`p-6 rounded-lg ${
+                brandSkin === 'waffle' 
+                  ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                  : 'bg-gray-800/50 border border-lime-500/30'
+              }`}>
+                <h4 className={`text-lg font-bold mb-3 ${
+                  brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+                }`}>
+                  📺 EBN Hijack Mode
+                </h4>
+                <p className={`${
+                  brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+                } leading-relaxed`}>
+                  A nod to the pioneers at Emergency Broadcast Network. Tactical overlays, neon alerts, hacked-broadcast energy.
+                </p>
+              </div>
             </div>
           </div>
 
