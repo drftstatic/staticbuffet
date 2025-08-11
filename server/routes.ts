@@ -22,6 +22,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rows: req.query.rows ? parseInt(req.query.rows as string) : 50,
         durationMin: req.query.durationMin ? parseInt(req.query.durationMin as string) : undefined,
         durationMax: req.query.durationMax ? parseInt(req.query.durationMax as string) : undefined,
+        sources: req.query.sources ? (req.query.sources as string).split(',') : undefined,
+        allowRestrictedLicenses: req.query.allowRestrictedLicenses === 'true',
       };
       
       const filters = searchFiltersSchema.parse(queryData);
@@ -44,7 +46,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
           case 'ccby':
             query += " AND licenseurl:*by*";
             break;
+          case 'restricted':
+            if (filters.allowRestrictedLicenses) {
+              query += " AND (licenseurl:*nc* OR licenseurl:*nd* OR licenseurl:*sa*)";
+            } else {
+              // Default to safe licenses if restricted is selected but not allowed
+              query += " AND (licenseurl:*publicdomain* OR licenseurl:*cc0* OR licenseurl:*by*)";
+            }
+            break;
         }
+      }
+      
+      // Add source collection filters
+      if (filters.sources && filters.sources.length > 0) {
+        const sourceQueries = filters.sources.map((source: string) => {
+          switch (source) {
+            case 'prelinger':
+              return 'collection:prelinger';
+            case 'fedflix':
+              return 'collection:fedflix';
+            case 'nasa':
+              return 'collection:nasa';
+            case 'loc':
+              return 'collection:library_of_congress';
+            case 'wikimedia':
+              return 'collection:wikimedia';
+            default:
+              return `collection:${source}`;
+          }
+        });
+        query += ` AND (${sourceQueries.join(' OR ')})`;
       }
       
       // Add year range if specified
@@ -195,7 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ) || [];
       
       console.log(`📁 Found ${videoFiles.length} browser-compatible video files for ${identifier}:`, 
-        videoFiles.map(f => `${f.name} (${f.format})`));
+        videoFiles.map((f: any) => `${f.name} (${f.format})`));
       
       // Sort by format compatibility and quality preference
       const sortedVideoFiles = videoFiles.sort((a: any, b: any) => {

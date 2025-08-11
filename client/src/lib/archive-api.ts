@@ -21,6 +21,12 @@ export async function searchVideos(filters: SearchState) {
   if (filters.license) params.set('license', filters.license);
   if (filters.sort) params.set('sort', filters.sort);
   if (filters.page) params.set('page', filters.page.toString());
+  if (filters.sources && filters.sources.length > 0) {
+    params.set('sources', filters.sources.join(','));
+  }
+  if (filters.allowRestrictedLicenses !== undefined) {
+    params.set('allowRestrictedLicenses', filters.allowRestrictedLicenses.toString());
+  }
   
   // Set default rows if not specified
   params.set('rows', '50');

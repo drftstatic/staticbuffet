@@ -27,10 +27,12 @@ export const searchFiltersSchema = z.object({
   yearTo: z.string().optional(),
   durationMin: z.number().optional(),
   durationMax: z.number().optional(),
-  license: z.enum(['all', 'publicdomain', 'cc0', 'ccby']).default('all'),
+  license: z.enum(['all', 'publicdomain', 'cc0', 'ccby', 'restricted']).default('all'),
   sort: z.enum(['downloads', 'date', 'relevance']).default('downloads'),
   page: z.number().default(1),
   rows: z.number().default(50),
+  sources: z.array(z.string()).optional(),
+  allowRestrictedLicenses: z.boolean().default(false),
 });
 
 export const queueItemSchema = z.object({

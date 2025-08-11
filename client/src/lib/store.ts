@@ -96,6 +96,8 @@ export const useStore = create<AppStore>((set, get) => ({
     license: 'publicdomain',
     sort: 'downloads',
     page: 1,
+    sources: ['prelinger', 'fedflix'],
+    allowRestrictedLicenses: false,
   },
   searchResults: [],
   selectedVideo: null,

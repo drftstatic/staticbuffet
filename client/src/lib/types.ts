@@ -5,9 +5,26 @@ export interface SearchState {
   yearFrom: string;
   yearTo: string;
   duration: string;
-  license: 'all' | 'publicdomain' | 'cc0' | 'ccby';
+  license: 'all' | 'publicdomain' | 'cc0' | 'ccby' | 'restricted';
   sort: 'downloads' | 'date' | 'relevance';
   page: number;
+  sources: string[];
+  allowRestrictedLicenses: boolean;
+}
+
+export interface SmartQuery {
+  id: string;
+  label: string;
+  query: string;
+  description: string;
+}
+
+export interface SearchSource {
+  id: string;
+  name: string;
+  collection: string;
+  enabled: boolean;
+  description: string;
 }
 
 export interface VideoResult {

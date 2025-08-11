@@ -99,6 +99,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
             <SelectItem value="publicdomain">Public Domain</SelectItem>
             <SelectItem value="cc0">CC0</SelectItem>
             <SelectItem value="ccby">CC-BY</SelectItem>
+            <SelectItem value="restricted">Restricted (NC/ND)</SelectItem>
           </SelectContent>
         </Select>
       </div>
