@@ -64,11 +64,22 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
 
   const handleAddToQueue = async (video: VideoResult) => {
     try {
+      console.log('🎬 Adding video to queue:', video.identifier);
       const metadata = await getVideoMetadata(video.identifier);
+      console.log('📋 Metadata received:', {
+        hasStreamUrl: !!metadata.streamUrl,
+        streamUrl: metadata.streamUrl,
+        videoFile: metadata.videoFile?.name,
+        totalFiles: metadata.videoFiles?.length
+      });
+      
       const videoUrl = metadata.streamUrl || `https://archive.org/download/${video.identifier}`;
+      console.log('🎥 Final video URL:', videoUrl);
+      
       addToQueue(video, videoUrl);
+      console.log('✅ Video added to queue successfully');
     } catch (error) {
-      console.error('Failed to add to queue:', error);
+      console.error('❌ Failed to add to queue:', error);
     }
   };
 

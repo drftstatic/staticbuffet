@@ -128,6 +128,12 @@ export const useStore = create<AppStore>((set, get) => ({
 
   // Queue actions
   addToQueue: (video, videoUrl, addToFront = false) => {
+    console.log('🎯 Store: Adding to queue', {
+      identifier: video.identifier,
+      videoUrl,
+      addToFront
+    });
+    
     const newItem: QueueItem = {
       id: `${video.identifier}-${Date.now()}`,
       identifier: video.identifier,
@@ -143,11 +149,24 @@ export const useStore = create<AppStore>((set, get) => ({
       attribution: video.creator,
     };
     
-    set((state) => ({
-      queueItems: addToFront 
+    set((state) => {
+      const newQueue = addToFront 
         ? [newItem, ...state.queueItems]
-        : [...state.queueItems, newItem]
-    }));
+        : [...state.queueItems, newItem];
+      
+      console.log('📊 Queue updated:', {
+        oldLength: state.queueItems.length,
+        newLength: newQueue.length,
+        currentIndex: state.currentQueueIndex,
+        firstItem: newQueue[0]?.identifier
+      });
+      
+      return {
+        queueItems: newQueue,
+        // If this is the first item, set current index to 0
+        currentQueueIndex: state.queueItems.length === 0 ? 0 : state.currentQueueIndex
+      };
+    });
   },
 
   removeFromQueue: (id) => set((state) => ({

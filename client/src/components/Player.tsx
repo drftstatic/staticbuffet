@@ -39,26 +39,71 @@ export function Player() {
 
   useEffect(() => {
     if (videoRef.current && currentVideo) {
-      console.log('Loading video:', currentVideo.videoUrl);
-      videoRef.current.src = currentVideo.videoUrl;
-      videoRef.current.volume = volume[0] / 100;
-      videoRef.current.muted = false; // Ensure not muted
-      videoRef.current.load();
+      console.log('🎬 Loading video:', {
+        identifier: currentVideo.identifier,
+        url: currentVideo.videoUrl,
+        title: currentVideo.title
+      });
       
-      // Add event listeners for debugging
       const video = videoRef.current;
-      const handleCanPlay = () => console.log('Video can play');
-      const handleLoadedData = () => console.log('Video loaded, duration:', video.duration, 'muted:', video.muted, 'volume:', video.volume);
-      const handleError = (e: any) => console.error('Video error:', e);
+      
+      // Reset video element
+      video.src = '';
+      video.load();
+      
+      // Set new source and properties
+      video.src = currentVideo.videoUrl;
+      video.volume = volume[0] / 100;
+      video.muted = false;
+      video.autoplay = false;
+      video.preload = 'metadata';
+      
+      // Add comprehensive event listeners for debugging
+      const handleCanPlay = () => {
+        console.log('✅ Video can play:', {
+          duration: video.duration,
+          videoWidth: video.videoWidth,
+          videoHeight: video.videoHeight,
+          readyState: video.readyState
+        });
+      };
+      
+      const handleLoadedData = () => {
+        console.log('📺 Video loaded:', {
+          duration: video.duration,
+          muted: video.muted,
+          volume: video.volume,
+          src: video.src
+        });
+      };
+      
+      const handleError = (e: any) => {
+        console.error('❌ Video error:', {
+          error: e,
+          networkState: video.networkState,
+          readyState: video.readyState,
+          src: video.src
+        });
+      };
+      
+      const handleLoadStart = () => console.log('🔄 Video load started');
+      const handleProgress = () => console.log('📊 Video loading progress...');
       
       video.addEventListener('canplay', handleCanPlay);
       video.addEventListener('loadeddata', handleLoadedData);
       video.addEventListener('error', handleError);
+      video.addEventListener('loadstart', handleLoadStart);
+      video.addEventListener('progress', handleProgress);
+      
+      // Load the video
+      video.load();
       
       return () => {
         video.removeEventListener('canplay', handleCanPlay);
         video.removeEventListener('loadeddata', handleLoadedData);
         video.removeEventListener('error', handleError);
+        video.removeEventListener('loadstart', handleLoadStart);
+        video.removeEventListener('progress', handleProgress);
       };
     }
   }, [currentVideo]);
