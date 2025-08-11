@@ -19,17 +19,14 @@ export function FloatingPanelsManager() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-40">
-      {/* Search Panel */}
+      {/* Search Results Panel - no duplicate search UI */}
       <div className="pointer-events-auto">
         <FloatingPanel
           id="search"
-          title="Search & Filters"
+          title="Search Results"
           brandSkin={brandSkin}
         >
-          <div className="space-y-4">
-            <SearchBar />
-            <Filters />
-          </div>
+          <ResultsGrid />
         </FloatingPanel>
       </div>
 
@@ -66,20 +63,7 @@ export function FloatingPanelsManager() {
         </FloatingPanel>
       </div>
 
-      {/* Results overlay - positioned next to search panel */}
-      <div className="pointer-events-auto fixed bg-black/80 backdrop-blur-sm rounded-lg shadow-2xl border border-gray-600"
-           style={{
-             left: Math.min(floatingPanelStates.search.x + floatingPanelStates.search.width + 10, window.innerWidth - 620),
-             top: floatingPanelStates.search.y,
-             width: Math.max(600, Math.min(800, window.innerWidth - floatingPanelStates.search.x - floatingPanelStates.search.width - 30)),
-             height: floatingPanelStates.search.height,
-             zIndex: 35,
-           }}>
-        <div className="p-4 h-full overflow-auto">
-          <h3 className="text-lg font-semibold mb-4 text-white">Search Results</h3>
-          <ResultsGrid />
-        </div>
-      </div>
+      {/* No separate results overlay needed - integrated into search panel */}
     </div>
   );
 }

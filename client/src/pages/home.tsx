@@ -185,7 +185,7 @@ export default function Home() {
           ? 'glass border-amber-400/50'
           : 'glass-hogan border-yellow-400/50'
       }`}>
-        <div className="max-w-full px-4 py-2 space-y-3">
+        <div className="max-w-full px-4 py-1.5 space-y-2">
           {/* Top Row - Compact Brand + Controls */}
           <div className="flex items-center justify-between">
             {/* Compact Brand */}
@@ -224,23 +224,18 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center space-x-2">
+            {/* Compact Media Controls */}
+            <div className="flex items-center">
               <MediaControls />
-              
-              {/* Simplified controls - only media controls now */}
-              {/* Theme controls now handled by ThemeSelector in top-right */}
             </div>
           </div>
 
-          {/* Search Bar Row - Full Width */}
-          <div className="flex gap-2 items-center">
-            <SearchBar onSearch={handleSearch} />
+          {/* Ultra-compact Search Row */}
+          <div className="flex gap-1 items-center text-sm">
+            <div className="flex-1 max-w-sm">
+              <SearchBar onSearch={handleSearch} />
+            </div>
             <SavedSearches />
-          </div>
-
-          {/* Filters Row */}
-          <div>
             <Filters onFiltersChange={handleFiltersChange} />
           </div>
         </div>
@@ -415,20 +410,9 @@ export default function Home() {
         <DevicePrompt />
       </div>
 
-      {/* Footer */}
-      <div className="flex-shrink-0">
-        <Footer />
-      </div>
-
-      {/* Soundboards now handled by CoreSoundboards */}
-
-      {/* Welcome Modal */}
+      {/* Streamlined Modals - consolidated */}
       <StreamlinedWelcome />
-      
-      {/* First Run Tour */}
       <FirstRunTour />
-      
-      {/* Core Soundboards (theme-aware) */}
       <CoreSoundboards />
       
       {/* Master Control Panel - consolidates theme, layout, and help controls */}

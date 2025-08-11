@@ -229,50 +229,26 @@ export function EffectsPanel() {
   };
 
   return (
-    <div className="space-y-6 p-6 max-h-[600px] overflow-y-auto">
-      <div className="flex items-center space-x-3">
-        <div className={`p-2 rounded-lg ${
-          brandSkin === 'waffle' 
-            ? 'bg-yellow-100 text-amber-700' 
-            : 'bg-lime-900/30 text-lime-400'
-        }`}>
-          <Zap className="h-5 w-5" />
-        </div>
-        <h3 className="font-bold text-amber-900 text-[15px]">
-          Effects Studio
-        </h3>
+    <div className="space-y-3 p-3 max-h-[600px] overflow-y-auto">
+      <div className="flex items-center space-x-2">
+        <Zap className="h-4 w-4" />
+        <h3 className="font-medium text-sm">Effects (1-8)</h3>
       </div>
-      {/* Quick Presets */}
-      <div className="space-y-2">
-        <div className="grid grid-cols-2 gap-2">
-          <Button size="sm" variant="outline" onClick={() => applyPreset('cyberpunk')} title="Keyboard: 1">
-            <span className="mr-1 text-xs opacity-70">1</span> Cyberpunk
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('vintage')} title="Keyboard: 2">
-            <span className="mr-1 text-xs opacity-70">2</span> Vintage
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('glitch')} title="Keyboard: 3">
-            <span className="mr-1 text-xs opacity-70">3</span> Glitch
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('noir')} title="Keyboard: 4">
-            <span className="mr-1 text-xs opacity-70">4</span> Film Noir
-          </Button>
+      
+      {/* Ultra-Compact Quick Presets */}
+      <div className="space-y-1">
+        <div className="grid grid-cols-4 gap-1">
+          <Button size="sm" variant="outline" onClick={() => applyPreset('cyberpunk')} title="Cyberpunk" className="h-6 text-xs p-1">1</Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('vintage')} title="Vintage" className="h-6 text-xs p-1">2</Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('glitch')} title="Glitch" className="h-6 text-xs p-1">3</Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('noir')} title="Film Noir" className="h-6 text-xs p-1">4</Button>
         </div>
         
-        {/* New Advanced Effects Row */}
-        <div className="grid grid-cols-2 gap-2">
-          <Button size="sm" variant="outline" onClick={() => applyPreset('vortex')} title="Keyboard: 5">
-            <span className="mr-1 text-xs opacity-70">5</span> Video Vortex
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('portal')} title="Keyboard: 6">
-            <span className="mr-1 text-xs opacity-70">6</span> Demonic Portal
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('fractal')} title="Keyboard: 7">
-            <span className="mr-1 text-xs opacity-70">7</span> Fractal Storm
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => applyPreset('timewarp')} title="Keyboard: 8">
-            <span className="mr-1 text-xs opacity-70">8</span> Time Warp
-          </Button>
+        <div className="grid grid-cols-4 gap-1">
+          <Button size="sm" variant="outline" onClick={() => applyPreset('vortex')} title="Video Vortex" className="h-6 text-xs p-1">5</Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('portal')} title="Demonic Portal" className="h-6 text-xs p-1">6</Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('fractal')} title="Fractal Storm" className="h-6 text-xs p-1">7</Button>
+          <Button size="sm" variant="outline" onClick={() => applyPreset('timewarp')} title="Time Warp" className="h-6 text-xs p-1">8</Button>
         </div>
       </div>
       <Accordion type="multiple" className="w-full">
