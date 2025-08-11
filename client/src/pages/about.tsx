@@ -200,6 +200,38 @@ export default function About() {
             </div>
           </div>
 
+          <div className="mb-8">
+            <div className={`p-6 rounded-lg ${
+              brandSkin === 'waffle' 
+                ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                : 'bg-gray-800/50 border border-lime-500/30'
+            }`}>
+              <h4 className={`text-lg font-bold mb-3 ${
+                brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+              }`}>
+                Built by Fladry Creative
+              </h4>
+              <p className={`${
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+              } leading-relaxed mb-3`}>
+                Static Buffet was designed and developed by Fladry Creative, bringing together technical expertise and creative vision to build tools for the underground media community.
+              </p>
+              <a 
+                href="https://fladrycreative.co" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${
+                  brandSkin === 'waffle'
+                    ? 'border-yellow-400/50 bg-yellow-50/50 text-amber-800 hover:bg-yellow-100/50'
+                    : 'border-lime-500/30 bg-gray-800/50 text-lime-400 hover:bg-gray-700/50'
+                }`}
+              >
+                <span>Visit Fladry Creative</span>
+                <ExternalLink size={16} />
+              </a>
+            </div>
+          </div>
+
           <div className={`p-6 rounded-lg border-2 border-dashed ${
             brandSkin === 'waffle' 
               ? 'border-yellow-400/50 bg-yellow-50/30' 
