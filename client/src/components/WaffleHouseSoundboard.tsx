@@ -34,12 +34,55 @@ interface WaffleHouseSoundboardProps {
 export function WaffleHouseSoundboard({ isOpen, onClose }: WaffleHouseSoundboardProps) {
   const { toast } = useToast();
 
-  const playSound = (sound: WaffleSound) => {
-    toast({
-      title: `🧇 WAFFLE HOUSE SAYS:`,
-      description: sound.text,
-      duration: 3000,
-    });
+  const playSound = async (sound: WaffleSound) => {
+    try {
+      // Create audio context if needed
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        throw new Error('Web Audio API not supported');
+      }
+
+      const audioContext = new AudioContextClass();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+
+      // Create a simple beep sound to simulate the soundboard
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Different frequencies for different sounds
+      const frequency = 200 + (sound.id.length * 50); // Simple frequency based on sound ID
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+
+      toast({
+        title: `🧇 WAFFLE HOUSE SAYS:`,
+        description: sound.text,
+        duration: 3000,
+      });
+
+      // Clean up
+      setTimeout(() => {
+        audioContext.close();
+      }, 1000);
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+      toast({
+        title: `🧇 WAFFLE HOUSE SAYS:`,
+        description: sound.text + ' (Audio not available - check browser settings)',
+        duration: 3000,
+      });
+    }
   };
 
   return (

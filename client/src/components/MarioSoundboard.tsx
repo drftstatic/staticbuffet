@@ -34,12 +34,57 @@ interface MarioSoundboardProps {
 export function MarioSoundboard({ isOpen, onClose }: MarioSoundboardProps) {
   const { toast } = useToast();
 
-  const playSound = (sound: MarioSound) => {
-    toast({
-      title: `🍄 MARIO SAYS:`,
-      description: sound.text,
-      duration: 3000,
-    });
+  const playSound = async (sound: MarioSound) => {
+    try {
+      // Create audio context if needed
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        throw new Error('Web Audio API not supported');
+      }
+
+      const audioContext = new AudioContextClass();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+
+      // Create a playful Mario-style sound
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Bouncy, high-pitched frequency for Mario sound
+      const frequency = 400 + (sound.id.length * 80);
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(frequency * 1.5, audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + 0.2);
+      oscillator.type = 'square';
+
+      gainNode.gain.setValueAtTime(0.12, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.4);
+
+      toast({
+        title: `🍄 MARIO SAYS:`,
+        description: sound.text,
+        duration: 3000,
+      });
+
+      // Clean up
+      setTimeout(() => {
+        audioContext.close();
+      }, 1000);
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+      toast({
+        title: `🍄 MARIO SAYS:`,
+        description: sound.text + ' (Audio not available - check browser settings)',
+        duration: 3000,
+      });
+    }
   };
 
   return (

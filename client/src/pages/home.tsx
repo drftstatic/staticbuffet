@@ -41,6 +41,7 @@ import { FirstRunTour } from '@/components/FirstRunTour';
 import { ResponsiveLayoutHintsSimple } from '@/components/ResponsiveLayoutHintsSimple';
 import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
 import { ResponsiveBreakpointIndicator } from '@/components/ResponsiveBreakpointIndicator';
+import { SoundboardTester } from '@/components/SoundboardTester';
 import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
 
 export default function Home() {
@@ -501,6 +502,9 @@ export default function Home() {
       
       {/* Responsive Breakpoint Indicator */}
       <ResponsiveBreakpointIndicator />
+      
+      {/* Soundboard Tester */}
+      <SoundboardTester />
     </div>
     </ResponsiveLayoutManager>
   );

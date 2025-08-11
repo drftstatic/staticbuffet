@@ -34,12 +34,65 @@ interface MaxHeadroomSoundboardProps {
 export function MaxHeadroomSoundboard({ isOpen, onClose }: MaxHeadroomSoundboardProps) {
   const { toast } = useToast();
 
-  const playSound = (sound: MaxSound) => {
-    toast({
-      title: `📺 MAX HEADROOM:`,
-      description: sound.text,
-      duration: 3000,
-    });
+  const playSound = async (sound: MaxSound) => {
+    try {
+      // Create audio context if needed
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        throw new Error('Web Audio API not supported');
+      }
+
+      const audioContext = new AudioContextClass();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+
+      // Create a glitchy, digital Max Headroom-style sound
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+
+      oscillator.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Digital, glitchy frequency pattern
+      const baseFreq = 300 + (sound.id.length * 60);
+      oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(baseFreq * 0.7, audioContext.currentTime + 0.05);
+      oscillator.frequency.setValueAtTime(baseFreq * 1.3, audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime + 0.15);
+      oscillator.type = 'square';
+
+      // Add digital filtering
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(800, audioContext.currentTime);
+      filter.Q.setValueAtTime(10, audioContext.currentTime);
+
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+
+      toast({
+        title: `📺 MAX HEADROOM:`,
+        description: sound.text,
+        duration: 3000,
+      });
+
+      // Clean up
+      setTimeout(() => {
+        audioContext.close();
+      }, 1000);
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+      toast({
+        title: `📺 MAX HEADROOM:`,
+        description: sound.text + ' (Audio not available - check browser settings)',
+        duration: 3000,
+      });
+    }
   };
 
   return (
