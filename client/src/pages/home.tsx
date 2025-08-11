@@ -470,8 +470,7 @@ export default function Home() {
         <Footer />
       </div>
 
-      {/* DX Soundboard */}
-      <DXSoundboard />
+      {/* Soundboards now handled by CoreSoundboards */}
 
       {/* Welcome Modal */}
       <StreamlinedWelcome />
