@@ -62,8 +62,8 @@ export function Footer() {
   };
 
   const buildInfo = {
-    version: '6.0',
-    build: '2025.08.11',
+    version: '0.1.0-alpha',
+    build: '2025.01.11',
     engine: 'FS9000',
     audio: 'web.A.ap1',
     video: 'htmlcsskewl.run'

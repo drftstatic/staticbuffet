@@ -96,7 +96,7 @@ export function MediaControls() {
       // Start recording
       try {
         const stream = await navigator.mediaDevices.getDisplayMedia({
-          video: { mediaSource: 'screen' },
+          video: true,
           audio: true
         });
 

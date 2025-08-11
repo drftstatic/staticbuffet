@@ -212,6 +212,11 @@ export default function About() {
             <h2 className={`font-black mb-4 text-[30px] ${theme.titleText}`}>
               Trash Team × Nulltone.TV present Static Buffet
             </h2>
+            <div className="mb-4">
+              <span className="inline-block bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-semibold px-3 py-1 rounded-full">
+                v0.1.0-alpha
+              </span>
+            </div>
             <p className={`text-xl ${theme.bodyText}`}>
               All-you-can-eat video chaos, straight from the public domain.
             </p>
