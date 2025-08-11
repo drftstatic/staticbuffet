@@ -614,7 +614,7 @@ export function Player() {
     return (
       <div className="h-full flex items-center justify-center bg-gray-900 text-gray-400">
         <div className="text-center space-y-4">
-          <div className="text-6xl">📺</div>
+          <div className="text-[22px] text-[#9ca3af9e] font-bold">[ TRASH TEAM x NULLTONE.TV ]</div>
           <div>
             <p className="text-lg font-medium text-white">No video loaded</p>
             <p className="text-sm">Search and add videos to your queue to start playing</p>
