@@ -19,8 +19,8 @@ export function ThemeSwitcher() {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="waffle">🧇 Waffle House Mode</SelectItem>
-        <SelectItem value="ebn">📺 EBN Hijack Mode</SelectItem>
+        <SelectItem value="waffle">🧇 Waffle House</SelectItem>
+        <SelectItem value="ebn">📺 EBN Hijack</SelectItem>
       </SelectContent>
     </Select>
   );

@@ -61,10 +61,10 @@ export function EmergencyMix() {
         onClick={handleQuickMix}
         disabled={searchResults.length === 0}
         data-testid="button-emergency-mix"
-        className="px-4 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 dark:bg-orange-500 dark:hover:bg-orange-400 text-white dark:text-black transition-all duration-200"
+        className="px-2 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 dark:bg-orange-500 dark:hover:bg-orange-400 text-white dark:text-black transition-all duration-200"
+        title="Emergency Mix"
       >
-        <Zap className="mr-2" size={16} />
-        Emergency Mix
+        <Zap size={16} />
       </Button>
 
       {/* Advanced Options Dialog */}
