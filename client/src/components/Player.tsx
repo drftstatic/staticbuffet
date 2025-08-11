@@ -39,11 +39,29 @@ export function Player() {
 
   useEffect(() => {
     if (videoRef.current && currentVideo) {
+      console.log('Loading video:', currentVideo.videoUrl);
       videoRef.current.src = currentVideo.videoUrl;
       videoRef.current.volume = volume[0] / 100;
+      videoRef.current.muted = false; // Ensure not muted
       videoRef.current.load();
+      
+      // Add event listeners for debugging
+      const video = videoRef.current;
+      const handleCanPlay = () => console.log('Video can play, has audio tracks:', video.audioTracks?.length || 'unknown');
+      const handleLoadedData = () => console.log('Video loaded, duration:', video.duration, 'muted:', video.muted, 'volume:', video.volume);
+      const handleError = (e: any) => console.error('Video error:', e);
+      
+      video.addEventListener('canplay', handleCanPlay);
+      video.addEventListener('loadeddata', handleLoadedData);
+      video.addEventListener('error', handleError);
+      
+      return () => {
+        video.removeEventListener('canplay', handleCanPlay);
+        video.removeEventListener('loadeddata', handleLoadedData);
+        video.removeEventListener('error', handleError);
+      };
     }
-  }, [currentVideo, volume]);
+  }, [currentVideo]);
 
   useEffect(() => {
     const video = videoRef.current;
