@@ -13,7 +13,8 @@ export function QueuePanel() {
     removeFromQueue, 
     updateQueueItem, 
     reorderQueue, 
-    clearQueue 
+    clearQueue,
+    brandSkin
   } = useStore();
 
   const handleDragEnd = (result: any) => {
@@ -48,10 +49,14 @@ export function QueuePanel() {
   };
 
   return (
-    <div className="w-80 bg-orange-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 overflow-y-auto">
+    <div className={`h-full overflow-y-auto rounded-xl shadow-lg ${
+      brandSkin === 'diner' ? 'glass' : 'glass-dark'
+    }`}>
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 font-inter">
+          <h2 className={`text-lg font-semibold font-inter ${
+            brandSkin === 'diner' ? 'text-gray-800' : 'text-gray-100'
+          }`}>
             Queue
           </h2>
           <div className="flex items-center space-x-2">

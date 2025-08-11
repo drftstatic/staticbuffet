@@ -19,7 +19,8 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
     setLoading,
     addToQueue,
     isLoading,
-    totalResults
+    totalResults,
+    brandSkin
   } = useStore();
 
   const observerRef = useRef<IntersectionObserver>();

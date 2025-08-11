@@ -85,12 +85,42 @@
 }
 
 @layer utilities {
-  /* Noise background for diner theme */
+  /* Enhanced noise background for diner theme */
   .noise-bg {
     background-image: 
       radial-gradient(circle at 20% 50%, transparent 20%, rgba(255,255,255,0.1) 21%, rgba(255,255,255,0.1) 34%, transparent 35%, transparent),
       linear-gradient(0deg, rgba(0,0,0,0.02) 50%, transparent 50%);
     background-size: 4px 4px, 1px 1px;
+  }
+
+  /* Modern glass morphism effects */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+  }
+
+  .glass-dark {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(17, 24, 39, 0.75);
+    border: 1px solid rgba(132, 204, 22, 0.2);
+  }
+
+  /* Enhanced gradient backgrounds */
+  .diner-gradient {
+    background: linear-gradient(135deg, 
+      rgba(254, 242, 242, 1) 0%, 
+      rgba(255, 251, 235, 1) 50%, 
+      rgba(254, 242, 242, 1) 100%);
+  }
+
+  .ebn-gradient {
+    background: linear-gradient(135deg, 
+      rgba(17, 24, 39, 1) 0%, 
+      rgba(31, 41, 55, 1) 50%, 
+      rgba(17, 24, 39, 1) 100%);
   }
   
   /* Scanlines for EBN theme */

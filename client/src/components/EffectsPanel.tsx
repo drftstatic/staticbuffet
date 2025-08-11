@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/accordion';
 
 export function EffectsPanel() {
-  const { videoEffects, setVideoEffects, audioEffects, setAudioEffects } = useStore();
+  const { videoEffects, setVideoEffects, audioEffects, setAudioEffects, brandSkin } = useStore();
 
   // Global keyboard shortcuts for presets
   React.useEffect(() => {
@@ -148,10 +148,18 @@ export function EffectsPanel() {
   };
 
   return (
-    <div className="space-y-4 p-4 max-h-[600px] overflow-y-auto">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold flex items-center">
-          <Zap className="h-5 w-5 mr-2" />
+    <div className="space-y-6 p-6 max-h-[600px] overflow-y-auto">
+      <div className="flex items-center space-x-3">
+        <div className={`p-2 rounded-lg ${
+          brandSkin === 'diner' 
+            ? 'bg-red-100 text-red-600' 
+            : 'bg-lime-900/30 text-lime-400'
+        }`}>
+          <Zap className="h-5 w-5" />
+        </div>
+        <h3 className={`text-xl font-bold ${
+          brandSkin === 'diner' ? 'text-gray-800' : 'text-gray-100'
+        }`}>
           Effects Studio
         </h3>
       </div>

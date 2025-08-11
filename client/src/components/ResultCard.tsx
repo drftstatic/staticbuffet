@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { LicenseBadge } from './LicenseBadge';
 import { type VideoResult } from '@/lib/types';
 import { generateThumbnailUrl } from '@/lib/archive-api';
+import { useStore } from '@/lib/store';
 
 interface ResultCardProps {
   video: VideoResult;
@@ -11,6 +12,7 @@ interface ResultCardProps {
 }
 
 export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
+  const { brandSkin } = useStore();
   const thumbnailUrl = generateThumbnailUrl(video.identifier);
 
   const handleAddClick = (e: React.MouseEvent) => {
@@ -20,7 +22,11 @@ export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
 
   return (
     <div
-      className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-200 dark:border-gray-700"
+      className={`rounded-xl overflow-hidden shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:shadow-2xl group ${
+        brandSkin === 'diner' 
+          ? 'bg-white/80 backdrop-blur-sm border border-amber-200/50 hover:bg-white/90' 
+          : 'bg-gray-800/80 backdrop-blur-sm border border-lime-500/20 hover:bg-gray-800/90'
+      }`}
       onClick={() => onSelect(video)}
       data-testid={`card-video-${video.identifier}`}
     >

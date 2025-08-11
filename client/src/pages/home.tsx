@@ -84,12 +84,14 @@ export default function Home() {
   }, [brandSkin]);
 
   return (
-    <div className="min-h-screen transition-all duration-300">
+    <div className={`min-h-screen transition-all duration-300 ${
+      brandSkin === 'diner' ? 'diner-gradient' : 'ebn-gradient'
+    }`}>
       {/* Top Bar */}
       <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${
         brandSkin === 'diner' 
-          ? 'bg-white border-amber-200' 
-          : 'bg-gray-800 border-lime-500/20'
+          ? 'glass border-amber-200/50' 
+          : 'glass-dark border-lime-500/30'
       }`}>
         <div className="max-w-full px-4 py-3">
           <div className="flex items-center justify-between">
@@ -160,25 +162,25 @@ export default function Home() {
       </header>
 
       {/* Main Content Layout */}
-      <div className="flex h-[calc(100vh-120px)] overflow-hidden">
+      <div className="flex h-[calc(100vh-120px)] overflow-hidden gap-2 p-2">
         {/* Results Grid */}
-        <div className={`flex-1 overflow-y-auto ${
-          brandSkin === 'diner' ? 'bg-orange-50' : 'bg-gray-900'
+        <div className={`flex-1 overflow-y-auto rounded-xl shadow-lg ${
+          brandSkin === 'diner' ? 'glass' : 'glass-dark'
         }`}>
           <ResultsGrid onVideoSelect={handleVideoSelect} />
         </div>
 
         {/* Effects Panel */}
-        <div className={`w-80 border-r overflow-y-auto ${
-          brandSkin === 'diner' 
-            ? 'bg-white border-amber-200' 
-            : 'bg-gray-800 border-lime-500/20'
+        <div className={`w-80 overflow-y-auto rounded-xl shadow-lg ${
+          brandSkin === 'diner' ? 'glass' : 'glass-dark'
         }`}>
           <EffectsPanel />
         </div>
 
         {/* Queue Panel */}
-        <QueuePanel />
+        <div className="w-80">
+          <QueuePanel />
+        </div>
       </div>
 
       {/* Detail Drawer */}
