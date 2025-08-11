@@ -38,6 +38,10 @@ import { searchVideos } from '@/lib/archive-api';
 import { type VideoResult } from '@/lib/types';
 import { PanelHeader } from '@/components/PanelHeader';
 import { FirstRunTour } from '@/components/FirstRunTour';
+import { ResponsiveLayoutHints } from '@/components/ResponsiveLayoutHints';
+import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
+import { ResponsiveBreakpointIndicator } from '@/components/ResponsiveBreakpointIndicator';
+import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
 
 export default function Home() {
   const {
@@ -64,6 +68,9 @@ export default function Home() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null);
+  
+  // Responsive layout management
+  const { currentLayout, panelConfig, isTransitioning } = useResponsiveLayout();
 
   // Perform search when filters change
   const { data: searchData, error, isLoading } = useQuery({
@@ -124,7 +131,7 @@ export default function Home() {
   }, [brandSkin]);
 
   return (
-    <>
+    <ResponsiveLayoutManager>
       {/* First Run Tour */}
       <FirstRunTour />
       
@@ -488,7 +495,15 @@ export default function Home() {
 
       {/* Welcome Modal */}
       <WelcomeModal />
+      
+      {/* Responsive Layout Hints */}
+      <ResponsiveLayoutHints onLayoutChange={(layout) => {
+        console.log('Layout changed to:', layout);
+      }} />
+      
+      {/* Responsive Breakpoint Indicator */}
+      <ResponsiveBreakpointIndicator />
     </div>
-    </>
+    </ResponsiveLayoutManager>
   );
 }

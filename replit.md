@@ -17,6 +17,7 @@ Static Buffet is a professional VJ-focused web application designed for searchin
 - ✅ Implemented sessionStorage metadata caching with 15-minute TTL
 - ✅ Created skeleton loaders for all content types with theme integration
 - ✅ Completed first-run guided tour covering essential VJ workflow
+- ✅ **NEW**: Responsive Layout Hint Animations - Interactive UI that shows layout adaptations across mobile/tablet/desktop with smooth transitions and visual cues
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -73,6 +74,7 @@ Preferred communication style: Simple, everyday language.
 - **First-Run Tour**: Guided 4-step onboarding covering essential VJ workflow (Search → Preview/Trim → Queue → Emergency Mix).
 - **Session Management**: Persistent storage of recording sessions with venue info, statistics, and export capabilities.
 - **Zero-Hitch Video Transitions**: Intelligent preloading system ensures smooth transitions between queue items.
+- **Responsive Layout Hints**: Interactive animations show how the interface adapts to different screen sizes with breakpoint indicators and layout previews.
 
 ### Performance Optimizations (v0.1.0-alpha Complete)
 - **Advanced Video Preloading**: LRU cache system with intelligent queue preloading for zero-hitch transitions.
