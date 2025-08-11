@@ -25,6 +25,38 @@ import {
 export function EffectsPanel() {
   const { videoEffects, setVideoEffects, audioEffects, setAudioEffects } = useStore();
 
+  // Global keyboard shortcuts for presets
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only trigger if not typing in an input field
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.code) {
+        case 'Digit1':
+          e.preventDefault();
+          applyPreset('cyberpunk');
+          break;
+        case 'Digit2':
+          e.preventDefault();
+          applyPreset('vintage');
+          break;
+        case 'Digit3':
+          e.preventDefault();
+          applyPreset('glitch');
+          break;
+        case 'Digit4':
+          e.preventDefault();
+          applyPreset('noir');
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const updateVideoEffect = (key: string, value: number | boolean) => {
     setVideoEffects({ ...videoEffects, [key]: value });
   };
@@ -126,17 +158,17 @@ export function EffectsPanel() {
 
       {/* Quick Presets */}
       <div className="grid grid-cols-2 gap-2">
-        <Button size="sm" variant="outline" onClick={() => applyPreset('cyberpunk')}>
-          Cyberpunk
+        <Button size="sm" variant="outline" onClick={() => applyPreset('cyberpunk')} title="Keyboard: 1">
+          <span className="mr-1 text-xs opacity-70">1</span> Cyberpunk
         </Button>
-        <Button size="sm" variant="outline" onClick={() => applyPreset('vintage')}>
-          Vintage
+        <Button size="sm" variant="outline" onClick={() => applyPreset('vintage')} title="Keyboard: 2">
+          <span className="mr-1 text-xs opacity-70">2</span> Vintage
         </Button>
-        <Button size="sm" variant="outline" onClick={() => applyPreset('glitch')}>
-          Glitch
+        <Button size="sm" variant="outline" onClick={() => applyPreset('glitch')} title="Keyboard: 3">
+          <span className="mr-1 text-xs opacity-70">3</span> Glitch
         </Button>
-        <Button size="sm" variant="outline" onClick={() => applyPreset('noir')}>
-          Film Noir
+        <Button size="sm" variant="outline" onClick={() => applyPreset('noir')} title="Keyboard: 4">
+          <span className="mr-1 text-xs opacity-70">4</span> Film Noir
         </Button>
       </div>
 

@@ -22,7 +22,8 @@ export function Player() {
     previousTrack,
     isAudioReactive,
     videoEffects,
-    audioEffects
+    audioEffects,
+    setVideoEffects
   } = useStore();
 
   const currentVideo = queueItems[currentQueueIndex];
@@ -131,6 +132,22 @@ export function Player() {
           e.preventDefault();
           adjustVolume(-10);
           break;
+        case 'Digit1':
+          e.preventDefault();
+          applyPreset('cyberpunk');
+          break;
+        case 'Digit2':
+          e.preventDefault();
+          applyPreset('vintage');
+          break;
+        case 'Digit3':
+          e.preventDefault();
+          applyPreset('glitch');
+          break;
+        case 'Digit4':
+          e.preventDefault();
+          applyPreset('noir');
+          break;
       }
     };
 
@@ -235,6 +252,50 @@ export function Player() {
     setVolume([newVolume]);
     if (videoRef.current) {
       videoRef.current.volume = newVolume / 100;
+    }
+  };
+
+  // Preset effects for quick application
+  const applyPreset = (preset: string) => {
+    switch (preset) {
+      case 'cyberpunk':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 120,
+          contrast: 140,
+          saturation: 150,
+          hue: 180,
+          chromaticAberration: 30,
+          scanlines: true,
+        });
+        break;
+      case 'vintage':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 90,
+          contrast: 110,
+          saturation: 80,
+          sepia: 40,
+          blur: 1,
+        });
+        break;
+      case 'glitch':
+        setVideoEffects({
+          ...videoEffects,
+          glitchIntensity: 50,
+          chromaticAberration: 60,
+          datamosh: true,
+          pixelate: 30,
+        });
+        break;
+      case 'noir':
+        setVideoEffects({
+          ...videoEffects,
+          grayscale: 100,
+          contrast: 150,
+          brightness: 80,
+        });
+        break;
     }
   };
 
@@ -409,7 +470,8 @@ export function Player() {
 
                 {/* Keyboard Shortcuts Hint */}
                 <div className="text-center text-gray-400 text-sm">
-                  Press F for fullscreen • Space to play/pause • ← → to seek • ↑ ↓ for volume • ESC to exit
+                  F: fullscreen • Space: play/pause • ← →: seek • ↑ ↓: volume • ESC: exit<br/>
+                  1: Cyberpunk • 2: Vintage • 3: Glitch • 4: Film Noir
                 </div>
               </div>
             </div>

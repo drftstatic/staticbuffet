@@ -7,6 +7,7 @@ import { ResultsGrid } from '@/components/ResultsGrid';
 import { QueuePanel } from '@/components/QueuePanel';
 import { DetailDrawer } from '@/components/DetailDrawer';
 import { EffectsPanel } from '@/components/EffectsPanel';
+import { EffectPresetNotification } from '@/components/EffectPresetNotification';
 import { BottomHUD } from '@/components/BottomHUD';
 import { BrandSkinToggle } from '@/components/BrandSkinToggle';
 import { EmergencyMix } from '@/components/EmergencyMix';
@@ -156,6 +157,9 @@ export default function Home() {
 
       {/* Bottom HUD (EBN mode only) */}
       <BottomHUD />
+
+      {/* Effect Preset Notifications */}
+      <EffectPresetNotification />
     </div>
   );
 }
