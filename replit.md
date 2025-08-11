@@ -8,6 +8,8 @@ Static Buffet is a VJ-focused web application designed for searching, previewing
 
 Preferred communication style: Simple, everyday language.
 
+Project description: Trash Team × Nulltone.TV present Static Buffet — all-you-can-eat video chaos, straight from the public domain. Trash Team is an audio/visual collaboration dedicated to turning discarded culture into something worth watching again. Nulltone.TV is the broadcast arm of the resistance — a streaming experiment for alternative programming, glitch aesthetics, and strange transmissions.
+
 ## Recent Changes
 
 - Created comprehensive About page explaining Static Buffet's purpose and features

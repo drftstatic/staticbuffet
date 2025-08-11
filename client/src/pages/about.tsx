@@ -44,12 +44,12 @@ export default function About() {
             <h2 className={`text-4xl font-black mb-4 ${
               brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
             }`}>
-              All-You-Can-Eat Video Chaos
+              Trash Team × Nulltone.TV present Static Buffet
             </h2>
             <p className={`text-xl ${
               brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
             }`}>
-              Straight from the public domain.
+              All-you-can-eat video chaos, straight from the public domain.
             </p>
           </div>
 
@@ -64,13 +64,18 @@ export default function About() {
                 <h3 className={`text-xl font-bold ${
                   brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
                 }`}>
-                  What is Static Buffet?
+                  Why Static Buffet exists
                 </h3>
               </div>
               <p className={`${
                 brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+              } leading-relaxed mb-4`}>
+                VJs, artists, and media remixers need a faster way to find source material that's actually safe to use. Public domain gems, Creative Commons gold, dusty VHS rips — the good stuff that's been hiding in Archive.org and other forgotten corners.
+              </p>
+              <p className={`${
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
               } leading-relaxed`}>
-                Static Buffet is a VJ-focused web application designed for searching, previewing, and mixing free-to-use video content from Archive.org. It's built for video jockeys, content creators, and artists who need immediate access to royalty-free footage with proper licensing compliance.
+                Instead of endless scrolling, Static Buffet lets you search, preview, and queue loops in seconds, with tools for chaotic live mixes and audio-reactive cuts. Whether you're hacking together a last-minute visuals set, building a glitch art piece, or just mainlining strange old training films at 3 AM, Static Buffet is here to feed you.
               </p>
             </div>
 
@@ -125,19 +130,46 @@ export default function About() {
           </div>
 
           <div className="mb-8">
-            <h3 className={`text-2xl font-bold mb-4 ${
+            <h3 className={`text-2xl font-bold mb-6 ${
               brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
             }`}>
               About the Creators
             </h3>
-            <div className="flex items-center space-x-4 mb-4">
-              <Heart className={brandSkin === 'waffle' ? 'text-red-600' : 'text-red-500'} size={20} />
-              <span className={`text-lg ${
-                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+            
+            <div className={`p-6 rounded-lg mb-6 ${
+              brandSkin === 'waffle' 
+                ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                : 'bg-gray-800/50 border border-lime-500/30'
+            }`}>
+              <h4 className={`text-lg font-bold mb-3 ${
+                brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
               }`}>
-                A collaboration between Trash Team and Nulltone.TV
-              </span>
+                Trash Team
+              </h4>
+              <p className={`${
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+              } leading-relaxed`}>
+                Trash Team is an audio/visual collaboration dedicated to turning discarded culture into something worth watching again. We dig in the bins, crack open dusty archives, and rewire forgotten media until it makes you feel something weird and new.
+              </p>
             </div>
+
+            <div className={`p-6 rounded-lg mb-6 ${
+              brandSkin === 'waffle' 
+                ? 'bg-yellow-50/50 border border-yellow-400/30' 
+                : 'bg-gray-800/50 border border-lime-500/30'
+            }`}>
+              <h4 className={`text-lg font-bold mb-3 ${
+                brandSkin === 'waffle' ? 'text-amber-900' : 'text-gray-100'
+              }`}>
+                Nulltone.TV
+              </h4>
+              <p className={`${
+                brandSkin === 'waffle' ? 'text-amber-800' : 'text-gray-300'
+              } leading-relaxed`}>
+                Nulltone.TV is the broadcast arm of the resistance — a streaming experiment for alternative programming, glitch aesthetics, and strange transmissions that don't fit anywhere else. It's a place for signal-jammers, dreamers, and anyone who thinks "technical difficulties" should last forever.
+              </p>
+            </div>
+
             <div className="flex flex-wrap gap-4">
               <a 
                 href="https://trashteam.tv" 
