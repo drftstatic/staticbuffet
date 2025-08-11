@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState, type VideoEffects, type AudioEffects } from './types';
+import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState, type VideoEffects, type AudioEffects, type WorkspaceLayout, type PanelStates } from './types';
 
 interface AppStore extends AppState {
   // Theme actions
@@ -47,6 +47,12 @@ interface AppStore extends AppState {
   setAdaptiveColorsEnabled: (enabled: boolean) => void;
   setAdaptiveIntensity: (intensity: number) => void;
   setCurrentVideoPalette: (palette: any) => void;
+
+  // Workspace Layout actions
+  saveWorkspaceLayout: (name: string, description?: string) => void;
+  loadWorkspaceLayout: (layoutId: string) => void;
+  deleteWorkspaceLayout: (layoutId: string) => void;
+  updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates'>>) => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
@@ -84,6 +90,65 @@ export const useStore = create<AppStore>((set, get) => ({
     queueCollapsed: false,
     effectsCollapsed: false,
   },
+  
+  // Workspace layouts - Load from localStorage or use defaults
+  savedWorkspaceLayouts: (() => {
+    try {
+      const saved = localStorage.getItem('staticBuffetWorkspaceLayouts');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+      
+      // Default layouts for first-time users
+      const defaultLayouts: WorkspaceLayout[] = [
+        {
+          id: 'default_full_interface',
+          name: '🎛️ Full Interface',
+          description: 'All panels open for comprehensive VJ control',
+          panelStates: {
+            searchCollapsed: false,
+            playerCollapsed: false,
+            queueCollapsed: false,
+            effectsCollapsed: false,
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          id: 'default_performance',
+          name: '🎬 Performance Mode',
+          description: 'Player and effects only for live performance',
+          panelStates: {
+            searchCollapsed: true,
+            playerCollapsed: false,
+            queueCollapsed: true,
+            effectsCollapsed: false,
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          id: 'default_preparation',
+          name: '📚 Preparation Mode',
+          description: 'Focus on search and queue building',
+          panelStates: {
+            searchCollapsed: false,
+            playerCollapsed: true,
+            queueCollapsed: false,
+            effectsCollapsed: true,
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ];
+      
+      // Save defaults to localStorage
+      localStorage.setItem('staticBuffetWorkspaceLayouts', JSON.stringify(defaultLayouts));
+      return defaultLayouts;
+    } catch {
+      return [];
+    }
+  })(),
   
   // Effects state
   videoEffects: {
@@ -254,4 +319,59 @@ export const useStore = create<AppStore>((set, get) => ({
   setAdaptiveColorsEnabled: (enabled: boolean) => set({ adaptiveColorsEnabled: enabled }),
   setAdaptiveIntensity: (intensity: number) => set({ adaptiveIntensity: intensity }),
   setCurrentVideoPalette: (palette: any) => set({ currentVideoPalette: palette }),
+
+  // Workspace Layout actions
+  saveWorkspaceLayout: (name: string, description?: string) => {
+    const currentState = get();
+    const newLayout: WorkspaceLayout = {
+      id: `layout_${Date.now()}`,
+      name,
+      description,
+      panelStates: { ...currentState.panelStates },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    set((state) => ({
+      savedWorkspaceLayouts: [...state.savedWorkspaceLayouts, newLayout]
+    }));
+    
+    // Save to localStorage for persistence
+    const updatedLayouts = [...currentState.savedWorkspaceLayouts, newLayout];
+    localStorage.setItem('staticBuffetWorkspaceLayouts', JSON.stringify(updatedLayouts));
+  },
+
+  loadWorkspaceLayout: (layoutId: string) => {
+    const currentState = get();
+    const layout = currentState.savedWorkspaceLayouts.find(l => l.id === layoutId);
+    if (layout) {
+      set({ panelStates: { ...layout.panelStates } });
+    }
+  },
+
+  deleteWorkspaceLayout: (layoutId: string) => {
+    set((state) => {
+      const updatedLayouts = state.savedWorkspaceLayouts.filter(l => l.id !== layoutId);
+      
+      // Update localStorage
+      localStorage.setItem('staticBuffetWorkspaceLayouts', JSON.stringify(updatedLayouts));
+      
+      return { savedWorkspaceLayouts: updatedLayouts };
+    });
+  },
+
+  updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates'>>) => {
+    set((state) => {
+      const updatedLayouts = state.savedWorkspaceLayouts.map(layout => 
+        layout.id === layoutId 
+          ? { ...layout, ...updates, updatedAt: new Date().toISOString() }
+          : layout
+      );
+      
+      // Update localStorage
+      localStorage.setItem('staticBuffetWorkspaceLayouts', JSON.stringify(updatedLayouts));
+      
+      return { savedWorkspaceLayouts: updatedLayouts };
+    });
+  },
 }));

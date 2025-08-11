@@ -63,6 +63,22 @@ export interface AudioEffects {
   highpass: number;
 }
 
+export interface PanelStates {
+  searchCollapsed: boolean;
+  playerCollapsed: boolean;
+  queueCollapsed: boolean;
+  effectsCollapsed: boolean;
+}
+
+export interface WorkspaceLayout {
+  id: string;
+  name: string;
+  description?: string;
+  panelStates: PanelStates;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppState {
   brandSkin: BrandSkin;
   adaptiveColorsEnabled: boolean;
@@ -81,12 +97,8 @@ export interface AppState {
   timelineLoop: boolean; // Loop entire timeline
   videoEffects: VideoEffects;
   audioEffects: AudioEffects;
-  panelStates: {
-    searchCollapsed: boolean;
-    playerCollapsed: boolean;
-    queueCollapsed: boolean;
-    effectsCollapsed: boolean;
-  };
+  panelStates: PanelStates;
+  savedWorkspaceLayouts: WorkspaceLayout[];
 }
 
 export interface QueueItem {
