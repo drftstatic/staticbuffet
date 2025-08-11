@@ -13,7 +13,7 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 
 ## Recent Changes
 
-### Version 0.3.0 Release (January 11, 2025)
+### Version 0.3.0 Release (August 11, 2025)
 - **UI Polish and Professional Interface**: Major cleanup of control buttons for cleaner VJ interface
   - Converted Emergency Mix and Audio Reactive buttons to icon-only controls with tooltips
   - Created GroupedControls component to visually pair action buttons
@@ -25,6 +25,11 @@ Project description: Trash Team × Nulltone.TV present Static Buffet — all-you
 - **Button Accessibility**: Maintained functionality while improving visual consistency
   - Added proper tooltips for icon-only buttons
   - Consistent padding and styling across grouped controls
+- **Footer System Updates**: Updated build information with stylized tech references
+  - Version updated to v0.3.0 with build date 2025.08.11
+  - Engine renamed to "FS9000" for retro-futuristic aesthetic
+  - Audio system: "web.A.ap1" (Web Audio API stylized)
+  - Video system: "htmlcsskewl.run" (HTML5 + CSS Filters stylized)
 
 ### Version 0.1.6 Release (January 11, 2025)
 - **Critical Video Playback Fix**: Resolved complete video playback failure that was blocking all functionality
