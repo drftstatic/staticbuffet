@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useStore } from "@/lib/store";
+
+const KO_FI_URL = "https://ko-fi.com/staticbuffet";
 
 const tips = {
   waffle: [
@@ -22,67 +24,31 @@ function rand(arr: string[]): string {
   return arr[Math.floor(Math.random() * arr.length)]; 
 }
 
-declare global {
-  interface Window {
-    kofiWidgetOverlay?: {
-      draw: (username: string, options: Record<string, any>) => void;
-    };
-  }
+interface DonationCTAProps {
+  href?: string;
 }
 
-export default function DonationCTA() {
+export default function DonationCTA({ href = KO_FI_URL }: DonationCTAProps) {
   const { brandSkin } = useStore();
   const mode = brandSkin === 'waffle' ? 'waffle' : 'ebn';
   const [tip, setTip] = useState(rand(tips[mode] || tips.ebn));
-  const [isLoaded, setIsLoaded] = useState(false);
   const label = mode === "waffle" ? "Feed the Buffet" : "Send a Signal";
   
   const btnBase = "px-4 py-2 rounded-2xl font-semibold transition transform active:scale-[0.98] focus:outline-none focus:ring";
   const btnWaffle = "bg-yellow-300 text-black hover:bg-yellow-200 ring-yellow-400";
   const btnEbn = "bg-black text-[#FFD300] border border-[#FFD300]/60 hover:bg-zinc-900 ring-yellow-400";
 
-  useEffect(() => {
-    // Load Ko-fi overlay script
-    if (!document.querySelector('script[src*="overlay-widget.js"]')) {
-      const script = document.createElement('script');
-      script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
-      script.onload = () => {
-        setIsLoaded(true);
-        // Initialize the overlay widget
-        if (window.kofiWidgetOverlay) {
-          window.kofiWidgetOverlay.draw('staticbuffet', {
-            'type': 'floating-chat',
-            'floating-chat.donateButton.text': 'Tip Us',
-            'floating-chat.donateButton.background-color': mode === 'waffle' ? '#F59E0B' : '#323842',
-            'floating-chat.donateButton.text-color': mode === 'waffle' ? '#000' : '#fff'
-          });
-        }
-      };
-      document.head.appendChild(script);
-    } else {
-      setIsLoaded(true);
-    }
-  }, [mode]);
-
-  const showKoFiWidget = () => {
-    if (window.kofiWidgetOverlay) {
-      // The widget should already be initialized, clicking should activate it
-      const kofiButton = document.querySelector('[data-kofi-button]') as HTMLElement;
-      if (kofiButton) {
-        kofiButton.click();
-      }
-    }
-  };
+  const openKoFi = () =>
+    window.open(href, "_blank", "noopener,noreferrer");
 
   return (
     <div className="relative inline-block group">
       <button
         className={`${btnBase} ${mode === "waffle" ? btnWaffle : btnEbn}`}
         onMouseEnter={() => setTip(rand(tips[mode] || tips.ebn))}
-        onClick={showKoFiWidget}
-        aria-label={`${label} — opens Ko-fi donation widget`}
+        onClick={openKoFi}
+        aria-label={`${label} — opens Ko-fi in a new tab`}
         data-testid="button-donate"
-        disabled={!isLoaded}
       >
         {label}
       </button>
