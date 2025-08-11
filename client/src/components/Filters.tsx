@@ -56,6 +56,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
             <SelectItem value="2010">2010</SelectItem>
             <SelectItem value="2020">2020</SelectItem>
             <SelectItem value="2024">2024</SelectItem>
+            <SelectItem value="2025">2025</SelectItem>
           </SelectContent>
         </Select>
       </div>

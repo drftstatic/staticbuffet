@@ -49,7 +49,7 @@ export const useStore = create<AppStore>((set, get) => ({
   searchState: {
     query: '',
     yearFrom: '1950',
-    yearTo: '2020',
+    yearTo: '2025',
     duration: 'any',
     license: 'publicdomain',
     sort: 'downloads',
