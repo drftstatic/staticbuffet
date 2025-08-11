@@ -16,7 +16,7 @@ interface AppStore extends AppState {
   setDetailDrawerOpen: (open: boolean) => void;
   
   // Queue actions
-  addToQueue: (video: VideoResult, videoUrl: string) => void;
+  addToQueue: (video: VideoResult, videoUrl: string, addToFront?: boolean) => void;
   removeFromQueue: (id: string) => void;
   updateQueueItem: (id: string, updates: Partial<QueueItem>) => void;
   reorderQueue: (startIndex: number, endIndex: number) => void;
@@ -127,7 +127,7 @@ export const useStore = create<AppStore>((set, get) => ({
   setDetailDrawerOpen: (open) => set({ isDetailDrawerOpen: open }),
 
   // Queue actions
-  addToQueue: (video, videoUrl) => {
+  addToQueue: (video, videoUrl, addToFront = false) => {
     const newItem: QueueItem = {
       id: `${video.identifier}-${Date.now()}`,
       identifier: video.identifier,
@@ -144,7 +144,9 @@ export const useStore = create<AppStore>((set, get) => ({
     };
     
     set((state) => ({
-      queueItems: [...state.queueItems, newItem]
+      queueItems: addToFront 
+        ? [newItem, ...state.queueItems]
+        : [...state.queueItems, newItem]
     }));
   },
 

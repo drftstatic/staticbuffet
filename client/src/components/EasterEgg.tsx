@@ -8,9 +8,23 @@ interface EasterEggProps {
 }
 
 export function EasterEgg({ isActive, onClose }: EasterEggProps) {
-  const { setVideoEffects, videoEffects } = useStore();
+  const { setVideoEffects, videoEffects, addToQueue, queueItems } = useStore();
 
-  const activateAcidTrip = () => {
+  const activateAcidTrip = async () => {
+    // Add the Marilyn Manson video to the front of the queue
+    const easterEggVideo = {
+      identifier: 'TheVistaGroup-MarilynMansonGetYourGunnonBeavisandButthead',
+      title: 'Marilyn Manson - Get Your Gunn (Easter Egg)',
+      creator: 'Marilyn Manson',
+      duration: '4:20',
+      licenseurl: 'https://creativecommons.org/publicdomain/mark/1.0/',
+    };
+    
+    const videoUrl = 'https://archive.org/download/TheVistaGroup-MarilynMansonGetYourGunnonBeavisandButthead/Marilyn%20Manson%20-%20Get%20Your%20Gunn%20on%20Beavis%20and%20Butthead%20VHS%20%E2%80%A2%2060%20FPS%201996.mp4';
+    
+    // Add to front of queue (will be at index 0)
+    addToQueue(easterEggVideo, videoUrl, true);
+    
     // Enable intense video effects for acid trip mode
     setVideoEffects({
       ...videoEffects,
@@ -19,7 +33,13 @@ export function EasterEgg({ isActive, onClose }: EasterEggProps) {
       kaleidoscope: true,
       plasma: true,
       strobe: true,
-      chromatic: true
+      chromatic: true,
+      brightness: 150,
+      contrast: 200,
+      saturation: 300,
+      hue: 180,
+      chromaticAberration: 100,
+      glitchIntensity: 80,
     });
     
     // Auto-close the easter egg after activating
@@ -37,7 +57,8 @@ export function EasterEgg({ isActive, onClose }: EasterEggProps) {
         </h2>
         <p className="text-white mb-6 text-sm">
           You've discovered the secret Acid Trip effect!<br/>
-          This will activate maximum visual chaos mode.
+          This will add the Marilyn Manson clip to your queue<br/>
+          and activate maximum visual chaos mode.
         </p>
         
         <div className="space-y-3">
