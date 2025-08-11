@@ -42,6 +42,7 @@ import { ResponsiveLayoutHintsSimple } from '@/components/ResponsiveLayoutHintsS
 import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
 import { ResponsiveBreakpointIndicator } from '@/components/ResponsiveBreakpointIndicator';
 import { SoundboardTester } from '@/components/SoundboardTester';
+import { LayoutDemonstrator } from '@/components/LayoutDemonstrator';
 import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
 
 export default function Home() {
@@ -505,6 +506,9 @@ export default function Home() {
       
       {/* Soundboard Tester */}
       <SoundboardTester />
+      
+      {/* Layout Demonstrator */}
+      <LayoutDemonstrator />
     </div>
     </ResponsiveLayoutManager>
   );

@@ -18,7 +18,8 @@ Static Buffet is a professional VJ-focused web application designed for searchin
 - ✅ Created skeleton loaders for all content types with theme integration
 - ✅ Completed first-run guided tour covering essential VJ workflow
 - ✅ Responsive Layout Hint Animations - Interactive UI that shows layout adaptations across mobile/tablet/desktop with smooth transitions and visual cues
-- ✅ **NEW**: Text-to-Speech Soundboards - All soundboards now use browser speech synthesis with character-specific voice configurations for authentic audio playback
+- ✅ Text-to-Speech Soundboards - All soundboards now use browser speech synthesis with character-specific voice configurations for authentic audio playback
+- ✅ **NEW**: Interactive Layout Controls - Fully functional responsive layout indicators with manual layout switching, live previews, comprehensive layout demonstration system, and automatic reset functionality
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
