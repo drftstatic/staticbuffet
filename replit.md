@@ -1,5 +1,5 @@
 # Static Buffet - Trash Team × Nulltone.TV
-**Version: 0.1.5**
+**Version: 0.3.0**
 
 ## Overview
 
@@ -12,6 +12,19 @@ Preferred communication style: Simple, everyday language.
 Project description: Trash Team × Nulltone.TV present Static Buffet — all-you-can-eat video chaos, straight from the public domain. Trash Team is an audio/visual collaboration dedicated to turning discarded culture into something worth watching again. Nulltone.TV is the broadcast arm of the resistance — a streaming experiment for alternative programming, glitch aesthetics, and strange transmissions. Built by Fladry Creative (fladrycreative.co).
 
 ## Recent Changes
+
+### Version 0.3.0 Release (January 11, 2025)
+- **UI Polish and Professional Interface**: Major cleanup of control buttons for cleaner VJ interface
+  - Converted Emergency Mix and Audio Reactive buttons to icon-only controls with tooltips
+  - Created GroupedControls component to visually pair action buttons
+  - Improved header layout efficiency with compact button design
+  - Enhanced professional media workstation aesthetic
+- **Theme Switcher Refinement**: Cleaned up dropdown options by removing redundant "Mode" text
+  - "🧇 Waffle House Mode" → "🧇 Waffle House"
+  - "📺 EBN Hijack Mode" → "📺 EBN Hijack"
+- **Button Accessibility**: Maintained functionality while improving visual consistency
+  - Added proper tooltips for icon-only buttons
+  - Consistent padding and styling across grouped controls
 
 ### Version 0.1.6 Release (January 11, 2025)
 - **Critical Video Playback Fix**: Resolved complete video playback failure that was blocking all functionality
