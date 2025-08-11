@@ -43,7 +43,13 @@ export function QueueDropZone({ className = '' }: QueueDropZoneProps) {
         
         // Get metadata and add to queue
         const metadata = await getVideoMetadata(video.identifier);
-        const videoUrl = metadata.streamUrl || `https://archive.org/download/${video.identifier}`;
+        let videoUrl = metadata.streamUrl;
+        if (!videoUrl && metadata.videoFile) {
+          videoUrl = `https://archive.org/download/${video.identifier}/${metadata.videoFile.name}`;
+        } else if (!videoUrl) {
+          videoUrl = `https://archive.org/download/${video.identifier}/${video.identifier}.mp4`;
+          console.warn(`⚠️ Using fallback URL for ${video.identifier}: ${videoUrl}`);
+        }
         
         addToQueue(video, videoUrl);
         console.log('✅ Video added to queue via drag-and-drop');

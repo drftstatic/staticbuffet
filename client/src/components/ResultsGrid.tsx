@@ -83,7 +83,23 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
         totalFiles: metadata.videoFiles?.length
       });
       
-      const videoUrl = metadata.streamUrl || `https://archive.org/download/${video.identifier}`;
+      let videoUrl = metadata.streamUrl;
+      
+      // If no streamUrl from metadata, try to construct a better fallback
+      if (!videoUrl) {
+        console.warn(`⚠️ No streamUrl from metadata for ${video.identifier}, constructing fallback`);
+        // Try common video file patterns as fallback
+        const commonFormats = [
+          `${video.identifier}.mp4`,
+          `${video.identifier}.ogv`,
+          `${video.identifier}_512kb.mp4`,
+          `${video.identifier}.mov`
+        ];
+        // Use the first common format as fallback, but mark it as potentially problematic
+        videoUrl = `https://archive.org/download/${video.identifier}/${commonFormats[0]}`;
+        console.warn(`🔧 Using fallback URL: ${videoUrl}`);
+      }
+      
       console.log('🎥 Final video URL:', videoUrl);
       
       addToQueue(video, videoUrl);

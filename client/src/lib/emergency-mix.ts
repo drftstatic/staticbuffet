@@ -60,7 +60,7 @@ export function generateEmergencyMix(
       title: video.title,
       creator: video.creator,
       duration: video.duration || '0:00',
-      videoUrl: `https://archive.org/download/${video.identifier}`, // Will be resolved later
+      videoUrl: `https://archive.org/download/${video.identifier}/${video.identifier}.mp4`, // Will be resolved via metadata later
       trimIn: formatSecondsToTime(startTime),
       trimOut: formatSecondsToTime(endTime),
       loop: false,

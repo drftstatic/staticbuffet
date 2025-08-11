@@ -28,7 +28,13 @@ export function DetailDrawer() {
 
   const handleAddToQueue = async () => {
     if (selectedVideo && metadata) {
-      const videoUrl = metadata.streamUrl || `https://archive.org/download/${selectedVideo.identifier}`;
+      let videoUrl = metadata.streamUrl;
+      if (!videoUrl && metadata.videoFile) {
+        videoUrl = `https://archive.org/download/${selectedVideo.identifier}/${metadata.videoFile.name}`;
+      } else if (!videoUrl) {
+        videoUrl = `https://archive.org/download/${selectedVideo.identifier}/${selectedVideo.identifier}.mp4`;
+        console.warn(`⚠️ Using fallback URL for ${selectedVideo.identifier}: ${videoUrl}`);
+      }
       addToQueue(selectedVideo, videoUrl);
       setDetailDrawerOpen(false);
     }

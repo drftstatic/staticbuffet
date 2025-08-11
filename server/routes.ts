@@ -155,7 +155,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const response = await fetch(videoUrl);
       if (!response.ok) {
-        throw new Error(`Failed to fetch video: ${response.status}`);
+        console.error(`❌ Video not found: ${videoUrl} (Status: ${response.status})`);
+        return res.status(404).json({ 
+          error: "Video file not found", 
+          url: videoUrl, 
+          status: response.status 
+        });
       }
       
       // Set appropriate headers based on file extension
@@ -197,8 +202,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
     } catch (error) {
-      console.error("Video proxy error:", error);
-      res.status(500).json({ error: "Failed to proxy video" });
+      console.error(`❌ Video proxy error for ${req.params.identifier}/${req.params.filename}:`, error);
+      res.status(500).json({ 
+        error: "Failed to proxy video", 
+        identifier: req.params.identifier,
+        filename: req.params.filename,
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 
