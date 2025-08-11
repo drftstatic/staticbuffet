@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
 import { SmartQueryChips } from '@/components/SmartQueryChips';
 import { SourceToggles } from '@/components/SourceToggles';
-import { LuckyDip } from '@/components/LuckyDip';
+import { EmergencyMix } from '@/components/EmergencyMix';
 import { LicenseGuardrail } from '@/components/LicenseGuardrail';
 
 interface SearchBarProps {
@@ -38,10 +38,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
     onSearch(localQuery);
   };
 
-  const handleLuckyDipResults = (results: any) => {
-    // Results are already set by LuckyDip component
-    console.log('Lucky Dip found', results.length, 'clips');
-  };
+
 
   return (
     <div className="space-y-2">      
@@ -68,7 +65,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
         </form>
         
         <div className="flex-shrink-0">
-          <LuckyDip onDipResults={handleLuckyDipResults} />
+          <EmergencyMix />
         </div>
       </div>
       
