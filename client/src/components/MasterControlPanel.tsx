@@ -91,11 +91,11 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
 
   return (
     <div className="fixed top-4 right-4 z-50">
-      <div className={`${themeClasses.panelBg} ${themeClasses.border} rounded-xl shadow-2xl backdrop-blur-sm w-[420px] max-h-[85vh] overflow-hidden border-2`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+      <div className={`${themeClasses.panelBg} ${themeClasses.border} rounded-xl shadow-2xl backdrop-blur-md w-[420px] max-h-[85vh] overflow-hidden border-2 bg-black/80`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
         {/* Enhanced Header */}
         <div className={`flex items-center justify-between p-4 border-b-2 ${themeClasses.border}`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
           <div className="flex items-center space-x-3">
-            <div className={`p-2 rounded-lg ${themeClasses.bg}`} style={{ backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.1 }}>
+            <div className={`p-2 rounded-lg bg-white/10`} style={{ backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.3 }}>
               <Settings size={16} style={{ color: `var(--${brandSkin}-accent)` }} />
             </div>
             <div>
@@ -154,7 +154,7 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
           {activeTab === 'visual' && (
             <div className="space-y-6">
               {/* Theme Section */}
-              <div className={`p-4 rounded-xl border-2 ${themeClasses.bg}`} style={{ borderColor: `var(--${brandSkin}-accent)`, backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.05 }}>
+              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
                 <div className="flex items-center space-x-2 mb-4">
                   <Palette size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
                   <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Visual Themes</h4>
@@ -169,7 +169,7 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
               </div>
 
               {/* Responsive Preview */}
-              <div className={`p-4 rounded-xl border-2 ${themeClasses.bg}`} style={{ borderColor: `var(--${brandSkin}-accent)`, backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.05 }}>
+              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
                 <div className="flex items-center space-x-2 mb-4">
                   <Monitor size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
                   <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Responsive Preview</h4>
@@ -186,7 +186,7 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
           {activeTab === 'workspace' && (
             <div className="space-y-6">
               {/* Layout Modes */}
-              <div className={`p-4 rounded-xl border-2 ${themeClasses.bg}`} style={{ borderColor: `var(--${brandSkin}-accent)`, backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.05 }}>
+              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
                 <div className="flex items-center space-x-2 mb-4">
                   <Layout size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
                   <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Panel Layout</h4>
@@ -225,7 +225,7 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
               </div>
 
               {/* Quick Actions */}
-              <div className={`p-4 rounded-xl border-2 ${themeClasses.bg}`} style={{ borderColor: `var(--${brandSkin}-accent)`, backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.05 }}>
+              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
                 <div className="flex items-center space-x-2 mb-4">
                   <RotateCcw size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
                   <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Quick Actions</h4>
@@ -248,7 +248,7 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
               </div>
 
               {/* Saved Layouts */}
-              <div className={`p-4 rounded-xl border-2 ${themeClasses.bg}`} style={{ borderColor: `var(--${brandSkin}-accent)`, backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.05 }}>
+              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
                 <div className="flex items-center space-x-2 mb-4">
                   <Layers size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
                   <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Workspace Layouts</h4>
@@ -265,7 +265,7 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
           {activeTab === 'help' && (
             <div className="space-y-6">
               {/* Getting Started */}
-              <div className={`p-4 rounded-xl border-2 ${themeClasses.bg}`} style={{ borderColor: `var(--${brandSkin}-accent)`, backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.05 }}>
+              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
                 <div className="flex items-center space-x-2 mb-4">
                   <BookOpen size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
                   <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Getting Started</h4>
@@ -327,35 +327,35 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
               </div>
 
               {/* Keyboard Shortcuts */}
-              <div className={`p-4 rounded-xl border-2 ${themeClasses.bg}`} style={{ borderColor: `var(--${brandSkin}-accent)`, backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.05 }}>
+              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
                 <div className="flex items-center space-x-2 mb-4">
                   <Keyboard size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
                   <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Keyboard Shortcuts</h4>
                   <Badge variant="secondary" className="text-xs">Hotkeys</Badge>
                 </div>
                 <div className={`space-y-3 ${themeClasses.textSecondary}`}>
-                  <div className="flex items-center justify-between p-2 rounded bg-black/10">
+                  <div className="flex items-center justify-between p-2 rounded bg-black/20">
                     <div className="flex items-center space-x-2">
                       <Zap size={14} />
                       <span className="text-sm">Effects 1-8</span>
                     </div>
                     <kbd className="px-2 py-1 bg-gray-700 text-gray-200 text-xs rounded font-mono">1-8</kbd>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-black/10">
+                  <div className="flex items-center justify-between p-2 rounded bg-black/20">
                     <div className="flex items-center space-x-2">
                       <Palette size={14} />
                       <span className="text-sm">Theme easter eggs</span>
                     </div>
                     <kbd className="px-2 py-1 bg-gray-700 text-gray-200 text-xs rounded font-mono">Triple-click</kbd>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-black/10">
+                  <div className="flex items-center justify-between p-2 rounded bg-black/20">
                     <div className="flex items-center space-x-2">
                       <HelpCircle size={14} />
                       <span className="text-sm">Help overlay</span>
                     </div>
                     <kbd className="px-2 py-1 bg-gray-700 text-gray-200 text-xs rounded font-mono">?</kbd>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-black/10">
+                  <div className="flex items-center justify-between p-2 rounded bg-black/20">
                     <div className="flex items-center space-x-2">
                       <Keyboard size={14} />
                       <span className="text-sm">Command palette</span>
