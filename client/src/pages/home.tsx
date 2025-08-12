@@ -32,7 +32,7 @@ import { FirstRunTour } from '@/components/FirstRunTour';
 import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
 import { CoreSoundboards } from '@/components/CoreSoundboards';
 import { LayoutControls } from '@/components/LayoutControls';
-import { ResponsiveLayoutHints } from '@/components/ResponsiveLayoutHints';
+
 import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
 import { FadeTransition, SlideTransition, ThemeTransition } from '@/components/AnimatedTransitions';
 
@@ -402,9 +402,6 @@ export default function Home() {
 
       {/* Detail Drawer */}
       <DetailDrawer />
-
-      {/* Responsive Layout Hints - Educational component */}
-      <ResponsiveLayoutHints />
 
       {/* Bottom HUD (EBN mode only) */}
       <BottomHUD />

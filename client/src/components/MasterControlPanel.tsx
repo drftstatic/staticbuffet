@@ -91,26 +91,26 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
 
   return (
     <div className="fixed top-4 right-4 z-50">
-      <div className={`${themeClasses.panelBg} ${themeClasses.border} rounded-xl shadow-2xl backdrop-blur-md w-[420px] max-h-[85vh] overflow-hidden border-2 bg-black/80`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-        {/* Enhanced Header */}
-        <div className={`flex items-center justify-between p-4 border-b-2 ${themeClasses.border}`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-          <div className="flex items-center space-x-3">
-            <div className={`p-2 rounded-lg bg-white/10`} style={{ backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.3 }}>
-              <Settings size={16} style={{ color: `var(--${brandSkin}-accent)` }} />
+      <div className={`${themeClasses.panelBg} ${themeClasses.border} rounded-xl shadow-2xl backdrop-blur-md w-[380px] max-h-[85vh] overflow-hidden border-2 bg-black/80`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+        {/* Compact Header */}
+        <div className={`flex items-center justify-between p-3 border-b-2 ${themeClasses.border}`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+          <div className="flex items-center space-x-2">
+            <div className={`p-1.5 rounded-md bg-white/10`} style={{ backgroundColor: `var(--${brandSkin}-accent)`, opacity: 0.3 }}>
+              <Settings size={14} style={{ color: `var(--${brandSkin}-accent)` }} />
             </div>
             <div>
-              <h3 className={`font-bold text-lg ${themeClasses.text}`}>Master Control</h3>
-              <p className={`text-xs ${themeClasses.textSecondary}`}>Static Buffet v0.7.2</p>
+              <h3 className={`font-semibold text-base ${themeClasses.text}`}>Master Control</h3>
+              <p className={`text-[10px] ${themeClasses.textSecondary}`}>Static Buffet v0.7.2</p>
             </div>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsOpen(false)}
-            className={`h-8 w-8 p-0 hover:bg-red-500/20 transition-colors rounded-lg`}
+            className={`h-7 w-7 p-0 hover:bg-red-500/20 transition-colors rounded-md`}
             data-testid="button-close-master-control"
           >
-            <X size={16} className="text-red-400" />
+            <X size={14} className="text-red-400" />
           </Button>
         </div>
 
@@ -123,7 +123,7 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex flex-col items-center justify-center py-4 px-3 text-sm font-medium transition-all duration-200 relative ${
+                className={`flex-1 flex flex-col items-center justify-center py-3 px-2 text-xs font-medium transition-all duration-200 relative ${
                   isActive
                     ? `${themeClasses.accent} bg-white/10 shadow-sm`
                     : `${themeClasses.textSecondary} hover:bg-white/5`
@@ -131,13 +131,13 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
                 data-testid={`tab-${tab.id}`}
               >
                 <div className="flex items-center space-x-1">
-                  <Icon size={16} />
+                  <Icon size={14} />
                   {tab.badge && (
-                    <span className="text-xs">{tab.badge}</span>
+                    <span className="text-[10px]">{tab.badge}</span>
                   )}
                 </div>
-                <span className="text-xs mt-1">{tab.label}</span>
-                <span className="text-[10px] opacity-60 hidden lg:block">{tab.description}</span>
+                <span className="text-[11px] mt-0.5">{tab.label}</span>
+                <span className="text-[9px] opacity-60">{tab.description}</span>
                 {isActive && (
                   <div 
                     className="absolute bottom-0 left-0 right-0 h-0.5" 
@@ -149,20 +149,20 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
           })}
         </div>
 
-        {/* Enhanced Content */}
-        <div className="p-6 max-h-[500px] overflow-y-auto space-y-6">
+        {/* Compact Content */}
+        <div className="p-4 max-h-[500px] overflow-y-auto space-y-4">
           {activeTab === 'visual' && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Theme Section */}
-              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-                <div className="flex items-center space-x-2 mb-4">
-                  <Palette size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
-                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Visual Themes</h4>
-                  <Badge variant="secondary" className="text-xs">
+              <div className={`p-3 rounded-lg border bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+                <div className="flex items-center space-x-2 mb-3">
+                  <Palette size={16} style={{ color: `var(--${brandSkin}-accent)` }} />
+                  <h4 className={`font-medium text-sm ${themeClasses.text}`}>Visual Themes</h4>
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
                     {brandSkin === 'testcard' ? 'Default' : 'Custom'}
                   </Badge>
                 </div>
-                <p className={`text-sm mb-4 ${themeClasses.textSecondary}`}>
+                <p className={`text-xs mb-3 ${themeClasses.textSecondary}`}>
                   Choose from 10 unique VJ-inspired visual themes
                 </p>
                 <ThemeSelector />
@@ -171,107 +171,120 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
           )}
 
           {activeTab === 'workspace' && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Layout Modes */}
-              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-                <div className="flex items-center space-x-2 mb-4">
-                  <Layout size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
-                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Panel Layout</h4>
-                  <Badge variant="secondary" className="text-xs">
+              <div className={`p-3 rounded-lg border bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+                <div className="flex items-center space-x-2 mb-3">
+                  <Layout size={16} style={{ color: `var(--${brandSkin}-accent)` }} />
+                  <h4 className={`font-medium text-sm ${themeClasses.text}`}>Panel Layout</h4>
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
                     {isFloatingMode ? 'Floating' : isResizableMode ? 'Resizable' : 'Grid'}
                   </Badge>
                 </div>
-                <p className={`text-sm mb-4 ${themeClasses.textSecondary}`}>
-                  Choose how panels are organized and behave
-                </p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant={isFloatingMode ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFloatingMode(!isFloatingMode)}
-                    className="flex flex-col items-center py-3 space-y-1"
+                    className="flex flex-col items-center py-2 space-y-0.5 h-auto"
                     data-testid="button-toggle-floating-mode"
                   >
-                    <Move size={16} />
-                    <span className="text-xs">Floating</span>
-                    <span className="text-[10px] opacity-60">Independent panels</span>
+                    <Move size={14} />
+                    <span className="text-[11px]">Floating</span>
+                    <span className="text-[9px] opacity-60">Independent</span>
                   </Button>
                   
                   <Button
                     variant={isResizableMode ? "default" : "outline"}
                     size="sm"
                     onClick={() => setResizableMode(!isResizableMode)}
-                    className="flex flex-col items-center py-3 space-y-1"
+                    className="flex flex-col items-center py-2 space-y-0.5 h-auto"
                     data-testid="button-toggle-resizable-mode"
                   >
-                    <Maximize2 size={16} />
-                    <span className="text-xs">Resizable</span>
-                    <span className="text-[10px] opacity-60">Adjustable panels</span>
+                    <Maximize2 size={14} />
+                    <span className="text-[11px]">Resizable</span>
+                    <span className="text-[9px] opacity-60">Adjustable</span>
                   </Button>
                 </div>
               </div>
 
-              {/* Quick Actions */}
-              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-                <div className="flex items-center space-x-2 mb-4">
-                  <RotateCcw size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
-                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Quick Actions</h4>
+              {/* Quick Actions & Layouts Combined */}
+              <div className={`p-3 rounded-lg border bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+                <div className="flex items-center space-x-2 mb-3">
+                  <RotateCcw size={16} style={{ color: `var(--${brandSkin}-accent)` }} />
+                  <h4 className={`font-medium text-sm ${themeClasses.text}`}>Quick Actions</h4>
                 </div>
                 <div className="space-y-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={resetPanels}
-                    className="w-full flex items-center justify-between py-3"
+                    className="w-full flex items-center justify-between py-2 h-auto"
                     data-testid="button-reset-panels"
                   >
                     <div className="flex items-center space-x-2">
-                      <Tv size={16} />
-                      <span>Reset Layout</span>
+                      <Tv size={14} />
+                      <span className="text-xs">Reset Layout</span>
                     </div>
-                    <span className="text-xs opacity-60">Restore defaults</span>
+                    <span className="text-[10px] opacity-60">Defaults</span>
                   </Button>
                 </div>
+                
+                <div className="mt-3 pt-3 border-t border-white/10">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Layers size={14} style={{ color: `var(--${brandSkin}-accent)` }} />
+                    <span className={`font-medium text-xs ${themeClasses.text}`}>Saved Layouts</span>
+                  </div>
+                  <LayoutControls />
+                </div>
               </div>
 
-              {/* Saved Layouts */}
-              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-                <div className="flex items-center space-x-2 mb-4">
-                  <Layers size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
-                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Workspace Layouts</h4>
-                  <Badge variant="secondary" className="text-xs">Save & Load</Badge>
+              {/* Compact Responsive Preview */}
+              <div className={`p-3 rounded-lg border bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <Monitor size={14} style={{ color: `var(--${brandSkin}-accent)` }} />
+                    <h4 className={`font-medium text-xs ${themeClasses.text}`}>Layout Preview</h4>
+                  </div>
+                  <Badge variant="secondary" className="text-[9px] px-1 py-0.5">Demo</Badge>
                 </div>
-                <p className={`text-sm mb-4 ${themeClasses.textSecondary}`}>
-                  Save your custom panel arrangements
-                </p>
-                <LayoutControls />
-              </div>
-
-              {/* Responsive Preview */}
-              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-                <div className="flex items-center space-x-2 mb-4">
-                  <Monitor size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
-                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Responsive Preview</h4>
-                  <Badge variant="secondary" className="text-xs">Demo</Badge>
+                
+                {/* Compact breakpoint preview */}
+                <div className="grid grid-cols-3 gap-1 mb-2">
+                  <div className="flex flex-col items-center p-2 rounded bg-black/20">
+                    <Monitor size={12} className="mb-1" />
+                    <span className="text-[9px]">Desktop</span>
+                    <span className="text-[8px] opacity-60">1024px+</span>
+                  </div>
+                  <div className="flex flex-col items-center p-2 rounded bg-black/20">
+                    <Tablet size={12} className="mb-1" />
+                    <span className="text-[9px]">Tablet</span>
+                    <span className="text-[8px] opacity-60">768px+</span>
+                  </div>
+                  <div className="flex flex-col items-center p-2 rounded bg-black/20">
+                    <Smartphone size={12} className="mb-1" />
+                    <span className="text-[9px]">Mobile</span>
+                    <span className="text-[8px] opacity-60">375px+</span>
+                  </div>
                 </div>
-                <p className={`text-sm mb-4 ${themeClasses.textSecondary}`}>
-                  See how the interface adapts across different screen sizes
+                
+                <p className={`text-[10px] ${themeClasses.textSecondary} text-center`}>
+                  Interface adapts automatically to screen size
                 </p>
-                <ResponsiveLayoutHints />
               </div>
             </div>
           )}
 
           {activeTab === 'help' && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Getting Started */}
-              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-                <div className="flex items-center space-x-2 mb-4">
-                  <BookOpen size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
-                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Getting Started</h4>
-                  <Badge variant="secondary" className="text-xs">Guides</Badge>
+              <div className={`p-3 rounded-lg border bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+                <div className="flex items-center space-x-2 mb-3">
+                  <BookOpen size={16} style={{ color: `var(--${brandSkin}-accent)` }} />
+                  <h4 className={`font-medium text-sm ${themeClasses.text}`}>Getting Started</h4>
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">Guides</Badge>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -280,14 +293,14 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
                       (window as any).showStaticBuffetWelcome?.();
                       setIsOpen(false);
                     }}
-                    className="w-full flex items-center justify-between py-3"
+                    className="w-full flex items-center justify-between py-2 h-auto"
                     data-testid="button-show-welcome"
                   >
                     <div className="flex items-center space-x-2">
-                      <Info size={16} />
-                      <span>Welcome Guide</span>
+                      <Info size={14} />
+                      <span className="text-xs">Welcome Guide</span>
                     </div>
-                    <span className="text-xs opacity-60">Introduction</span>
+                    <span className="text-[10px] opacity-60">Intro</span>
                   </Button>
 
                   <Button
@@ -297,14 +310,14 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
                       onShowTour?.();
                       setIsOpen(false);
                     }}
-                    className="w-full flex items-center justify-between py-3"
+                    className="w-full flex items-center justify-between py-2 h-auto"
                     data-testid="button-show-tour"
                   >
                     <div className="flex items-center space-x-2">
-                      <Video size={16} />
-                      <span>Interactive Tour</span>
+                      <Video size={14} />
+                      <span className="text-xs">Interactive Tour</span>
                     </div>
-                    <span className="text-xs opacity-60">4 steps</span>
+                    <span className="text-[10px] opacity-60">4 steps</span>
                   </Button>
                   
                   <Button
@@ -314,53 +327,53 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
                       onShowAbout?.();
                       setIsOpen(false);
                     }}
-                    className="w-full flex items-center justify-between py-3"
+                    className="w-full flex items-center justify-between py-2 h-auto"
                     data-testid="button-show-about"
                   >
                     <div className="flex items-center space-x-2">
-                      <Info size={16} />
-                      <span>About Static Buffet</span>
+                      <Info size={14} />
+                      <span className="text-xs">About Static Buffet</span>
                     </div>
-                    <span className="text-xs opacity-60">v0.7.2</span>
+                    <span className="text-[10px] opacity-60">v0.7.2</span>
                   </Button>
                 </div>
               </div>
 
-              {/* Keyboard Shortcuts */}
-              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-                <div className="flex items-center space-x-2 mb-4">
-                  <Keyboard size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
-                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Keyboard Shortcuts</h4>
-                  <Badge variant="secondary" className="text-xs">Hotkeys</Badge>
+              {/* Compact Keyboard Shortcuts */}
+              <div className={`p-3 rounded-lg border bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+                <div className="flex items-center space-x-2 mb-3">
+                  <Keyboard size={16} style={{ color: `var(--${brandSkin}-accent)` }} />
+                  <h4 className={`font-medium text-sm ${themeClasses.text}`}>Keyboard Shortcuts</h4>
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">Hotkeys</Badge>
                 </div>
-                <div className={`space-y-3 ${themeClasses.textSecondary}`}>
-                  <div className="flex items-center justify-between p-2 rounded bg-black/20">
-                    <div className="flex items-center space-x-2">
-                      <Zap size={14} />
-                      <span className="text-sm">Effects 1-8</span>
+                <div className={`space-y-1.5 ${themeClasses.textSecondary}`}>
+                  <div className="flex items-center justify-between p-1.5 rounded bg-black/20">
+                    <div className="flex items-center space-x-1.5">
+                      <Zap size={12} />
+                      <span className="text-[11px]">Effects 1-8</span>
                     </div>
-                    <kbd className="px-2 py-1 bg-gray-700 text-gray-200 text-xs rounded font-mono">1-8</kbd>
+                    <kbd className="px-1.5 py-0.5 bg-gray-700 text-gray-200 text-[10px] rounded font-mono">1-8</kbd>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-black/20">
-                    <div className="flex items-center space-x-2">
-                      <Palette size={14} />
-                      <span className="text-sm">Theme easter eggs</span>
+                  <div className="flex items-center justify-between p-1.5 rounded bg-black/20">
+                    <div className="flex items-center space-x-1.5">
+                      <Palette size={12} />
+                      <span className="text-[11px]">Theme easter eggs</span>
                     </div>
-                    <kbd className="px-2 py-1 bg-gray-700 text-gray-200 text-xs rounded font-mono">Triple-click</kbd>
+                    <kbd className="px-1.5 py-0.5 bg-gray-700 text-gray-200 text-[10px] rounded font-mono">Triple-click</kbd>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-black/20">
-                    <div className="flex items-center space-x-2">
-                      <HelpCircle size={14} />
-                      <span className="text-sm">Help overlay</span>
+                  <div className="flex items-center justify-between p-1.5 rounded bg-black/20">
+                    <div className="flex items-center space-x-1.5">
+                      <HelpCircle size={12} />
+                      <span className="text-[11px]">Help overlay</span>
                     </div>
-                    <kbd className="px-2 py-1 bg-gray-700 text-gray-200 text-xs rounded font-mono">?</kbd>
+                    <kbd className="px-1.5 py-0.5 bg-gray-700 text-gray-200 text-[10px] rounded font-mono">?</kbd>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-black/20">
-                    <div className="flex items-center space-x-2">
-                      <Keyboard size={14} />
-                      <span className="text-sm">Command palette</span>
+                  <div className="flex items-center justify-between p-1.5 rounded bg-black/20">
+                    <div className="flex items-center space-x-1.5">
+                      <Keyboard size={12} />
+                      <span className="text-[11px]">Command palette</span>
                     </div>
-                    <kbd className="px-2 py-1 bg-gray-700 text-gray-200 text-xs rounded font-mono">Cmd+K</kbd>
+                    <kbd className="px-1.5 py-0.5 bg-gray-700 text-gray-200 text-[10px] rounded font-mono">Cmd+K</kbd>
                   </div>
                 </div>
               </div>
