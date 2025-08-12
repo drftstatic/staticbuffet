@@ -364,38 +364,40 @@ export default function Home() {
           )}
         </div>
 
-        {/* Bottom Timeline Panel - Full Width */}
-        <div 
-          data-tour-target="queue-section"
-          className={`${panelStates.queueCollapsed ? 'h-16' : 'h-64'} rounded-lg border-2 mx-1 mb-1 overflow-hidden transition-all duration-300 ${
-          brandSkin === 'waffle' 
-            ? 'bg-yellow-50/80 border-yellow-400/50' 
-            : 'bg-purple-950/80 border-yellow-400/50'
-        }`}>
-          <div className={`h-full flex flex-col ${
-            brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+        {/* Bottom Timeline Panel - Only show in Grid Layout mode (not in Resizable or Floating) */}
+        {!isFloatingMode && !isResizableMode && (
+          <div 
+            data-tour-target="queue-section"
+            className={`${panelStates.queueCollapsed ? 'h-16' : 'h-64'} rounded-lg border-2 mx-1 mb-1 overflow-hidden transition-all duration-300 ${
+            brandSkin === 'waffle' 
+              ? 'bg-yellow-50/80 border-yellow-400/50' 
+              : 'bg-purple-950/80 border-yellow-400/50'
           }`}>
-            <PanelHeader
-              title="TIMELINE • QUEUE"
-              status={`${queueItems.length} CLIPS • FULL WIDTH`}
-              isCollapsed={panelStates.queueCollapsed}
-              onToggleCollapse={() => togglePanelCollapse('queue')}
-            >
-              <div className="flex items-center space-x-2">
-                <div className={`px-2 py-1 rounded text-xs font-mono ${
-                  brandSkin === 'waffle' ? 'bg-amber-200 text-amber-800' : 'bg-yellow-400/20 text-yellow-300'
-                }`}>
-                  LONG
+            <div className={`h-full flex flex-col ${
+              brandSkin === 'waffle' ? 'text-amber-900' : 'text-yellow-300'
+            }`}>
+              <PanelHeader
+                title="TIMELINE • QUEUE"
+                status={`${queueItems.length} CLIPS • GRID LAYOUT`}
+                isCollapsed={panelStates.queueCollapsed}
+                onToggleCollapse={() => togglePanelCollapse('queue')}
+              >
+                <div className="flex items-center space-x-2">
+                  <div className={`px-2 py-1 rounded text-xs font-mono ${
+                    brandSkin === 'waffle' ? 'bg-amber-200 text-amber-800' : 'bg-yellow-400/20 text-yellow-300'
+                  }`}>
+                    GRID
+                  </div>
                 </div>
-              </div>
-            </PanelHeader>
-            {!panelStates.queueCollapsed && (
-              <div className="flex-1 overflow-hidden p-4">
-                <QueuePanel />
-              </div>
-            )}
+              </PanelHeader>
+              {!panelStates.queueCollapsed && (
+                <div className="flex-1 overflow-hidden p-4">
+                  <QueuePanel />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Detail Drawer */}
