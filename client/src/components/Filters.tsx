@@ -19,7 +19,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
       <div className="flex items-center space-x-2">
         <Label className="text-gray-600 dark:text-gray-400 font-inter">Year:</Label>
         <Select 
-          value={searchState.yearFrom} 
+          value={searchState.yearFrom || '1950'} 
           onValueChange={(value) => handleFilterChange('yearFrom', value)}
         >
           <SelectTrigger 
@@ -42,7 +42,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
         </Select>
         <span className="text-gray-600 dark:text-gray-400">to</span>
         <Select 
-          value={searchState.yearTo} 
+          value={searchState.yearTo || '2025'} 
           onValueChange={(value) => handleFilterChange('yearTo', value)}
         >
           <SelectTrigger 
@@ -64,7 +64,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
       <div className="flex items-center space-x-2">
         <Label className="text-gray-600 dark:text-gray-400 font-inter">Duration:</Label>
         <Select 
-          value={searchState.duration} 
+          value={searchState.duration || 'any'} 
           onValueChange={(value) => handleFilterChange('duration', value)}
         >
           <SelectTrigger 
@@ -85,7 +85,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
       <div className="flex items-center space-x-2">
         <Label className="text-gray-600 dark:text-gray-400 font-inter">License:</Label>
         <Select 
-          value={searchState.license} 
+          value={searchState.license || 'all'} 
           onValueChange={(value) => handleFilterChange('license', value)}
         >
           <SelectTrigger 
@@ -107,7 +107,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
       <div className="flex items-center space-x-2 ml-auto">
         <span className="text-gray-600 dark:text-gray-400 font-inter">Sort:</span>
         <Select 
-          value={searchState.sort} 
+          value={searchState.sort || 'downloads'} 
           onValueChange={(value) => handleFilterChange('sort', value)}
         >
           <SelectTrigger 

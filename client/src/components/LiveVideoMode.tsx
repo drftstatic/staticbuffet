@@ -208,11 +208,14 @@ export function LiveVideoMode() {
           }`}>
             Camera Device
           </label>
-          <Select value={selectedCamera} onValueChange={setSelectedCamera} disabled={isLiveMode}>
+          <Select value={selectedCamera || (cameras.length > 0 ? cameras[0].deviceId : 'none')} onValueChange={setSelectedCamera} disabled={isLiveMode}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select camera" />
             </SelectTrigger>
             <SelectContent>
+              {cameras.length === 0 && (
+                <SelectItem value="none">No cameras available</SelectItem>
+              )}
               {cameras.map((camera) => (
                 <SelectItem key={camera.deviceId} value={camera.deviceId}>
                   {camera.label}

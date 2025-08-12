@@ -10,7 +10,7 @@ export function ThemeSwitcher() {
   };
 
   return (
-    <Select value={brandSkin} onValueChange={handleThemeChange}>
+    <Select value={brandSkin || 'testcard'} onValueChange={handleThemeChange}>
       <SelectTrigger className={`w-56 ${
         brandSkin === 'testcard'
           ? 'border-blue-400/50 bg-gray-900/50 text-white'
