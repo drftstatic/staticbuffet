@@ -14,6 +14,7 @@ Static Buffet is a professional VJ-focused web application designed for searchin
 - ✅ **USER FEEDBACK**: Added comprehensive toast notifications for all button actions and error states
 - ✅ **VIDEO URL FIXES**: Resolved incomplete "archive.org/download/identifier" URLs with proper fallback logic and metadata handling
 - ✅ **RESPONSIVE LAYOUT HINTS**: Enhanced educational component with detailed VJ interface simulations, smooth animations, real-time breakpoint detection, pulsing effects, theme-aware styling, and comprehensive controls for demonstrating desktop/tablet/mobile adaptations
+- ✅ **POPUP CONSOLIDATION**: Disabled automatic popups for tour and welcome - now both accessible only through the Master Control Panel Help tab to reduce UI clutter
 
 ## Previous Changes (v0.7.1)
 - ✅ Enhanced license badges with detailed tooltips and external Creative Commons/Public Domain links

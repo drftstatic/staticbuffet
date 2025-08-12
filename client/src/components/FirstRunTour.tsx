@@ -80,17 +80,17 @@ export function FirstRunTour({}: FirstRunTourProps) {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [hasShownTour, setHasShownTour] = useState(false);
 
-  // Check if this is the user's first visit
-  useEffect(() => {
-    const hasSeenTour = localStorage.getItem('staticBuffetHasSeenTour');
-    if (!hasSeenTour && !hasShownTour) {
-      // Small delay to let the interface load
-      setTimeout(() => {
-        setIsOpen(true);
-        setHasShownTour(true);
-      }, 1500);
-    }
-  }, [hasShownTour]);
+  // Auto-start tour disabled - now only accessible through menu
+  // useEffect(() => {
+  //   const hasSeenTour = localStorage.getItem('staticBuffetHasSeenTour');
+  //   if (!hasSeenTour && !hasShownTour) {
+  //     // Small delay to let the interface load
+  //     setTimeout(() => {
+  //       setIsOpen(true);
+  //       setHasShownTour(true);
+  //     }, 1500);
+  //   }
+  // }, [hasShownTour]);
 
   const getThemeClasses = () => {
     switch (brandSkin) {

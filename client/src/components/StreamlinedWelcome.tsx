@@ -9,12 +9,24 @@ export function StreamlinedWelcome() {
   const [isOpen, setIsOpen] = useState(false);
   const { brandSkin } = useStore();
 
+  // Public method to show welcome (can be called from other components)
+  const showWelcome = () => setIsOpen(true);
+
+  // Attach function to window for external access
   useEffect(() => {
-    const hasSeenWelcome = localStorage.getItem('staticBuffetWelcomeSeen');
-    if (!hasSeenWelcome) {
-      setIsOpen(true);
-    }
+    (window as any).showStaticBuffetWelcome = showWelcome;
+    return () => {
+      delete (window as any).showStaticBuffetWelcome;
+    };
   }, []);
+
+  // Auto-start welcome disabled - now only accessible through menu
+  // useEffect(() => {
+  //   const hasSeenWelcome = localStorage.getItem('staticBuffetWelcomeSeen');
+  //   if (!hasSeenWelcome) {
+  //     setIsOpen(true);
+  //   }
+  // }, []);
 
   const handleClose = () => {
     localStorage.setItem('staticBuffetWelcomeSeen', 'true');

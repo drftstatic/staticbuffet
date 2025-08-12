@@ -184,6 +184,21 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
                     variant="outline"
                     size="sm"
                     onClick={() => {
+                      // Trigger welcome modal
+                      (window as any).showStaticBuffetWelcome?.();
+                      setIsOpen(false);
+                    }}
+                    className="w-full flex items-center space-x-2"
+                    data-testid="button-show-welcome"
+                  >
+                    <Info size={14} />
+                    <span>Welcome Guide</span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
                       onShowTour?.();
                       setIsOpen(false);
                     }}
