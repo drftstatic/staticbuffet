@@ -167,19 +167,6 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
                 </p>
                 <ThemeSelector />
               </div>
-
-              {/* Responsive Preview */}
-              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
-                <div className="flex items-center space-x-2 mb-4">
-                  <Monitor size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
-                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Responsive Preview</h4>
-                  <Badge variant="secondary" className="text-xs">Interactive</Badge>
-                </div>
-                <p className={`text-sm mb-4 ${themeClasses.textSecondary}`}>
-                  See how the interface adapts across desktop, tablet, and mobile
-                </p>
-                <ResponsiveLayoutHints />
-              </div>
             </div>
           )}
 
@@ -258,6 +245,19 @@ export function MasterControlPanel({ onShowTour, onShowAbout }: MasterControlPan
                   Save your custom panel arrangements
                 </p>
                 <LayoutControls />
+              </div>
+
+              {/* Responsive Preview */}
+              <div className={`p-4 rounded-xl border-2 bg-white/5`} style={{ borderColor: `var(--${brandSkin}-accent)` }}>
+                <div className="flex items-center space-x-2 mb-4">
+                  <Monitor size={18} style={{ color: `var(--${brandSkin}-accent)` }} />
+                  <h4 className={`font-semibold text-lg ${themeClasses.text}`}>Responsive Preview</h4>
+                  <Badge variant="secondary" className="text-xs">Demo</Badge>
+                </div>
+                <p className={`text-sm mb-4 ${themeClasses.textSecondary}`}>
+                  See how the interface adapts across different screen sizes
+                </p>
+                <ResponsiveLayoutHints />
               </div>
             </div>
           )}
