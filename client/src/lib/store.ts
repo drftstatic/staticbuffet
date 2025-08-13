@@ -38,6 +38,8 @@ interface AppStore extends AppState {
   // Effects
   setVideoEffects: (effects: VideoEffects) => void;
   setAudioEffects: (effects: AudioEffects) => void;
+  resetVideoEffects: () => void;
+  resetAudioEffects: () => void;
   
   // Text overlay actions
   setTextOverlay: (settings: TextSettings | null) => void;
@@ -490,7 +492,7 @@ export const useStore = create<AppStore>((set, get) => ({
     license: 'publicdomain',
     sort: 'downloads',
     page: 1,
-    sources: ['prelinger', 'fedflix'],
+    sources: ['prelinger', 'fedflix', 'nasa', 'loc', 'wikimedia'],
     allowRestrictedLicenses: false,
   },
   searchResults: [],
@@ -662,6 +664,64 @@ export const useStore = create<AppStore>((set, get) => ({
   // Effects actions
   setVideoEffects: (effects) => set({ videoEffects: effects }),
   setAudioEffects: (effects) => set({ audioEffects: effects }),
+  resetVideoEffects: () => set({ 
+    videoEffects: {
+      brightness: 100,
+      contrast: 100,
+      saturation: 100,
+      hue: 0,
+      blur: 0,
+      sharpness: 0,
+      opacity: 100,
+      invert: false,
+      grayscale: 0,
+      sepia: 0,
+      rotate: 0,
+      scaleX: 1,
+      scaleY: 1,
+      skewX: 0,
+      skewY: 0,
+      flipH: false,
+      flipV: false,
+      pixelate: 0,
+      edgeDetection: false,
+      emboss: false,
+      glitchIntensity: 0,
+      chromaticAberration: 0,
+      filmGrain: 0,
+      vignette: 0,
+      motionBlur: 0,
+      zoom: 1,
+      kaleidoscope: 0,
+      mirror: false,
+      thermal: false,
+      night: false,
+      xray: false
+    }
+  }),
+  resetAudioEffects: () => set({
+    audioEffects: {
+      volume: 100,
+      bass: 0,
+      mid: 0,
+      treble: 0,
+      reverb: 0,
+      delay: 0,
+      distortion: 0,
+      compressor: false,
+      limiter: false,
+      normalize: false,
+      pitch: 0,
+      speed: 1,
+      echo: 0,
+      chorus: 0,
+      flanger: 0,
+      phaser: 0,
+      bitcrush: 0,
+      filter: 0,
+      stereoWidth: 100
+    }
+  }),
   
   // Text overlay actions
   setTextOverlay: (settings) => set({ textOverlay: settings }),

@@ -1,4 +1,5 @@
 import { type QueueItem } from '@/lib/types';
+import { connectionMonitor } from '@/lib/connection-monitor';
 
 interface PreloadCache {
   [videoUrl: string]: {
@@ -12,30 +13,101 @@ interface PreloadCache {
 
 class VideoPreloader {
   private cache: PreloadCache = {};
-  private maxCacheSize = 3; // Preload up to 3 videos
-  private maxRetries = 3;
+  private maxCacheSize = 5; // Increased cache size for better performance
+  private maxRetries = 2; // Reduced retries to fail faster
   private currentAbortController: AbortController | null = null;
+  private preloadTimeout = 30000; // 30 second timeout for preloads
+  private userBehavior: { [videoId: string]: number } = {}; // Track video view counts
+  private lastSearchQuery = '';
+  private searchBasedPreloads: string[] = []; // URLs from recent searches
 
-  // Preload the next video in the queue
+  // Preload the next video in the queue with adaptive strategy
   async preloadNext(queueItems: QueueItem[], currentIndex: number): Promise<void> {
-    const nextIndex = currentIndex + 1;
-    if (nextIndex >= queueItems.length) return;
-
-    const nextItem = queueItems[nextIndex];
-    if (!nextItem?.videoUrl) return;
-
-    // Cancel any existing preload
-    this.cancelCurrentPreload();
-
-    // Create new abort controller for this preload
-    this.currentAbortController = new AbortController();
-
-    try {
-      await this.preloadVideo(nextItem.videoUrl, this.currentAbortController.signal);
-    } catch (error) {
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.warn('Video preload failed:', error);
+    const settings = connectionMonitor.getSettings();
+    
+    // Adjust preload count based on connection quality
+    const maxPreloads = Math.min(settings.maxConcurrentStreams, queueItems.length - currentIndex - 1);
+    const videosToPreload: number[] = [];
+    
+    // Smart prioritization: next videos + popular videos
+    for (let i = 1; i <= maxPreloads; i++) {
+      const nextIndex = currentIndex + i;
+      if (nextIndex < queueItems.length) {
+        videosToPreload.push(nextIndex);
       }
+    }
+    
+    // Add predictive preloads based on user behavior
+    if (settings.preloadStrategy === 'auto') {
+      this.addPredictivePreloads(queueItems, videosToPreload);
+    }
+    
+    for (const nextIndex of videosToPreload) {
+      if (nextIndex >= queueItems.length) continue;
+      
+      const nextItem = queueItems[nextIndex];
+      if (!nextItem?.videoUrl) continue;
+      
+      // Skip if already preloaded or loading
+      if (this.isPreloaded(nextItem.videoUrl) || this.isLoading(nextItem.videoUrl)) {
+        continue;
+      }
+
+      try {
+        // Use a separate abort controller for each preload
+        const abortController = new AbortController();
+        
+        // Only preload if connection allows it
+        if (settings.preloadStrategy !== 'none') {
+          this.preloadVideo(nextItem.videoUrl, abortController.signal);
+        }
+        
+        // Clean up cache if getting too large
+        this.cleanupCache();
+        
+      } catch (error) {
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.warn(`Video preload failed for index ${nextIndex}:`, error);
+        }
+      }
+    }
+  }
+
+  private addPredictivePreloads(queueItems: QueueItem[], currentPreloads: number[]): void {
+    // Find videos user has watched before (predictive loading)
+    const watchedVideos = Object.keys(this.userBehavior)
+      .sort((a, b) => this.userBehavior[b] - this.userBehavior[a])
+      .slice(0, 3); // Top 3 most watched
+      
+    for (const videoId of watchedVideos) {
+      const index = queueItems.findIndex(item => item.identifier === videoId);
+      if (index > -1 && !currentPreloads.includes(index)) {
+        currentPreloads.push(index);
+        break; // Only add one predictive preload
+      }
+    }
+  }
+
+  // Track user behavior for predictive preloading
+  public trackVideoView(videoId: string): void {
+    this.userBehavior[videoId] = (this.userBehavior[videoId] || 0) + 1;
+    
+    // Keep only last 50 entries to prevent memory bloat
+    const entries = Object.entries(this.userBehavior);
+    if (entries.length > 50) {
+      const sorted = entries.sort(([,a], [,b]) => b - a);
+      this.userBehavior = Object.fromEntries(sorted.slice(0, 50));
+    }
+  }
+
+  // Cache search results for predictive preloading
+  public cacheSearchResults(query: string, results: any[]): void {
+    if (query !== this.lastSearchQuery) {
+      this.lastSearchQuery = query;
+      this.searchBasedPreloads = results
+        .slice(0, 5) // Top 5 search results
+        .map(result => result.videoUrl || `/api/video/${result.identifier}`)
+        .filter(Boolean);
     }
   }
 
@@ -96,7 +168,7 @@ class VideoPreloader {
         reject(new Error('Video preload aborted'));
       };
 
-      const cleanup = () => {
+      let cleanup = () => {
         video.removeEventListener('canplaythrough', onCanPlayThrough);
         video.removeEventListener('error', onError);
         signal?.removeEventListener('abort', onAbort);
@@ -114,10 +186,26 @@ class VideoPreloader {
       video.addEventListener('canplaythrough', onCanPlayThrough);
       video.addEventListener('error', onError);
 
-      // Configure video element
-      video.preload = 'auto';
+      // Configure video element for optimal preloading
+      video.preload = 'metadata'; // Changed from 'auto' to 'metadata' for faster initial load
       video.muted = true; // Required for autoplay policies
       video.crossOrigin = 'anonymous';
+      video.playsInline = true; // Better mobile performance
+      
+      // Add timeout to prevent hanging preloads
+      const timeoutId = setTimeout(() => {
+        cacheEntry.loading = false;
+        cacheEntry.error = true;
+        cleanup();
+        reject(new Error(`Video preload timeout: ${videoUrl}`));
+      }, this.preloadTimeout);
+      
+      // Create enhanced cleanup function with timeout clearing
+      const originalCleanup = cleanup;
+      cleanup = () => {
+        clearTimeout(timeoutId);
+        originalCleanup();
+      };
       
       // Start preload
       video.src = videoUrl;

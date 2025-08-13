@@ -244,54 +244,57 @@ class TranscodeService {
    */
   private async downloadFile(url: string, outputPath: string, onProgress?: (progress: number) => void): Promise<void> {
     return new Promise((resolve, reject) => {
-      const response = fetch(url);
-      
-      response.then(async (res) => {
-        if (!res.ok) {
-          reject(new Error(`Download failed: ${res.status} ${res.statusText}`));
-          return;
-        }
-
-        const totalSize = parseInt(res.headers.get('content-length') || '0');
-        let downloadedSize = 0;
-
-        const fileStream = await fs.open(outputPath, 'w');
-        const writer = fileStream.createWriteStream();
-
-        if (!res.body) {
-          reject(new Error('No response body'));
-          return;
-        }
-
-        const reader = res.body.getReader();
-
-        const pump = async (): Promise<void> => {
-          try {
-            const { done, value } = await reader.read();
-            if (done) {
-              await writer.end();
-              await fileStream.close();
-              resolve();
-              return;
-            }
-
-            downloadedSize += value.length;
-            writer.write(Buffer.from(value));
-
-            if (onProgress && totalSize > 0) {
-              onProgress(downloadedSize / totalSize);
-            }
-
-            return pump();
-          } catch (error) {
-            await writer.destroy();
-            await fileStream.close();
-            reject(error);
+      (async () => {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            reject(new Error(`Download failed: ${response.status} ${response.statusText}`));
+            return;
           }
-        };
 
-        return pump();
-      }).catch(reject);
+          const totalSize = parseInt(response.headers.get('content-length') || '0');
+          let downloadedSize = 0;
+
+          const fileStream = await fs.open(outputPath, 'w');
+          const writer = fileStream.createWriteStream();
+
+          if (!response.body) {
+            reject(new Error('No response body'));
+            return;
+          }
+
+          const reader = response.body.getReader();
+
+          const pump = async (): Promise<void> => {
+            try {
+              const { done, value } = await reader.read();
+              if (done) {
+                await writer.end();
+                await fileStream.close();
+                resolve();
+                return;
+              }
+
+              downloadedSize += value.length;
+              writer.write(Buffer.from(value));
+
+              if (onProgress && totalSize > 0) {
+                onProgress(downloadedSize / totalSize);
+              }
+
+              return pump();
+            } catch (error) {
+              await writer.destroy();
+              await fileStream.close();
+              reject(error);
+            }
+          };
+
+          return pump();
+        } catch (error) {
+          reject(error);
+        }
+      })();
     });
   }
 
@@ -495,16 +498,18 @@ class TranscodeService {
     });
   }
 
-  /**
-   * Clear completed jobs older than specified hours
-   */
   clearOldJobs(hoursOld: number = 24) {
     const cutoff = new Date(Date.now() - hoursOld * 60 * 60 * 1000);
-    
-    for (const [jobId, job] of this.jobs.entries()) {
+    const jobsToDelete: string[] = [];
+
+    for (const [jobId, job] of Array.from(this.jobs.entries())) {
       if (job.status === 'completed' && job.completedAt && job.completedAt < cutoff) {
-        this.jobs.delete(jobId);
+        jobsToDelete.push(jobId);
       }
+    }
+
+    for (const jobId of jobsToDelete) {
+      this.jobs.delete(jobId);
     }
   }
 }

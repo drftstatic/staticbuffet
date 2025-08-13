@@ -4,6 +4,7 @@ import { searchFiltersSchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
 import { metadataService } from "./metadata-service";
 import { transcodeService } from "./transcode-service";
+// import { CacheService } from "./cache-service";
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -34,8 +35,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const filters = searchFiltersSchema.parse(queryData);
       
-      // Build Archive.org search query
-      let query = filters.query;
+      // Check cache first
+      // const cachedResults = CacheService.getCachedSearchResults(filters);
+      // if (cachedResults) {
+      //   return res.json(cachedResults);
+      // }
+      
+      // Build Archive.org search query with better sanitization
+      let query = filters.query.trim();
+      
+      // Remove potentially problematic characters and escape quotes
+      query = query.replace(/[^\w\s\-'"]/g, ' ').replace(/\s+/g, ' ').trim();
+      
+      // Ensure we have a valid query after sanitization
+      if (!query) {
+        throw new Error('Search query became empty after sanitization');
+      }
       
       // Add media type filter
       query += " AND mediatype:movies";
@@ -91,16 +106,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         query += ` AND year:[${fromYear} TO ${toYear}]`;
       }
       
-      // Build Archive.org API URL
+      // Build Archive.org API URL with better validation
       const searchUrl = new URL("https://archive.org/advancedsearch.php");
+      
       searchUrl.searchParams.set("q", query);
       searchUrl.searchParams.set("output", "json");
+      
       // Use comma-separated fields instead of fl[] array
       searchUrl.searchParams.set("fl", "identifier,title,creator,year,mediatype,licenseurl,downloads,date,description,collection");
-      searchUrl.searchParams.set("rows", filters.rows.toString());
-      searchUrl.searchParams.set("page", filters.page.toString());
-      searchUrl.searchParams.set("sort[]", filters.sort === 'downloads' ? 'downloads desc' : 
-                                          filters.sort === 'date' ? 'date desc' : 'score desc');
+      
+      // Validate and set pagination parameters with optimization
+      const safeRows = Math.min(Math.max(1, filters.rows), 50); // Reduced from 100 to 50 for faster responses
+      const safePage = Math.max(1, filters.page);
+      searchUrl.searchParams.set("rows", safeRows.toString());
+      searchUrl.searchParams.set("page", safePage.toString());
+      
+      // Add cursor-based pagination hint for better performance
+      if (safePage > 1) {
+        const cursorHint = (safePage - 1) * safeRows;
+        searchUrl.searchParams.set("start", cursorHint.toString());
+      }
+      
+      // Archive.org API sort parameter fix - use simple field names
+      if (filters.sort === 'downloads') {
+        searchUrl.searchParams.set("sort[]", 'downloads desc');
+      } else if (filters.sort === 'date') {
+        searchUrl.searchParams.set("sort[]", 'date desc');
+      }
+      // Don't set sort parameter for relevance/score - let Archive.org use default relevance
 
       // Retry logic for Archive.org API calls
       let lastError;
@@ -108,7 +141,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       for (let attempt = 1; attempt <= 3; attempt++) {
         try {
-          console.log(`Search attempt ${attempt}/3 for query: ${filters.query}`);
+          console.log(`🔍 Search attempt ${attempt}/3 for query: "${filters.query}"`);
+          console.log(`📡 API URL: ${searchUrl.toString()}`);
           
           const response = await fetch(searchUrl.toString(), {
             headers: {
@@ -118,17 +152,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           if (!response.ok) {
-            throw new Error(`Archive.org API error: ${response.status} ${response.statusText}`);
+            const errorText = await response.text();
+            console.error(`❌ Archive.org API error: ${response.status} ${response.statusText}`, errorText);
+            throw new Error(`Archive.org API error: ${response.status} ${response.statusText}. Response: ${errorText}`);
           }
           
-          data = await response.json();
+          const responseText = await response.text();
+          console.log(`📥 Raw response: ${responseText.substring(0, 500)}...`);
+          
+          try {
+            data = JSON.parse(responseText);
+          } catch (parseError) {
+            console.error(`❌ JSON parse error:`, parseError);
+            throw new Error(`Invalid JSON response from Archive.org API: ${parseError instanceof Error ? parseError.message : parseError}`);
+          }
           
           // Check if we got valid data
           if (!data.response) {
+            console.error(`❌ Invalid response structure:`, data);
             throw new Error('Invalid response structure from Archive.org API');
           }
           
-          console.log(`Search successful on attempt ${attempt}, found ${data.response.numFound || 0} results`);
+          console.log(`✅ Search successful on attempt ${attempt}, found ${data.response.numFound || 0} results`);
           break; // Success, exit retry loop
           
         } catch (error) {
@@ -158,7 +203,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Must have identifier and title
           if (!doc.identifier || !doc.title) return false;
           
-          // For development, be more permissive with licensing
+          // Filter out obvious non-video content by title/collection
+          const title = (doc.title || '').toLowerCase();
+          const collection = Array.isArray(doc.collection) ? doc.collection.join(' ').toLowerCase() : (doc.collection || '').toLowerCase();
+          
+          // Skip if title suggests it's not a video
+          const nonVideoTerms = ['book', 'text', 'pdf', 'document', 'article', 'paper', 'audio only', 'soundtrack'];
+          if (nonVideoTerms.some(term => title.includes(term) && !title.includes('video'))) {
+            return false;
+          }
+          
+          // Skip obvious data/software collections
+          const dataCollections = ['software', 'data', 'texts', 'books', 'academic'];
+          if (dataCollections.some(term => collection.includes(term))) {
+            return false;
+          }
+          
           return true;
         })
         .map((doc: any) => ({
@@ -177,10 +237,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Original docs count: ${data.response?.docs?.length}, Filtered count: ${filteredDocs.length}`);
       
-      res.json({
+      const result = {
         ...data.response,
         docs: filteredDocs
-      });
+      };
+      
+      // Cache the successful result
+      // CacheService.cacheSearchResults(filters, result, 30); // Cache for 30 minutes
+      
+      res.json(result);
       
     } catch (error) {
       console.error("Search error:", error);
@@ -259,12 +324,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Handle partial content response
       if (response.status === 206) {
-        // Forward all relevant headers for partial content
+        // Forward all relevant headers for partial content with optimizations
         const responseHeaders: Record<string, string> = {
           'Content-Type': contentType,
           'Accept-Ranges': 'bytes',
           'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=3600',
+          'Cache-Control': 'public, max-age=86400, immutable', // 24 hour cache for better performance
+          'Connection': 'keep-alive',
+          'Access-Control-Expose-Headers': 'Content-Range, Content-Length, Accept-Ranges'
         };
         
         // Forward range-related headers
@@ -277,63 +344,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.status(206).set(responseHeaders);
         
       } else {
-        // Full content response
+        // Full content response with optimizations
         res.set({
           'Content-Type': contentType,
           'Accept-Ranges': 'bytes',
           'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=3600',
-          'Content-Length': response.headers.get('content-length') || ''
+          'Cache-Control': 'public, max-age=86400, immutable', // 24 hour cache
+          'Connection': 'keep-alive',
+          'Content-Length': response.headers.get('content-length') || '',
+          'Access-Control-Expose-Headers': 'Content-Length, Accept-Ranges'
         });
       }
       
-      // Stream the video through our server with error handling
+      // Stream the video through our server with optimized error handling
       if (response.body) {
         const reader = response.body.getReader();
-        let retryCount = 0;
-        const maxStreamRetries = 3;
-        
+        let streamClosed = false;
+
         const pump = async (): Promise<void> => {
           try {
-            const { done, value } = await reader.read();
-            if (done) {
-              res.end();
-              return;
+            while (!streamClosed) {
+              const { done, value } = await reader.read();
+              
+              if (done || streamClosed) {
+                if (!streamClosed) {
+                  res.end();
+                  streamClosed = true;
+                }
+                return;
+              }
+
+              // Check if client is still connected
+              if (res.destroyed || res.writableEnded) {
+                streamClosed = true;
+                return;
+              }
+
+              // Write chunk to response with better buffer management
+              const chunk = Buffer.from(value);
+              const writeSuccess = res.write(chunk);
+
+              if (!writeSuccess && !streamClosed) {
+                // Back pressure - wait for drain with timeout
+                await Promise.race([
+                  new Promise(resolve => res.once('drain', resolve)),
+                  new Promise(resolve => setTimeout(resolve, 5000)) // 5s timeout
+                ]);
+              }
             }
-            
-            // Write chunk to response
-            const writeSuccess = res.write(Buffer.from(value));
-            
-            if (!writeSuccess) {
-              // Back pressure - wait for drain
-              await new Promise(resolve => res.once('drain', resolve));
-            }
-            
-            // Reset retry count on successful chunk
-            retryCount = 0;
-            return pump();
-            
           } catch (error) {
-            retryCount++;
-            
-            if (retryCount < maxStreamRetries) {
-              console.warn(`⚠️ Stream error (attempt ${retryCount}/${maxStreamRetries}):`, error);
-              // Try to continue streaming
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              return pump();
-            } else {
-              console.error('❌ Stream failed after retries:', error);
-              res.end();
+            if (!streamClosed) {
+              console.error('❌ Stream error:', error);
+              streamClosed = true;
+              if (!res.destroyed) {
+                res.end();
+              }
             }
           }
         };
+
+        // Handle client disconnect with cleanup
+        const cleanup = () => {
+          if (!streamClosed) {
+            console.log('🔌 Client disconnected, closing stream');
+            streamClosed = true;
+            reader.cancel().catch(() => {});
+          }
+        };
         
-        // Handle client disconnect
-        req.on('close', () => {
-          console.log('🔌 Client disconnected, closing stream');
-          reader.cancel().catch(() => {});
-        });
-        
+        req.on('close', cleanup);
+        req.on('aborted', cleanup);
+        res.on('finish', cleanup);
+        res.on('error', cleanup);
+
         return pump();
       } else {
         res.status(500).json({ error: "No response body" });
@@ -575,8 +658,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Cache statistics
   app.get("/api/cache-stats", async (req, res) => {
     try {
-      const stats = await transcodeService.getCacheStats();
-      res.json(stats);
+      const transcodeStats = await transcodeService.getCacheStats();
+      // const cacheStats = CacheService.getStats();
+      
+      res.json({
+        transcode: transcodeStats,
+        // memory: cacheStats,
+        timestamp: new Date().toISOString()
+      });
     } catch (error) {
       console.error("Cache stats error:", error);
       res.status(500).json({ error: "Failed to get cache stats" });

@@ -146,6 +146,7 @@ export class MetadataService {
 
     // Check database cache
     try {
+      // TODO: Implement database caching for metadata.
       // Since we don't have a database table yet, we'll return null
       // In production, you'd query your database here
       console.log(`📦 No database cache for ${identifier} (table not implemented yet)`);
@@ -166,6 +167,7 @@ export class MetadataService {
 
     // Save to database
     try {
+      // TODO: Implement database caching for metadata.
       // In production, you'd insert/update your database here
       console.log(`💾 Would save ${identifier} to database (table not implemented yet)`);
     } catch (error) {
@@ -317,8 +319,6 @@ export class MetadataService {
 export const metadataService = new MetadataService();
 
 // Set up periodic cleanup (every hour)
-if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
-    metadataService.cleanupExpiredCache().catch(console.error);
-  }, 60 * 60 * 1000);
-}
+setInterval(() => {
+  metadataService.cleanupExpiredCache().catch(console.error);
+}, 60 * 60 * 1000);

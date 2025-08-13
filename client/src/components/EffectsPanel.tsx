@@ -39,7 +39,7 @@ import {
 import { ScaleTransition } from './AnimatedTransitions';
 
 export function EffectsPanel() {
-  const { videoEffects, setVideoEffects, brandSkin, searchResults, setQueueItems } = useStore();
+  const { videoEffects, setVideoEffects, resetVideoEffects, resetAudioEffects, brandSkin, searchResults, setQueueItems } = useStore();
   const { toast } = useToast();
   const [showTextGenerator, setShowTextGenerator] = useState(false);
 
