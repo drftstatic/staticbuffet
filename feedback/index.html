@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Request Transmission v2.0</title>
+    <!-- Google Fonts: VT323 for the retro terminal look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glow-color: #00ffff; /* Cyan */
+            --primary-text: #00ff00; /* Green */
+            --bg-color: #0d0d0d;
+            --glitch-color-1: #ff00ff; /* Magenta */
+            --glitch-color-2: #00ffff; /* Cyan */
+            --disabled-color: #006400; /* Dark Green */
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: var(--bg-color);
+            color: var(--primary-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden; /* Hide scrollbars caused by glitching */
+        }
+
+        /* Scanline Overlay Effect */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.5),
+                rgba(0, 0, 0, 0.5) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Main container with CRT screen effect */
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(10, 25, 10, 0.3);
+            border: 2px solid var(--glow-color);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 15px var(--glow-color), 0 0 25px var(--glow-color) inset;
+            position: relative;
+            animation: flicker 0.15s infinite;
+        }
+
+        /* Glitch animation for the main title */
+        .glitch {
+            font-size: 2.5rem;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            animation: glitch-skew 1s infinite linear alternate-reverse;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            overflow: hidden;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--glitch-color-1);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 var(--glitch-color-2), 2px 2px var(--glitch-color-1);
+            animation: glitch-anim-2 1.5s infinite linear alternate-reverse;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px var(--primary-text);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            background-color: transparent;
+            border: 1px solid var(--primary-text);
+            border-radius: 4px;
+            padding: 0.75rem;
+            color: var(--primary-text);
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 5px var(--primary-text) inset;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--glow-color);
+            box-shadow: 0 0 10px var(--glow-color), 0 0 15px var(--glow-color) inset;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Button styling */
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 1rem;
+            font-family: 'VT323', monospace;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            color: var(--glow-color);
+            background-color: transparent;
+            border: 2px solid var(--glow-color);
+            border-radius: 5px;
+            text-shadow: 0 0 8px var(--glow-color);
+            box-shadow: 0 0 10px var(--glow-color);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            color: var(--bg-color);
+            background-color: var(--glow-color);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+        
+        .btn:disabled {
+            color: var(--disabled-color);
+            border-color: var(--disabled-color);
+            cursor: not-allowed;
+            text-shadow: none;
+            box-shadow: none;
+        }
+
+        .ai-btn {
+            font-size: 1rem;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            width: auto;
+            float: right;
+        }
+
+        /* Thank you message container */
+        #thank-you-container {
+            text-align: center;
+        }
+        
+        #thank-you-container h2 {
+            font-size: 2rem;
+        }
+
+        #thank-you-container p {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+        .analysis-result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border: 1px dashed var(--primary-text);
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .loading-indicator {
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Keyframe animations */
+        @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.95; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes glitch-skew { 0% { transform: skewX(0deg); } 10% { transform: skewX(2deg); } 20% { transform: skewX(-2deg); } 30% { transform: skewX(0deg); } 100% { transform: skewX(0deg); } }
+        @keyframes glitch-anim-1 { 0% { clip-path: inset(5% 0 90% 0); } 20% { clip-path: inset(80% 0 5% 0); } 40% { clip-path: inset(45% 0 45% 0); } 60% { clip-path: inset(90% 0 1% 0); } 80% { clip-path: inset(25% 0 60% 0); } 100% { clip-path: inset(60% 0 30% 0); } }
+        @keyframes glitch-anim-2 { 0% { clip-path: inset(85% 0 5% 0); } 25% { clip-path: inset(10% 0 80% 0); } 50% { clip-path: inset(70% 0 10% 0); } 75% { clip-path: inset(30% 0 50% 0); } 100% { clip-path: inset(95% 0 2% 0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="form-container">
+            <h1 class="glitch" data-text="F34TUR3 R3QU3ST">F34TUR3 R3QU3ST</h1>
+            <p style="text-align:center; margin-bottom: 2rem;">// INCOMING TRANSMISSION v2.0 //</p>
+
+            <form id="featureRequestForm">
+                <div class="form-group">
+                    <label for="feature-title">Feature Title:</label>
+                    <input type="text" id="feature-title" name="feature-title" placeholder="> Enter a short title..." required>
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="feature-description">Description:</label>
+                        <button type="button" id="flesh-out-btn" class="btn ai-btn" disabled>✨ Flesh out idea</button>
+                    </div>
+                    <textarea id="feature-description" name="feature-description" placeholder="> Describe your idea. What problem does it solve? How should it work?" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="contact-info">Contact (Optional):</label>
+                    <input type="text" id="contact-info" name="contact-info" placeholder="> email@example.com or @username">
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="submit-btn" class="btn">Transmit Signal</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="thank-you-container" style="display: none;">
+            <h2 class="glitch" data-text="TRANSMISSION RECEIVED">TRANSMISSION RECEIVED</h2>
+            <p>// Your signal is being processed by the mainframe... //</p>
+            <div id="analysis-container" class="analysis-result">
+                <p class="loading-indicator">> ANALYZING REQUEST...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Element References ---
+        const featureForm = document.getElementById('featureRequestForm');
+        const formContainer = document.getElementById('form-container');
+        const thankYouContainer = document.getElementById('thank-you-container');
+        const titleInput = document.getElementById('feature-title');
+        const descriptionTextarea = document.getElementById('feature-description');
+        const fleshOutBtn = document.getElementById('flesh-out-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const analysisContainer = document.getElementById('analysis-container');
+        
+        // --- Gemini API Configuration ---
+        const API_KEY = ""; // Leave empty, it will be handled by the environment
+        const API_URL_FLASH = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+
+        /**
+         * A generic function to call the Gemini API with exponential backoff for retries.
+         * @param {object} payload - The payload to send to the API.
+         * @returns {Promise<object>} - The JSON response from the API.
+         */
+        async function callGeminiAPI(payload) {
+            let response;
+            let attempts = 0;
+            const maxAttempts = 5;
+            let delay = 1000; // Start with 1 second
+
+            while (attempts < maxAttempts) {
+                try {
+                    response = await fetch(API_URL_FLASH, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        return await response.json();
+                    } else if (response.status === 429 || response.status >= 500) {
+                        // Throttling or server error, so we retry
+                        console.warn(`API call failed with status ${response.status}. Retrying in ${delay}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Exponential backoff
+                        attempts++;
+                    } else {
+                        // Other client-side error, don't retry
+                        throw new Error(`API call failed with status ${response.status}: ${await response.text()}`);
+                    }
+                } catch (error) {
+                    console.error("Network or fetch error:", error);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                    attempts++;
+                }
+            }
+            throw new Error("API call failed after multiple retries.");
+        }
+
+
+        // --- Event Listeners ---
+
+        // Enable/disable the "Flesh out" button based on title input
+        titleInput.addEventListener('input', () => {
+            fleshOutBtn.disabled = !titleInput.value.trim();
+        });
+        
+        // Handle the "Flesh out idea" button click
+        fleshOutBtn.addEventListener('click', async () => {
+            const originalText = fleshOutBtn.innerHTML;
+            fleshOutBtn.disabled = true;
+            fleshOutBtn.innerHTML = '<span class="loading-indicator">> GENERATING...</span>';
+
+            const prompt = `Based on the feature title "${titleInput.value}", generate a detailed description for a software feature request. Explain the core idea, the problem it solves for the user, and how it could function. Write it in a clear, concise, and user-focused way.`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }]
+            };
+
+            try {
+                const result = await callGeminiAPI(payload);
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                    descriptionTextarea.value = text;
+                } else {
+                    descriptionTextarea.value = "// Mainframe communication error. Please describe manually. //";
+                }
+            } catch (error) {
+                console.error("Error generating description:", error);
+                descriptionTextarea.value = "// Could not connect to the generation matrix. Please describe manually. //";
+            } finally {
+                fleshOutBtn.innerHTML = originalText;
+                fleshOutBtn.disabled = false;
+            }
+        });
+
+        // Handle the main form submission
+        featureForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const title = titleInput.value;
+            const description = descriptionTextarea.value;
+            
+            // --- In a real app, you'd save the form data here ---
+            console.log("Form submitted:", { title, description, contact: document.getElementById('contact-info').value });
+
+            // Switch to the thank you view
+            formContainer.style.display = 'none';
+            thankYouContainer.style.display = 'block';
+
+            // Now, call Gemini to analyze the request
+            const prompt = `Analyze the following feature request and categorize it. Also, generate a cool, retro-futuristic, one-word codename for this request (e.g., 'NEON', 'GRIDRUNNER', 'DATASCAPE'). Title: "${title}". Description: "${description}"`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "category": { "type": "STRING" },
+                            "codename": { "type": "STRING" }
+                        },
+                        required: ["category", "codename"]
+                    }
+                }
+            };
+
+            try {
+                const result = await callGeminiAPI(payload);
+                const analysis = JSON.parse(result?.candidates?.[0]?.content?.parts?.[0]?.text);
+                if (analysis && analysis.category && analysis.codename) {
+                    analysisContainer.innerHTML = `
+                        <p>> TRANSMISSION ANALYSIS COMPLETE</p>
+                        <p>> CATEGORY: ${analysis.category.toUpperCase()}</p>
+                        <p>> CODENAME: ${analysis.codename.toUpperCase()}</p>
+                    `;
+                } else {
+                    throw new Error("Invalid analysis structure received.");
+                }
+            } catch (error) {
+                console.error("Error analyzing request:", error);
+                analysisContainer.innerHTML = "<p>// ANALYSIS FAILED: Signal lost in the static. //</p>";
+            }
+        });
+
+    </script>
+
+</body>
+</html>
