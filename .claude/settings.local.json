@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm install)",
+      "Bash(npm run dev:*)",
+      "Bash(PORT=3000 npm run dev)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
