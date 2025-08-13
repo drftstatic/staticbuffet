@@ -11,10 +11,9 @@ import { ScaleTransition, FadeTransition } from './AnimatedTransitions';
 interface ResultCardProps {
   video: VideoResult;
   onSelect: (video: VideoResult) => void;
-  onAddToQueue: (video: VideoResult) => void;
 }
 
-export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
+export function ResultCard({ video, onSelect }: ResultCardProps) {
   const { brandSkin } = useStore();
   const [thumbnailLoaded, setThumbnailLoaded] = useState(false);
   const [thumbnailError, setThumbnailError] = useState(false);
@@ -24,10 +23,6 @@ export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
   const [showHoverInfo, setShowHoverInfo] = useState(false);
   const maxRetries = 3;
 
-  const handleAddClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onAddToQueue(video);
-  };
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);
@@ -140,20 +135,10 @@ export function ResultCard({ video, onSelect, onAddToQueue }: ResultCardProps) {
         <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
           {video.creator && `${video.creator} • `}{video.year || 'Unknown'}
         </p>
-        <div className="flex items-center justify-between text-xs">
+        <div className="text-xs">
           <span className="text-gray-600 dark:text-gray-400">
             {video.downloads ? `${(video.downloads / 1000).toFixed(1)}k downloads` : 'No stats'}
           </span>
-          <ScaleTransition hoverScale={1.1} tapScale={0.9}>
-            <Button
-              size="sm"
-              onClick={handleAddClick}
-              data-testid={`button-add-${video.identifier}`}
-              className="px-2 py-1 rounded transition-all duration-200 bg-red-600 hover:bg-red-700 dark:bg-lime-500 dark:hover:bg-lime-400 text-white dark:text-black text-xs"
-            >
-              <span className="text-xs">+ Add</span>
-            </Button>
-          </ScaleTransition>
         </div>
       </div>
     </div>

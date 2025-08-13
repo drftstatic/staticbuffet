@@ -1,6 +1,9 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useStore } from '@/lib/store';
+import { Calendar, Shield, Globe, Scale, Lock, Clock, Zap, Timer, Hourglass } from 'lucide-react';
+import { SourceToggles } from '@/components/SourceToggles';
+import { LicenseGuardrail } from '@/components/LicenseGuardrail';
 
 interface FiltersProps {
   onFiltersChange: () => void;
@@ -14,16 +17,38 @@ export function Filters({ onFiltersChange }: FiltersProps) {
     onFiltersChange();
   };
 
+  const getLicenseIcon = (value: string) => {
+    switch (value) {
+      case 'all':
+        return <Globe className="h-3 w-3 text-green-400" />;
+      case 'publicdomain':
+        return <Scale className="h-3 w-3 text-blue-400" />;
+      case 'cc0':
+        return <Shield className="h-3 w-3 text-cyan-400" />;
+      case 'ccby':
+        return <Shield className="h-3 w-3 text-yellow-400" />;
+      case 'restricted':
+        return <Lock className="h-3 w-3 text-red-400" />;
+      default:
+        return <Globe className="h-3 w-3 text-green-400" />;
+    }
+  };
+
+
+  const handleDurationChange = (duration: string) => {
+    handleFilterChange('duration', duration);
+  };
+
   return (
-    <div className="mt-3 flex items-center space-x-4 text-sm">
-      <div className="flex items-center space-x-2">
-        <Label className="text-gray-600 dark:text-gray-400 font-inter">Year:</Label>
+    <div className="flex items-center space-x-3 text-xs">
+      <div className="flex items-center space-x-1">
+        <Calendar className="h-3 w-3 text-gray-300" title="Year Range" />
         <Select 
           value={searchState.yearFrom || '1950'} 
           onValueChange={(value) => handleFilterChange('yearFrom', value)}
         >
           <SelectTrigger 
-            className="w-20 px-2 py-1 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
+            className="w-16 h-7 px-1.5 py-0.5 text-xs rounded border-white/20 bg-black/30 text-white hover:bg-black/50 transition-colors"
             data-testid="select-year-from"
           >
             <SelectValue />
@@ -40,13 +65,13 @@ export function Filters({ onFiltersChange }: FiltersProps) {
             <SelectItem value="2000">2000</SelectItem>
           </SelectContent>
         </Select>
-        <span className="text-gray-600 dark:text-gray-400">to</span>
+        <span className="text-gray-400 text-xs">to</span>
         <Select 
           value={searchState.yearTo || '2025'} 
           onValueChange={(value) => handleFilterChange('yearTo', value)}
         >
           <SelectTrigger 
-            className="w-20 px-2 py-1 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
+            className="w-16 h-7 px-1.5 py-0.5 text-xs rounded border-white/20 bg-black/30 text-white hover:bg-black/50 transition-colors"
             data-testid="select-year-to"
           >
             <SelectValue />
@@ -61,68 +86,108 @@ export function Filters({ onFiltersChange }: FiltersProps) {
         </Select>
       </div>
       
-      <div className="flex items-center space-x-2">
-        <Label className="text-gray-600 dark:text-gray-400 font-inter">Duration:</Label>
-        <Select 
-          value={searchState.duration || 'any'} 
-          onValueChange={(value) => handleFilterChange('duration', value)}
-        >
-          <SelectTrigger 
-            className="w-24 px-2 py-1 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
-            data-testid="select-duration"
-          >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="any">Any</SelectItem>
-            <SelectItem value="short">&lt; 5 min</SelectItem>
-            <SelectItem value="medium">5-30 min</SelectItem>
-            <SelectItem value="long">&gt; 30 min</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
 
-      <div className="flex items-center space-x-2">
-        <Label className="text-gray-600 dark:text-gray-400 font-inter">License:</Label>
+      <div className="flex items-center space-x-1">
+        <Shield className="h-3 w-3 text-gray-300" title="License" />
         <Select 
           value={searchState.license || 'all'} 
           onValueChange={(value) => handleFilterChange('license', value)}
         >
           <SelectTrigger 
-            className="w-32 px-2 py-1 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
+            className="w-8 h-7 px-1.5 py-0.5 text-xs rounded border-white/20 bg-black/30 text-white hover:bg-black/50 transition-colors flex items-center justify-center"
             data-testid="select-license"
           >
-            <SelectValue />
+            {getLicenseIcon(searchState.license || 'all')}
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Open</SelectItem>
-            <SelectItem value="publicdomain">Public Domain</SelectItem>
-            <SelectItem value="cc0">CC0</SelectItem>
-            <SelectItem value="ccby">CC-BY</SelectItem>
-            <SelectItem value="restricted">Restricted (NC/ND)</SelectItem>
+            <SelectItem value="all">
+              <div className="flex items-center space-x-2">
+                <Globe className="h-3 w-3 text-green-400" />
+                <span>All Open</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="publicdomain">
+              <div className="flex items-center space-x-2">
+                <Scale className="h-3 w-3 text-blue-400" />
+                <span>Public Domain</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="cc0">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-3 w-3 text-cyan-400" />
+                <span>CC0</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="ccby">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-3 w-3 text-yellow-400" />
+                <span>CC-BY</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="restricted">
+              <div className="flex items-center space-x-2">
+                <Lock className="h-3 w-3 text-red-400" />
+                <span>Restricted</span>
+              </div>
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      <div className="flex items-center space-x-2 ml-auto">
-        <span className="text-gray-600 dark:text-gray-400 font-inter">Sort:</span>
-        <Select 
-          value={searchState.sort || 'downloads'} 
-          onValueChange={(value) => handleFilterChange('sort', value)}
+      {/* Duration Controls */}
+      <div className="flex gap-1">
+        <button
+          onClick={() => handleDurationChange('any')}
+          className={`h-7 px-2 text-xs rounded border transition-colors flex items-center ${
+            searchState.duration === 'any' || !searchState.duration 
+              ? 'border-white/40 bg-white/20 text-white' 
+              : 'border-white/20 bg-black/30 text-gray-300 hover:bg-black/50'
+          }`}
+          title="Any duration"
         >
-          <SelectTrigger 
-            className="w-24 px-2 py-1 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
-            data-testid="select-sort"
-          >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="downloads">Downloads</SelectItem>
-            <SelectItem value="date">Date</SelectItem>
-            <SelectItem value="relevance">Relevance</SelectItem>
-          </SelectContent>
-        </Select>
+          <Clock className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => handleDurationChange('short')}
+          className={`h-7 px-2 text-xs rounded border transition-colors flex items-center ${
+            searchState.duration === 'short' 
+              ? 'border-yellow-400/40 bg-yellow-400/20 text-yellow-300' 
+              : 'border-white/20 bg-black/30 text-gray-300 hover:bg-black/50'
+          }`}
+          title="Under 5 minutes"
+        >
+          <Zap className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => handleDurationChange('medium')}
+          className={`h-7 px-2 text-xs rounded border transition-colors flex items-center ${
+            searchState.duration === 'medium' 
+              ? 'border-blue-400/40 bg-blue-400/20 text-blue-300' 
+              : 'border-white/20 bg-black/30 text-gray-300 hover:bg-black/50'
+          }`}
+          title="5-30 minutes"
+        >
+          <Timer className="h-3 w-3" />
+        </button>
+        <button
+          onClick={() => handleDurationChange('long')}
+          className={`h-7 px-2 text-xs rounded border transition-colors flex items-center ${
+            searchState.duration === 'long' 
+              ? 'border-purple-400/40 bg-purple-400/20 text-purple-300' 
+              : 'border-white/20 bg-black/30 text-gray-300 hover:bg-black/50'
+          }`}
+          title="Over 30 minutes"
+        >
+          <Hourglass className="h-3 w-3" />
+        </button>
       </div>
+
+      {/* Source Toggles */}
+      <SourceToggles onSourcesChange={onFiltersChange} />
+      
+      {/* License Guardrail */}
+      <LicenseGuardrail onLicenseChange={onFiltersChange} />
+
     </div>
   );
 }

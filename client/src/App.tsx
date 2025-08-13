@@ -8,14 +8,12 @@ import { useEasterEgg } from "@/hooks/use-easter-egg";
 import { DragDropProvider } from "@/components/DragDropProvider";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import Home from "@/pages/home";
-import About from "@/pages/about";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>
   );

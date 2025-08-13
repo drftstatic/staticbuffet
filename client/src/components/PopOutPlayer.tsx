@@ -1,20 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, X, Maximize2, Volume2, VolumeX, Play, Pause, RotateCcw } from 'lucide-react';
+import { ExternalLink, X } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { type QueueItem } from '@/lib/types';
+
+// Global singleton for pop-out window management
+let globalPopOutWindow: Window | null = null;
+let globalPopOutWindowOpen = false;
 
 interface PopOutPlayerProps {
   currentVideo?: QueueItem | null;
 }
 
 export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
-  const { brandSkin, queueItems, currentQueueIndex, isPlaying, setPlaying } = useStore();
+  const { brandSkin, queueItems, currentQueueIndex, isPlaying } = useStore();
   const { toast } = useToast();
-  const [popOutWindow, setPopOutWindow] = useState<Window | null>(null);
-  const [isPopOutOpen, setIsPopOutOpen] = useState(false);
   const windowCheckInterval = useRef<NodeJS.Timeout>();
+  
+  // Use global singleton instead of local state
+  const [isPopOutOpen, setIsPopOutOpen] = useState(globalPopOutWindowOpen);
 
   const getThemeClasses = () => {
     switch (brandSkin) {
@@ -44,8 +49,8 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
   };
 
   const openPopOutPlayer = () => {
-    if (popOutWindow && !popOutWindow.closed) {
-      popOutWindow.focus();
+    if (globalPopOutWindow && !globalPopOutWindow.closed) {
+      globalPopOutWindow.focus();
       return;
     }
 
@@ -71,14 +76,16 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
       return;
     }
 
-    setPopOutWindow(newWindow);
+    globalPopOutWindow = newWindow;
+    globalPopOutWindowOpen = true;
     setIsPopOutOpen(true);
 
     // Check if window is still open periodically
     windowCheckInterval.current = setInterval(() => {
       if (newWindow.closed) {
+        globalPopOutWindowOpen = false;
+        globalPopOutWindow = null;
         setIsPopOutOpen(false);
-        setPopOutWindow(null);
         if (windowCheckInterval.current) {
           clearInterval(windowCheckInterval.current);
         }
@@ -105,7 +112,8 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
       maxheadroom: { bg: '#064e3b', accent: '#22c55e', text: '#86efac' },
       mario: { bg: '#7f1d1d', accent: '#eab308', text: '#fde047' },
       dakota: { bg: '#374151', accent: '#9ca3af', text: '#d1d5db' },
-      blondie: { bg: '#451a03', accent: '#f59e0b', text: '#fbbf24' }
+      blondie: { bg: '#451a03', accent: '#f59e0b', text: '#fbbf24' },
+      diner: { bg: '#451a03', accent: '#f59e0b', text: '#fbbf24' }
     };
 
     const theme = themeColors[brandSkin] || themeColors.testcard;
@@ -132,7 +140,7 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
             background: rgba(0, 0, 0, 0.8);
             padding: 8px 16px;
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid ${theme.accent}50;
             backdrop-filter: blur(10px);
@@ -154,54 +162,6 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
             width: 100%;
             height: 100%;
             object-fit: contain;
-          }
-          .controls {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-            padding: 20px 16px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-          }
-          .video-container:hover .controls {
-            opacity: 1;
-          }
-          .control-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s;
-          }
-          .control-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-          }
-          .time-display {
-            color: white;
-            font-size: 12px;
-            font-family: 'JetBrains Mono', monospace;
-          }
-          .progress-container {
-            flex: 1;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-          }
-          .progress-bar {
-            height: 100%;
-            background: ${theme.accent};
-            border-radius: 2px;
-            width: 0%;
-            transition: width 0.1s ease;
           }
           .placeholder {
             display: flex;
@@ -303,13 +263,7 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
       video.controls = true;
       video.autoplay = isPlaying;
       
-      // Add video before controls
-      const controls = videoContainer.querySelector('.controls');
-      if (controls) {
-        videoContainer.insertBefore(video, controls);
-      } else {
-        videoContainer.appendChild(video);
-      }
+      videoContainer.appendChild(video);
     } else {
       placeholder?.style.setProperty('display', 'flex');
       queueInfo?.style.setProperty('display', 'none');
@@ -334,8 +288,8 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
 
   // Send updates to pop-out window when video changes
   useEffect(() => {
-    if (popOutWindow && !popOutWindow.closed && currentVideo) {
-      popOutWindow.postMessage({
+    if (globalPopOutWindow && !globalPopOutWindow.closed && currentVideo) {
+      globalPopOutWindow.postMessage({
         type: 'VIDEO_UPDATE',
         videoUrl: currentVideo.videoUrl,
         title: currentVideo.title,
@@ -343,17 +297,17 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
         queueLength: queueItems.length
       }, '*');
     }
-  }, [currentVideo, currentQueueIndex, queueItems.length, popOutWindow]);
+  }, [currentVideo, currentQueueIndex, queueItems.length]);
 
   // Send playback state updates
   useEffect(() => {
-    if (popOutWindow && !popOutWindow.closed) {
-      popOutWindow.postMessage({
+    if (globalPopOutWindow && !globalPopOutWindow.closed) {
+      globalPopOutWindow.postMessage({
         type: 'PLAYBACK_UPDATE',
         isPlaying
       }, '*');
     }
-  }, [isPlaying, popOutWindow]);
+  }, [isPlaying]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -361,18 +315,29 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
       if (windowCheckInterval.current) {
         clearInterval(windowCheckInterval.current);
       }
-      if (popOutWindow && !popOutWindow.closed) {
-        popOutWindow.close();
-      }
+      // Don't close global window on unmount - let user close it manually
     };
-  }, [popOutWindow]);
+  }, []);
+
+  // Expose function globally for testing
+  useEffect(() => {
+    (window as any).testPopOutPlayer = () => {
+      console.log('testPopOutPlayer: Manual test triggered');
+      openPopOutPlayer();
+    };
+    
+    return () => {
+      delete (window as any).testPopOutPlayer;
+    };
+  }, [openPopOutPlayer]);
 
   const closePopOut = () => {
-    if (popOutWindow && !popOutWindow.closed) {
-      popOutWindow.close();
+    if (globalPopOutWindow && !globalPopOutWindow.closed) {
+      globalPopOutWindow.close();
     }
+    globalPopOutWindowOpen = false;
+    globalPopOutWindow = null;
     setIsPopOutOpen(false);
-    setPopOutWindow(null);
     
     toast({
       title: "Pop-out Closed",
@@ -384,7 +349,11 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
     <div className="flex items-center space-x-2">
       {!isPopOutOpen ? (
         <Button
-          onClick={openPopOutPlayer}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openPopOutPlayer();
+          }}
           variant="ghost"
           size="sm"
           className={`flex items-center space-x-1 px-2 py-1 ${getThemeClasses()}`}

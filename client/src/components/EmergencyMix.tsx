@@ -9,7 +9,7 @@ import { generateEmergencyMix, type EmergencyMixOptions } from '@/lib/emergency-
 import { useToast } from '@/hooks/use-toast';
 
 export function EmergencyMix() {
-  const { searchResults, queueItems, setQueueItems } = useStore();
+  const { searchResults, queueItems, setQueueItems, brandSkin } = useStore();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<EmergencyMixOptions>({
@@ -20,6 +20,8 @@ export function EmergencyMix() {
   });
 
   const handleGenerateMix = () => {
+    console.log('EmergencyMix: handleGenerateMix called');
+    console.log('EmergencyMix: searchResults.length =', searchResults.length);
     try {
       if (searchResults.length === 0) {
         toast({
@@ -54,18 +56,45 @@ export function EmergencyMix() {
     handleGenerateMix();
   };
 
+  const getThemeClasses = () => {
+    switch (brandSkin) {
+      case 'testcard':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-400/50';
+      case 'waffle':
+        return 'bg-red-400/20 text-red-600 hover:bg-red-400/30 border-red-400/50';
+      case 'ebn':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-500/50';
+      case 'ozzy':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-500/50';
+      case 'hogan':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-400/50';
+      case 'dx':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-500/50';
+      case 'maxheadroom':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-500/50';
+      case 'mario':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-400/50';
+      case 'dakota':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-400/50';
+      case 'blondie':
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-400/50';
+      default:
+        return 'bg-red-400/20 text-red-300 hover:bg-red-400/30 border-red-400/50';
+    }
+  };
+
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-1">
       {/* Quick Emergency Mix */}
       <Button
         onClick={handleQuickMix}
         disabled={searchResults.length === 0}
         data-testid="button-emergency-mix"
         data-tour-target="emergency-mix"
-        className="px-2 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 dark:bg-orange-500 dark:hover:bg-orange-400 text-white dark:text-black transition-all duration-200"
-        title="Emergency Mix"
+        className={`h-8 w-8 flex items-center justify-center rounded-lg border transition-colors ${getThemeClasses()}`}
+        title="Emergency Mix - Generate instant mix"
       >
-        <Zap size={16} />
+        <Zap size={14} />
       </Button>
 
       {/* Advanced Options Dialog */}
@@ -75,9 +104,9 @@ export function EmergencyMix() {
             variant="ghost"
             size="sm"
             data-testid="button-mix-settings"
-            className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+            className="h-6 w-6 p-1 text-gray-400 hover:text-gray-200 hover:bg-white/10 rounded"
           >
-            <Settings size={16} />
+            <Settings size={12} />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">

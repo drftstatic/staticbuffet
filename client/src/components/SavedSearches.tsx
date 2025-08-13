@@ -119,13 +119,12 @@ export function SavedSearches() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="ghost"
+          variant="ghost" 
           size="sm"
-          className={`flex items-center gap-2 ${theme.button}`}
+          className="h-7 px-2 py-0.5 flex items-center text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           title="Saved Searches"
         >
-          <Bookmark size={14} />
-          <span className="hidden sm:inline">Saved</span>
+          <Bookmark size={12} />
         </Button>
       </DialogTrigger>
 

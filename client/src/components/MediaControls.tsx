@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { ScaleTransition, PulseTransition } from './AnimatedTransitions';
+import { LuckyDip } from '@/components/LuckyDip';
+import { EmergencyMix } from '@/components/EmergencyMix';
 
 export function MediaControls() {
   const { brandSkin } = useStore();
@@ -150,6 +152,11 @@ export function MediaControls() {
     }
   };
 
+  const handleLuckyDipResults = (results: any) => {
+    // Results are already set by LuckyDip component
+    console.log('Lucky Dip found', results.length, 'clips');
+  };
+
   return (
     <div className="flex items-center space-x-1">
       {/* Play/Pause Button */}
@@ -195,6 +202,12 @@ export function MediaControls() {
           </Button>
         </ScaleTransition>
       </PulseTransition>
+
+      {/* Lucky Dip & Emergency Mix Buttons */}
+      <div className="border-l border-white/20 pl-1 ml-1 flex items-center space-x-1">
+        <LuckyDip onDipResults={handleLuckyDipResults} />
+        <EmergencyMix />
+      </div>
     </div>
   );
 }

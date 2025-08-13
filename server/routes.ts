@@ -3,11 +3,13 @@ import { createServer, type Server } from "http";
 import { searchFiltersSchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
 
-// Rate limiter for Archive.org API calls
+// Rate limiter for Archive.org API calls - more generous limits
 const apiLimiter = rateLimit({
   windowMs: 1000, // 1 second
-  max: 10, // 10 requests per second
-  message: { error: "Too many requests, please try again later" }
+  max: 20, // 20 requests per second (increased from 10)
+  message: { error: "Too many requests, please try again later" },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -96,13 +98,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       searchUrl.searchParams.set("sort[]", filters.sort === 'downloads' ? 'downloads desc' : 
                                           filters.sort === 'date' ? 'date desc' : 'score desc');
 
-      const response = await fetch(searchUrl.toString());
+      // Retry logic for Archive.org API calls
+      let lastError;
+      let data;
       
-      if (!response.ok) {
-        throw new Error(`Archive.org API error: ${response.status}`);
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          console.log(`Search attempt ${attempt}/3 for query: ${filters.query}`);
+          
+          const response = await fetch(searchUrl.toString(), {
+            headers: {
+              'User-Agent': 'VideoArchive/1.0 (+https://staticbuffet.tv)',
+              'Accept': 'application/json',
+            },
+            timeout: 10000, // 10 second timeout
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Archive.org API error: ${response.status} ${response.statusText}`);
+          }
+          
+          data = await response.json();
+          
+          // Check if we got valid data
+          if (!data.response) {
+            throw new Error('Invalid response structure from Archive.org API');
+          }
+          
+          console.log(`Search successful on attempt ${attempt}, found ${data.response.numFound || 0} results`);
+          break; // Success, exit retry loop
+          
+        } catch (error) {
+          lastError = error;
+          console.error(`Search attempt ${attempt} failed:`, error instanceof Error ? error.message : error);
+          
+          if (attempt < 3) {
+            // Wait before retrying (exponential backoff)
+            const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+            console.log(`Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          }
+        }
       }
       
-      const data = await response.json();
+      if (!data) {
+        throw new Error(`Search failed after 3 attempts. Last error: ${lastError instanceof Error ? lastError.message : lastError}`);
+      }
       
       // Log the first few docs for debugging
       console.log("Full API URL:", searchUrl.toString());

@@ -75,7 +75,7 @@ export function LuckyDip({ onDipResults }: LuckyDipProps) {
         duration: 'short' as const,
         yearFrom: '1940',
         yearTo: '1990',
-        sort: 'downloads' as const,
+        sort: 'relevance' as const,
         page: Math.floor(Math.random() * 3) + 1, // Random page 1-3 for better results
         sources: ['prelinger', 'fedflix'],
         allowRestrictedLicenses: false

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
-import { Lock, Unlock, Move, X } from 'lucide-react';
+import { Lock, Unlock, X } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { PanelPosition, FloatingPanelStates, BrandSkin } from '@/lib/types';
 import { getThemeClasses } from '@/lib/theme-utils';
@@ -18,6 +18,7 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
     floatingPanelStates, 
     updatePanelPosition, 
     togglePanelLock, 
+    setFloatingPanelVisible,
     bringPanelToFront 
   } = useStore();
   
@@ -62,8 +63,11 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isDragging) {
+        // Account for header height only (no more MainToolbar)
+        // Header: ~70px
+        const headerHeight = window.innerWidth >= 1024 ? 80 : 90;
         const newX = Math.max(0, Math.min(window.innerWidth - position.width, e.clientX - dragStart.x));
-        const newY = Math.max(0, Math.min(window.innerHeight - position.height, e.clientY - dragStart.y));
+        const newY = Math.max(headerHeight, Math.min(window.innerHeight - position.height, e.clientY - dragStart.y));
         
         updatePanelPosition(id, { x: newX, y: newY });
       } else if (isResizing) {
@@ -93,14 +97,61 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
     }
   }, [isDragging, isResizing, dragStart, resizeStart, id, position, updatePanelPosition]);
 
+  // Handle window resize to keep panels in bounds
+  useEffect(() => {
+    const handleResize = () => {
+      const headerHeight = window.innerWidth >= 1024 ? 80 : 90;
+      const maxX = Math.max(0, window.innerWidth - position.width);
+      const maxY = Math.max(headerHeight, window.innerHeight - position.height);
+      
+      let needsUpdate = false;
+      const updates: Partial<PanelPosition> = {};
+      
+      if (position.x > maxX) {
+        updates.x = maxX;
+        needsUpdate = true;
+      }
+      
+      if (position.y < headerHeight) {
+        updates.y = headerHeight;
+        needsUpdate = true;
+      } else if (position.y > maxY) {
+        updates.y = maxY;
+        needsUpdate = true;
+      }
+      
+      if (position.width > window.innerWidth) {
+        updates.width = Math.max(300, window.innerWidth - 40);
+        needsUpdate = true;
+      }
+      
+      if (position.height > window.innerHeight - headerHeight) {
+        updates.height = Math.max(200, window.innerHeight - headerHeight - 40);
+        needsUpdate = true;
+      }
+      
+      if (needsUpdate) {
+        updatePanelPosition(id, updates);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [id, position.x, position.y, position.width, position.height, updatePanelPosition]);
+
+  // Don't render if panel is not visible
+  if (position.visible === false) {
+    return null;
+  }
+
   return (
     <FloatingPanelTransition isDragging={isDragging}>
       <div
         ref={panelRef}
         className={`fixed border rounded-lg shadow-2xl backdrop-blur-sm transition-shadow duration-200 ${
           position.isLocked 
-            ? `${themeClasses.panelBg} border-green-500/50 shadow-green-500/20` 
-            : `${themeClasses.panelBg} ${themeClasses.border} hover:shadow-2xl`
+            ? `${themeClasses.bgSecondary} border-green-500/50 shadow-green-500/20` 
+            : `${themeClasses.bgSecondary} ${themeClasses.border} hover:shadow-2xl`
         } ${isDragging ? 'cursor-grabbing select-none' : ''}`}
         style={{
           left: position.x,
@@ -116,12 +167,11 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
       <div
         className={`flex items-center justify-between px-3 py-2 border-b cursor-move rounded-t-lg ${
           position.isLocked ? 'cursor-default' : 'cursor-grab'
-        } ${themeClasses.border} ${themeClasses.headerBg}`}
+        } ${themeClasses.border} ${themeClasses.bg}`}
         onMouseDown={handleMouseDown}
         data-testid={`panel-header-${id}`}
       >
         <div className="flex items-center space-x-2">
-          <Move size={14} className={position.isLocked ? 'opacity-50' : themeClasses.accent} />
           <h3 className={`font-semibold text-sm ${themeClasses.text}`}>{title}</h3>
         </div>
         
@@ -132,10 +182,27 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
+                setFloatingPanelVisible(id, false);
+              }}
+              className={`h-6 w-6 p-0 ${themeClasses.accent} hover:text-red-500`}
+              data-testid={`button-close-${id}`}
+              title="Close"
+            >
+              <X size={12} />
+            </Button>
+          </ScaleTransition>
+          
+          <ScaleTransition hoverScale={1.1} tapScale={0.9}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
                 togglePanelLock(id);
               }}
               className={`h-6 w-6 p-0 ${themeClasses.accent}`}
               data-testid={`button-lock-${id}`}
+              title={position.isLocked ? 'Unlock' : 'Lock'}
             >
               {position.isLocked ? <Lock size={12} /> : <Unlock size={12} />}
             </Button>

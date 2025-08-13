@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState, type VideoEffects, type AudioEffects, type WorkspaceLayout, type PanelStates, type FloatingPanelStates, type PanelPosition } from './types';
+import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState, type VideoEffects, type AudioEffects, type FloatingPanelStates, type PanelPosition, type TextSettings } from './types';
 
 interface AppStore extends AppState {
   // Theme actions
@@ -39,28 +39,29 @@ interface AppStore extends AppState {
   setVideoEffects: (effects: VideoEffects) => void;
   setAudioEffects: (effects: AudioEffects) => void;
   
-  // Panel actions
-  togglePanelCollapse: (panel: 'search' | 'player' | 'queue' | 'effects') => void;
-  resetPanels: () => void;
+  // Text overlay actions
+  setTextOverlay: (settings: TextSettings | null) => void;
+  setTextOverlayVisible: (visible: boolean) => void;
+  
   
   // Floating panels
   floatingPanelStates: FloatingPanelStates;
+  defaultFloatingPanelStates: FloatingPanelStates;
   isFloatingMode: boolean;
   setFloatingMode: (enabled: boolean) => void;
   updatePanelPosition: (panel: keyof FloatingPanelStates, position: Partial<PanelPosition>) => void;
   togglePanelLock: (panel: keyof FloatingPanelStates) => void;
+  togglePanelMinimize: (panel: keyof FloatingPanelStates) => void;
   bringPanelToFront: (panel: keyof FloatingPanelStates) => void;
+  setFloatingPanelVisible: (panel: keyof FloatingPanelStates, visible: boolean) => void;
+  setFloatingPanelMinimized: (panel: keyof FloatingPanelStates, minimized: boolean) => void;
+  resetToDefaultLayout: () => void;
   
   // Adaptive color actions
   setAdaptiveColorsEnabled: (enabled: boolean) => void;
   setAdaptiveIntensity: (intensity: number) => void;
   setCurrentVideoPalette: (palette: any) => void;
 
-  // Workspace Layout actions
-  saveWorkspaceLayout: (name: string, description?: string) => void;
-  loadWorkspaceLayout: (layoutId: string) => void;
-  deleteWorkspaceLayout: (layoutId: string) => void;
-  updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates' | 'layoutMode' | 'panelSizes'>>) => void;
   
   // Layout mode state
   setResizableMode: (mode: boolean) => void;
@@ -93,43 +94,336 @@ export const useStore = create<AppStore>((set, get) => ({
   panelSizes: [30, 40, 30],
   
   // Floating panel states
-  isFloatingMode: false,
-  floatingPanelStates: {
+  isFloatingMode: true,
+  
+  // Define default layout for reset functionality
+  defaultFloatingPanelStates: {
     search: {
-      x: 20,
-      y: 100,
-      width: 400,
-      height: 600,
+      x: 200,
+      y: 120,
+      width: 380,
+      height: 480,
       zIndex: 1,
       isLocked: false,
       isDocked: true,
+      visible: true,
     },
     player: {
-      x: 440,
-      y: 100,
+      x: 600,
+      y: 120,
       width: 500,
+      height: 350,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      visible: true,
+    },
+    queue: {
+      x: 200,
+      y: 620,
+      width: 900,
+      height: 160,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      visible: true,
+    },
+    liveVideo: {
+      x: 180,
+      y: 540,
+      width: 280,
+      height: 200,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      visible: false,
+    },
+    recordSet: {
+      x: 320,
+      y: 540,
+      width: 200,
+      height: 120,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      isMinimized: true,
+      visible: false,
+    },
+    loopControls: {
+      x: 540,
+      y: 540,
+      width: 180,
+      height: 100,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      isMinimized: true,
+      visible: false,
+    },
+    presetEffects: {
+      x: 180,
+      y: 240,
+      width: 350,
       height: 400,
       zIndex: 1,
       isLocked: false,
-      isDocked: true,
+      isDocked: false,
+      visible: false,
     },
-    queue: {
-      x: 960,
-      y: 100,
-      width: 400,
-      height: 600,
+    resultsGrid: {
+      x: 180,
+      y: 280,
+      width: 600,
+      height: 500,
       zIndex: 1,
       isLocked: false,
-      isDocked: true,
+      isDocked: false,
+      visible: false,
     },
-    effects: {
-      x: 440,
-      y: 520,
-      width: 500,
+    mediaControls: {
+      x: 220,
+      y: 320,
+      width: 300,
+      height: 200,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    popOutPlayer: {
+      x: 260,
+      y: 360,
+      width: 400,
       height: 300,
       zIndex: 1,
       isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    emergencyMix: {
+      x: 300,
+      y: 400,
+      width: 350,
+      height: 250,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    luckyDip: {
+      x: 340,
+      y: 440,
+      width: 300,
+      height: 200,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    keyboardShortcuts: {
+      x: 380,
+      y: 480,
+      width: 400,
+      height: 350,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    preview: {
+      x: 180,
+      y: 280,
+      width: 420,
+      height: 480,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: true,
+    },
+    videoEffects: {
+      x: 60,
+      y: 160,
+      width: 450,
+      height: 500,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    audioEffects: {
+      x: 100,
+      y: 200,
+      width: 400,
+      height: 450,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+  },
+  
+  floatingPanelStates: {
+    search: {
+      x: 200,
+      y: 120,
+      width: 380,
+      height: 480,
+      zIndex: 1,
+      isLocked: false,
       isDocked: true,
+      visible: true,
+    },
+    player: {
+      x: 600,
+      y: 120,
+      width: 500,
+      height: 350,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      visible: true,
+    },
+    queue: {
+      x: 200,
+      y: 620,
+      width: 900,
+      height: 160,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      visible: true,
+    },
+    liveVideo: {
+      x: 180,
+      y: 540,
+      width: 280,
+      height: 200,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      visible: false,
+    },
+    recordSet: {
+      x: 320,
+      y: 540,
+      width: 200,
+      height: 120,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      isMinimized: true,
+      visible: false,
+    },
+    loopControls: {
+      x: 540,
+      y: 540,
+      width: 180,
+      height: 100,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: true,
+      isMinimized: true,
+      visible: false,
+    },
+    presetEffects: {
+      x: 180,
+      y: 240,
+      width: 350,
+      height: 400,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    resultsGrid: {
+      x: 180,
+      y: 280,
+      width: 600,
+      height: 500,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    mediaControls: {
+      x: 220,
+      y: 320,
+      width: 300,
+      height: 200,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    popOutPlayer: {
+      x: 260,
+      y: 360,
+      width: 400,
+      height: 300,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    emergencyMix: {
+      x: 300,
+      y: 400,
+      width: 350,
+      height: 250,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    luckyDip: {
+      x: 340,
+      y: 440,
+      width: 300,
+      height: 200,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    keyboardShortcuts: {
+      x: 380,
+      y: 480,
+      width: 400,
+      height: 350,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    preview: {
+      x: 180,
+      y: 280,
+      width: 420,
+      height: 480,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: true,
+    },
+    videoEffects: {
+      x: 60,
+      y: 160,
+      width: 450,
+      height: 500,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    audioEffects: {
+      x: 100,
+      y: 200,
+      width: 400,
+      height: 450,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
     },
   },
   
@@ -159,92 +453,7 @@ export const useStore = create<AppStore>((set, get) => ({
   totalResults: 0,
   timelineLoop: false,
   
-  // Panel state
-  panelStates: {
-    searchCollapsed: false,
-    playerCollapsed: false,
-    queueCollapsed: false,
-    effectsCollapsed: false,
-  },
   
-  // Workspace layouts - Load from localStorage or use defaults
-  savedWorkspaceLayouts: (() => {
-    try {
-      const saved = localStorage.getItem('staticBuffetWorkspaceLayouts');
-      if (saved) {
-        return JSON.parse(saved);
-      }
-      
-      // Default layouts for first-time users
-      const defaultLayouts: WorkspaceLayout[] = [
-        {
-          id: 'default_full_interface',
-          name: '🎛️ Full Interface',
-          description: '3-panel top row + full-width timeline for complete VJ control',
-          panelStates: {
-            searchCollapsed: false,
-            playerCollapsed: false,
-            queueCollapsed: false,
-            effectsCollapsed: false,
-          },
-          layoutMode: 'panels',
-          panelSizes: [30, 40, 30],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: 'default_performance',
-          name: '🎬 Performance Mode',
-          description: 'Player-focused top + long timeline for live mixing',
-          panelStates: {
-            searchCollapsed: false,
-            playerCollapsed: false,
-            queueCollapsed: false,
-            effectsCollapsed: false,
-          },
-          layoutMode: 'panels',
-          panelSizes: [20, 60, 20],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: 'default_preparation',
-          name: '📚 Preparation Mode',
-          description: 'Search-focused top + timeline for content preparation',
-          panelStates: {
-            searchCollapsed: false,
-            playerCollapsed: false,
-            queueCollapsed: false,
-            effectsCollapsed: false,
-          },
-          layoutMode: 'panels',
-          panelSizes: [50, 30, 20],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: 'default_grid_layout',
-          name: '⌗ Grid Layout',
-          description: 'Traditional grid top + dedicated bottom timeline',
-          panelStates: {
-            searchCollapsed: false,
-            playerCollapsed: false,
-            queueCollapsed: false,
-            effectsCollapsed: false,
-          },
-          layoutMode: 'grid',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ];
-      
-      // Save defaults to localStorage
-      localStorage.setItem('staticBuffetWorkspaceLayouts', JSON.stringify(defaultLayouts));
-      return defaultLayouts;
-    } catch {
-      return [];
-    }
-  })(),
   
   // Effects state
   videoEffects: {
@@ -265,6 +474,14 @@ export const useStore = create<AppStore>((set, get) => ({
     scanlines: false,
     datamosh: false,
     pixelate: 0,
+    intensity: 0,
+    gamma: 100,
+    exposure: 0,
+    temperature: 0,
+    tint: 0,
+    vignette: 0,
+    sharpen: 0,
+    noise: 0,
   },
   audioEffects: {
     gain: 100,
@@ -279,6 +496,10 @@ export const useStore = create<AppStore>((set, get) => ({
     lowpass: 20000,
     highpass: 20,
   },
+  
+  // Text overlay state
+  textOverlay: null,
+  isTextOverlayVisible: false,
 
   // Theme actions
   setBrandSkin: (skin) => set({ brandSkin: skin }),
@@ -393,22 +614,10 @@ export const useStore = create<AppStore>((set, get) => ({
   setVideoEffects: (effects) => set({ videoEffects: effects }),
   setAudioEffects: (effects) => set({ audioEffects: effects }),
   
-  // Panel actions
-  togglePanelCollapse: (panel) => set((state) => ({
-    panelStates: {
-      ...state.panelStates,
-      [`${panel}Collapsed`]: !state.panelStates[`${panel}Collapsed` as keyof typeof state.panelStates]
-    }
-  })),
+  // Text overlay actions
+  setTextOverlay: (settings) => set({ textOverlay: settings }),
+  setTextOverlayVisible: (visible) => set({ isTextOverlayVisible: visible }),
   
-  resetPanels: () => set(() => ({
-    panelStates: {
-      searchCollapsed: false,
-      playerCollapsed: false,
-      queueCollapsed: false,
-      effectsCollapsed: false,
-    }
-  })),
   
   // Adaptive color actions
   setAdaptiveColorsEnabled: (enabled: boolean) => set({ adaptiveColorsEnabled: enabled }),
@@ -419,66 +628,6 @@ export const useStore = create<AppStore>((set, get) => ({
   setResizableMode: (mode: boolean) => set({ isResizableMode: mode }),
   setPanelSizes: (sizes: number[]) => set({ panelSizes: sizes }),
 
-  // Workspace Layout actions
-  saveWorkspaceLayout: (name: string, description?: string) => {
-    const currentState = get();
-    const newLayout: WorkspaceLayout = {
-      id: `layout_${Date.now()}`,
-      name,
-      description,
-      panelStates: { ...currentState.panelStates },
-      layoutMode: currentState.isResizableMode ? 'panels' : 'grid',
-      panelSizes: currentState.isResizableMode ? [...currentState.panelSizes] : undefined,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    set((state) => ({
-      savedWorkspaceLayouts: [...state.savedWorkspaceLayouts, newLayout]
-    }));
-    
-    // Save to localStorage for persistence
-    const updatedLayouts = [...currentState.savedWorkspaceLayouts, newLayout];
-    localStorage.setItem('staticBuffetWorkspaceLayouts', JSON.stringify(updatedLayouts));
-  },
-
-  loadWorkspaceLayout: (layoutId: string) => {
-    const currentState = get();
-    const layout = currentState.savedWorkspaceLayouts.find(l => l.id === layoutId);
-    if (layout) {
-      set({ 
-        panelStates: { ...layout.panelStates },
-        isResizableMode: layout.layoutMode === 'panels',
-        panelSizes: layout.panelSizes || [30, 40, 30]
-      });
-    }
-  },
-
-  deleteWorkspaceLayout: (layoutId: string) => {
-    set((state) => {
-      const updatedLayouts = state.savedWorkspaceLayouts.filter(l => l.id !== layoutId);
-      
-      // Update localStorage
-      localStorage.setItem('staticBuffetWorkspaceLayouts', JSON.stringify(updatedLayouts));
-      
-      return { savedWorkspaceLayouts: updatedLayouts };
-    });
-  },
-
-  updateWorkspaceLayout: (layoutId: string, updates: Partial<Pick<WorkspaceLayout, 'name' | 'description' | 'panelStates' | 'layoutMode' | 'panelSizes'>>) => {
-    set((state) => {
-      const updatedLayouts = state.savedWorkspaceLayouts.map(layout => 
-        layout.id === layoutId 
-          ? { ...layout, ...updates, updatedAt: new Date().toISOString() }
-          : layout
-      );
-      
-      // Update localStorage
-      localStorage.setItem('staticBuffetWorkspaceLayouts', JSON.stringify(updatedLayouts));
-      
-      return { savedWorkspaceLayouts: updatedLayouts };
-    });
-  },
 
   // Mario Mode implementation
   setMarioMode: (enabled) => set({ isMarioMode: enabled }),
@@ -511,6 +660,16 @@ export const useStore = create<AppStore>((set, get) => ({
       },
     },
   })),
+
+  togglePanelMinimize: (panel) => set((state) => ({
+    floatingPanelStates: {
+      ...state.floatingPanelStates,
+      [panel]: {
+        ...state.floatingPanelStates[panel],
+        isMinimized: !state.floatingPanelStates[panel].isMinimized,
+      },
+    },
+  })),
   
   bringPanelToFront: (panel) => set((state) => {
     const maxZ = Math.max(...Object.values(state.floatingPanelStates).map(p => p.zIndex));
@@ -524,4 +683,28 @@ export const useStore = create<AppStore>((set, get) => ({
       },
     };
   }),
+
+  setFloatingPanelVisible: (panel, visible) => set((state) => ({
+    floatingPanelStates: {
+      ...state.floatingPanelStates,
+      [panel]: {
+        ...state.floatingPanelStates[panel],
+        visible,
+      },
+    },
+  })),
+
+  setFloatingPanelMinimized: (panel, minimized) => set((state) => ({
+    floatingPanelStates: {
+      ...state.floatingPanelStates,
+      [panel]: {
+        ...state.floatingPanelStates[panel],
+        isMinimized: minimized,
+      },
+    },
+  })),
+
+  resetToDefaultLayout: () => set((state) => ({
+    floatingPanelStates: JSON.parse(JSON.stringify(state.defaultFloatingPanelStates)),
+  })),
 }));

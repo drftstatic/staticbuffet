@@ -7,6 +7,8 @@ import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize } from 
 import { PopOutPlayer } from '@/components/PopOutPlayer';
 import { videoPreloader } from '@/lib/video-preloader';
 import { VideoPlayerSkeleton } from './SkeletonLoader';
+import { useToast } from '@/hooks/use-toast';
+import { TextOverlay } from '@/components/TextOverlay';
 
 export function Player() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -39,10 +41,14 @@ export function Player() {
     timelineLoop,
     videoEffects,
     audioEffects,
-    setVideoEffects
+    setVideoEffects,
+    textOverlay,
+    isTextOverlayVisible,
+    setTextOverlayVisible
   } = useStore();
 
   const currentVideo = queueItems[currentQueueIndex];
+  const { toast } = useToast();
   
   // Initialize adaptive colors
   const { analyzeCurrentFrame } = useAdaptiveColors(videoRef);
@@ -393,10 +399,19 @@ export function Player() {
         case 'Space':
           e.preventDefault();
           togglePlay();
+          toast({
+            title: isPlaying ? "Video Paused" : "Video Playing",
+            description: `${currentVideo.title}`,
+          });
           break;
         case 'KeyF':
           e.preventDefault();
+          const willEnterFullscreen = !isFullscreen;
           toggleFullscreen();
+          toast({
+            title: willEnterFullscreen ? "Entering Fullscreen" : "Exiting Fullscreen",
+            description: "Press F again to toggle, or Esc to exit",
+          });
           break;
         case 'Escape':
           if (isFullscreen) {
@@ -434,6 +449,14 @@ export function Player() {
         case 'Digit4':
           e.preventDefault();
           applyPreset('noir');
+          break;
+        case 'KeyT':
+          e.preventDefault();
+          setTextOverlayVisible(!isTextOverlayVisible);
+          toast({
+            title: isTextOverlayVisible ? "Text Overlay Hidden" : "Text Overlay Shown",
+            description: isTextOverlayVisible ? "Text overlay removed from program output" : "Text overlay added to program output",
+          });
           break;
         case 'KeyP':
           if (e.ctrlKey || e.metaKey) {
@@ -560,16 +583,31 @@ export function Player() {
   };
 
   const toggleFullscreen = async () => {
-    if (!playerContainerRef.current) return;
+    if (!playerContainerRef.current) {
+      console.warn('No player container reference for fullscreen');
+      toast({
+        title: "Fullscreen Failed", 
+        description: "Player container not ready",
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
       if (!isFullscreen) {
+        console.log('Requesting fullscreen...');
         await playerContainerRef.current.requestFullscreen();
       } else {
+        console.log('Exiting fullscreen...');
         await document.exitFullscreen();
       }
     } catch (error) {
       console.error('Fullscreen error:', error);
+      toast({
+        title: "Fullscreen Error", 
+        description: error instanceof Error ? error.message : "Could not toggle fullscreen",
+        variant: "destructive"
+      });
     }
   };
 
@@ -801,6 +839,12 @@ export function Player() {
             }}
           />
         )}
+        
+        {/* Text Overlay */}
+        <TextOverlay 
+          textSettings={textOverlay}
+          isVisible={isTextOverlayVisible}
+        />
         
         {/* Fullscreen Controls Overlay */}
         {isFullscreen && (

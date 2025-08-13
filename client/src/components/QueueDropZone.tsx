@@ -65,21 +65,21 @@ export function QueueDropZone({ className = '' }: QueueDropZoneProps) {
     switch (brandSkin) {
       case 'waffle':
         return {
-          base: 'border-yellow-400/50 bg-yellow-50/30',
-          active: 'border-yellow-500 bg-yellow-100/50',
-          text: 'text-yellow-700'
+          base: 'border-yellow-400/50 bg-yellow-600/10',
+          active: 'border-yellow-500 bg-yellow-600/20',
+          text: 'text-yellow-200'
         };
       case 'ebn':
         return {
-          base: 'border-lime-500/50 bg-lime-900/20',
-          active: 'border-lime-400 bg-lime-900/40',
-          text: 'text-lime-400'
+          base: 'border-lime-500/50 bg-lime-500/10',
+          active: 'border-lime-400 bg-lime-500/20',
+          text: 'text-lime-300'
         };
       default:
         return {
-          base: 'border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-800',
-          active: 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20',
-          text: 'text-gray-600 dark:text-gray-400'
+          base: 'border-gray-400/50 bg-gray-600/10',
+          active: 'border-blue-400/60 bg-blue-500/15',
+          text: 'text-gray-300'
         };
     }
   };
@@ -89,7 +89,7 @@ export function QueueDropZone({ className = '' }: QueueDropZoneProps) {
   return (
     <div
       className={`
-        min-h-[120px] border-2 border-dashed rounded-lg 
+        min-h-[140px] border-2 border-dashed rounded-lg 
         flex items-center justify-center transition-all duration-200
         ${isDragOver ? theme.active : theme.base}
         ${isDropping ? 'animate-pulse' : ''}
@@ -100,22 +100,22 @@ export function QueueDropZone({ className = '' }: QueueDropZoneProps) {
       onDrop={handleDrop}
       data-testid="queue-drop-zone"
     >
-      <div className={`text-center p-4 ${theme.text}`}>
+      <div className={`text-center p-6 ${theme.text} space-y-2`}>
         {isDropping ? (
           <>
-            <div className="animate-spin w-6 h-6 border-2 border-current border-t-transparent rounded-full mx-auto mb-2" />
-            <p className="text-sm">Adding to queue...</p>
+            <div className="animate-spin w-6 h-6 border-2 border-current border-t-transparent rounded-full mx-auto" />
+            <p className="text-sm font-medium">Adding to queue...</p>
           </>
         ) : isDragOver ? (
           <>
-            <Plus className="w-8 h-8 mx-auto mb-2" />
+            <Plus className="w-8 h-8 mx-auto" />
             <p className="text-sm font-medium">Drop video here to add to queue</p>
           </>
         ) : (
           <>
-            <Plus className="w-6 h-6 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Drag videos from search results</p>
-            <p className="text-xs opacity-75 mt-1">or use the + button</p>
+            <Plus className="w-6 h-6 mx-auto opacity-60" />
+            <p className="text-sm font-medium">Drag videos from search results</p>
+            <p className="text-xs opacity-75">or use the + button</p>
           </>
         )}
       </div>

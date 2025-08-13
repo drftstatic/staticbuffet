@@ -167,58 +167,41 @@ export function LiveVideoMode() {
         ? 'bg-red-900/30 border border-yellow-400/30'
         : 'bg-gray-800/50 border border-yellow-400/30'
     }`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <Camera className={`${
-            brandSkin === 'waffle' ? 'text-amber-600' : 
-            brandSkin === 'ebn' ? 'text-lime-400' :
-            brandSkin === 'ozzy' ? 'text-red-400' :
-            brandSkin === 'mario' ? 'text-red-500' :
-            'text-yellow-400'
-          }`} size={20} />
-          <h3 className={`font-bold ${
-            brandSkin === 'waffle' ? 'text-amber-900' : 
-            brandSkin === 'ebn' ? 'text-gray-100' :
-            brandSkin === 'ozzy' ? 'text-red-300' :
-            brandSkin === 'mario' ? 'text-yellow-200' :
-            'text-yellow-300'
-          }`}>
-            Live Video Mode
-          </h3>
-        </div>
-        
-        {isLiveMode && (
+      {/* Compact Status */}
+      {isLiveMode && (
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-1 animate-pulse">
             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
             <span className="text-xs font-mono text-red-500">LIVE</span>
           </div>
-        )}
-      </div>
+          <Button
+            onClick={addLiveVideoToQueue}
+            size="sm"
+            className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 h-6"
+            title="Add live video to queue"
+          >
+            + Add
+          </Button>
+        </div>
+      )}
 
-      {/* Camera Selection */}
-      {cameras.length > 0 && (
-        <div className="mb-4">
-          <label className={`block text-sm font-medium mb-2 ${
-            brandSkin === 'waffle' ? 'text-amber-800' : 
-            brandSkin === 'ebn' ? 'text-gray-300' :
-            brandSkin === 'ozzy' ? 'text-red-200' :
-            brandSkin === 'mario' ? 'text-yellow-200' :
-            'text-yellow-200'
-          }`}>
-            Camera Device
-          </label>
-          <Select value={selectedCamera || (cameras.length > 0 ? cameras[0].deviceId : 'none')} onValueChange={setSelectedCamera} disabled={isLiveMode}>
-            <SelectTrigger className="w-full">
+      {/* Compact Camera Selection */}
+      {cameras.length > 0 && !isLiveMode && (
+        <div className="mb-2">
+          <Select value={selectedCamera || (cameras.length > 0 ? (cameras[0].deviceId || 'camera-0') : 'none')} onValueChange={setSelectedCamera} disabled={isLiveMode}>
+            <SelectTrigger className="w-full h-8 text-xs">
               <SelectValue placeholder="Select camera" />
             </SelectTrigger>
             <SelectContent>
               {cameras.length === 0 && (
                 <SelectItem value="none">No cameras available</SelectItem>
               )}
-              {cameras.map((camera) => (
-                <SelectItem key={camera.deviceId} value={camera.deviceId}>
-                  {camera.label}
+              {cameras.map((camera, index) => (
+                <SelectItem 
+                  key={camera.deviceId || `camera-${index}`} 
+                  value={camera.deviceId || `camera-${index}`}
+                >
+                  {camera.label || `Camera ${index + 1}`}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -226,11 +209,11 @@ export function LiveVideoMode() {
         </div>
       )}
 
-      {/* Preview Video */}
-      <div className="mb-4">
+      {/* Compact Preview Video */}
+      <div className="mb-2">
         <video 
           ref={videoRef}
-          className="w-full aspect-video bg-black rounded-lg"
+          className="w-full h-24 bg-black rounded object-cover"
           style={{
             filter: isLiveMode ? `
               brightness(${videoEffects.brightness}%) 
@@ -249,35 +232,38 @@ export function LiveVideoMode() {
         />
       </div>
 
-      {/* Controls */}
-      <div className="flex flex-wrap gap-2">
+      {/* Compact Controls */}
+      <div className="flex gap-1">
         {!isLiveMode ? (
           <Button 
             onClick={startLiveVideo} 
             disabled={isLoading || cameras.length === 0}
-            className="flex items-center space-x-2"
+            size="sm"
+            className="flex items-center gap-1 text-xs px-2 py-1 h-6"
           >
-            <Camera size={16} />
-            <span>{isLoading ? 'Starting...' : 'Start Live Video'}</span>
+            <Camera size={12} />
+            <span>{isLoading ? 'Starting...' : 'Start'}</span>
           </Button>
         ) : (
           <>
             <Button 
               onClick={stopLiveVideo}
               variant="destructive" 
-              className="flex items-center space-x-2"
+              size="sm"
+              className="flex items-center gap-1 text-xs px-2 py-1 h-6"
             >
-              <CameraOff size={16} />
-              <span>Stop Live Video</span>
+              <CameraOff size={12} />
+              <span>Stop</span>
             </Button>
             
             <Button 
               onClick={addLiveVideoToQueue}
               variant="secondary"
-              className="flex items-center space-x-2"
+              size="sm"
+              className="flex items-center gap-1 text-xs px-2 py-1 h-6"
             >
-              <Square size={16} />
-              <span>Add to Queue</span>
+              <Square size={12} />
+              <span>Queue</span>
             </Button>
           </>
         )}

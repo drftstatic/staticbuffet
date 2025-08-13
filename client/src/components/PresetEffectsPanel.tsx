@@ -1,47 +1,23 @@
-import React, { useState } from 'react';
-import { AdaptiveColorControls } from '@/components/AdaptiveColorControls';
-import { TextGenerator } from '@/components/TextGenerator';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
 import { useStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { 
-  Palette, 
-  Volume2, 
-  Zap, 
-  Eye,
-  Waves,
-  RotateCw,
-  Contrast,
-  Sun,
-  FileText,
-  Settings,
-  Sliders,
-  Film,
-  Headphones,
-  RefreshCw,
   Sparkles,
   Tv,
   Camera,
+  Zap,
+  Film,
+  RotateCw,
   Filter,
-  Paintbrush,
-  Type
+  Waves
 } from 'lucide-react';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { ScaleTransition } from './AnimatedTransitions';
 
-export function EffectsPanel() {
-  const { videoEffects, setVideoEffects, brandSkin, searchResults, setQueueItems } = useStore();
+export function PresetEffectsPanel() {
+  const { videoEffects, setVideoEffects } = useStore();
   const { toast } = useToast();
-  const [showTextGenerator, setShowTextGenerator] = useState(false);
 
   // Global keyboard shortcuts for presets
   React.useEffect(() => {
@@ -90,7 +66,6 @@ export function EffectsPanel() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
-
 
   // Preset effects for quick application
   const applyPreset = (preset: string) => {
@@ -194,57 +169,20 @@ export function EffectsPanel() {
         });
         break;
     }
+
+    toast({
+      title: `${preset.charAt(0).toUpperCase() + preset.slice(1)} preset applied`,
+      description: "Video effects have been updated",
+    });
   };
 
   return (
     <div className="space-y-4 p-4 max-h-[600px] overflow-y-auto">
-      {/* Header with Master Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Settings className="h-4 w-4 text-blue-500" />
-        </div>
-        <div className="flex items-center space-x-1">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setShowTextGenerator(!showTextGenerator)}
-            title="Toggle Text Generator"
-            className={`h-7 px-2 text-xs transition-colors ${
-              showTextGenerator 
-                ? 'text-blue-600 bg-blue-50 border border-blue-200' 
-                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-            }`}
-          >
-            <Type size={12} className="mr-1" />
-            Text
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={resetVideoEffects}
-            title="Reset Video Effects"
-            className="h-7 w-7 p-0 text-gray-500 hover:text-red-500"
-          >
-            <RefreshCw size={12} />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={resetAudioEffects}
-            title="Reset Audio Effects"
-            className="h-7 w-7 p-0 text-gray-500 hover:text-red-500"
-          >
-            <Headphones size={12} />
-          </Button>
-        </div>
+      {/* Header */}
+      <div className="flex items-center space-x-2">
+        <Sparkles className="h-4 w-4 text-purple-500" />
+        <h3 className="font-semibold text-sm">Quick Effect Presets</h3>
       </div>
-      
-      {/* Text Generator Panel */}
-      {showTextGenerator && (
-        <div className="bg-blue-50/50 border border-blue-200 rounded-lg p-3">
-          <TextGenerator />
-        </div>
-      )}
       
       {/* Professional Effect Presets */}
       <div className="space-y-3">
@@ -350,11 +288,6 @@ export function EffectsPanel() {
             </Button>
           </ScaleTransition>
         </div>
-      </div>
-      {/* Note: Audio and Video effects are now available as separate panels */}
-      <div className="text-xs text-gray-500 bg-gray-50/50 dark:bg-gray-800/50 rounded-lg p-3">
-        <p className="mb-2">🎨 <strong>Video Effects</strong> and 🎵 <strong>Audio Effects</strong> are now available as separate panels!</p>
-        <p>Use the toolbar buttons to open dedicated Video FX and Audio FX panels for more detailed control.</p>
       </div>
     </div>
   );

@@ -6,6 +6,27 @@ import { metadataCache } from './metadata-cache';
 let currentSearchController: AbortController | null = null;
 
 export async function searchVideos(filters: SearchState) {
+  console.log('searchVideos called with filters:', filters);
+  
+  // Validate and clean query
+  if (!filters.query || filters.query.trim().length === 0) {
+    throw new Error('Search query cannot be empty');
+  }
+  
+  if (filters.query.trim().length < 2) {
+    throw new Error('Search query must be at least 2 characters');
+  }
+  
+  // Clean up common query issues
+  const cleanQuery = filters.query.trim()
+    .replace(/\s+/g, ' ') // Multiple spaces to single space
+    .replace(/[^\w\s\-'"]/g, ' ') // Remove special chars except quotes and hyphens
+    .trim();
+    
+  if (cleanQuery.length === 0) {
+    throw new Error('Search query contains only invalid characters');
+  }
+  
   // Cancel any existing search
   if (currentSearchController) {
     currentSearchController.abort();
@@ -27,7 +48,7 @@ export async function searchVideos(filters: SearchState) {
   }
   const params = new URLSearchParams();
   
-  if (filters.query) params.set('query', filters.query);
+  if (cleanQuery) params.set('query', cleanQuery);
   if (filters.yearFrom) params.set('yearFrom', filters.yearFrom);
   if (filters.yearTo) params.set('yearTo', filters.yearTo);
   
@@ -54,19 +75,68 @@ export async function searchVideos(filters: SearchState) {
   // Set default rows if not specified
   params.set('rows', '50');
 
-  const response = await fetch(`/api/search?${params.toString()}`, {
-    signal: currentSearchController.signal
-  });
+  // Add client-side retry logic with exponential backoff
+  let lastError;
+  let result;
   
-  if (!response.ok) {
-    throw new Error(`Search failed: ${response.statusText}`);
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      console.log(`Client search attempt ${attempt}/2`);
+      
+      const response = await fetch(`/api/search?${params.toString()}`, {
+        signal: currentSearchController.signal,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        // Check for rate limiting
+        if (response.status === 429) {
+          throw new Error('Rate limited - please wait a moment before searching again');
+        }
+        
+        const errorText = await response.text();
+        throw new Error(`Search failed: ${response.status} ${response.statusText}. ${errorText}`);
+      }
+      
+      result = await response.json();
+      
+      // Validate result structure
+      if (!result || typeof result !== 'object') {
+        throw new Error('Invalid response format from search API');
+      }
+      
+      console.log(`Client search successful on attempt ${attempt}, found ${result.numFound || 0} results`);
+      break; // Success, exit retry loop
+      
+    } catch (error) {
+      lastError = error;
+      
+      // Don't retry if the request was aborted
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw error;
+      }
+      
+      console.error(`Client search attempt ${attempt} failed:`, error instanceof Error ? error.message : error);
+      
+      if (attempt < 2) {
+        // Wait before retrying (short delay for client-side retries)
+        const delay = 500 * attempt;
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
   }
   
-  const result = await response.json();
+  if (!result) {
+    throw new Error(`Search failed after 2 attempts. Last error: ${lastError instanceof Error ? lastError.message : lastError}`);
+  }
   
-  // Cache the results
-  if (result.docs && result.docs.length > 0) {
+  // Cache the results only if we have valid data
+  if (result.docs && Array.isArray(result.docs) && result.docs.length > 0) {
     metadataCache.set(cacheKey, filters.page || 1, result.docs, result.numFound || 0);
+    console.log(`Cached ${result.docs.length} search results`);
   }
   
   return result;

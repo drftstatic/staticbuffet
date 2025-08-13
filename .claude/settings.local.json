@@ -2,10 +2,31 @@
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
+<<<<<<< HEAD
       "Bash(npm install)",
       "Bash(npm run dev:*)",
       "Bash(PORT=3000 npm run dev)",
       "Bash(curl:*)"
+=======
+      "Bash(npm run dev:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run:*)",
+      "Bash(curl:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(grep:*)",
+      "Bash(awk:*)",
+      "Bash(sed:*)",
+      "Bash(npx update-browserslist-db:*)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(fuser:*)",
+      "Bash(PORT=5001 npm run dev)",
+      "Bash(PORT=3000 npm run dev)",
+      "Bash(node:*)",
+      "Bash(PORT=3000 node dist/index.js)"
+>>>>>>> cda8dc44a29f88ef7cc5ac44aeb9b8d98cfc8baa
     ],
     "deny": [],
     "ask": []

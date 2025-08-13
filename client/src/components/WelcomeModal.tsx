@@ -98,7 +98,7 @@ export function WelcomeModal() {
               <Headphones className="w-6 h-6" />
             </div>
             <p className="text-center text-sm mt-2 opacity-90">
-              Static Buffet includes audio-reactive features, soundboards, and live mixing capabilities.
+              Static Buffet includes audio-reactive features and live mixing capabilities.
             </p>
           </div>
 
@@ -209,7 +209,7 @@ export function WelcomeModal() {
               <Badge variant="outline" className="border-amber-400/50 text-amber-300">Blondie 🎵</Badge>
             </div>
             <p className="text-center text-sm opacity-75">
-              Each theme has unique easter eggs, soundboards, and visual effects!
+              Each theme has unique easter eggs and visual effects!
             </p>
           </div>
 
