@@ -66,6 +66,13 @@ export interface VideoEffects {
   vignette: number;
   sharpen: number;
   noise: number;
+  // Geometry effects
+  skewX?: number;
+  skewY?: number;
+  translateX?: number;
+  translateY?: number;
+  flipHorizontal?: boolean;
+  flipVertical?: boolean;
 }
 
 export interface AudioEffects {
@@ -113,6 +120,7 @@ export interface FloatingPanelStates {
   luckyDip: PanelPosition;
   keyboardShortcuts: PanelPosition;
   preview: PanelPosition;
+  geometry: PanelPosition;
 }
 
 

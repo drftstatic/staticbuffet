@@ -7,6 +7,7 @@ import { EasterEgg } from "@/components/EasterEgg";
 import { useEasterEgg } from "@/hooks/use-easter-egg";
 import { DragDropProvider } from "@/components/DragDropProvider";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
+import { AsciiModeIndicator } from "@/components/AsciiModeIndicator";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 
@@ -30,6 +31,7 @@ function App() {
           <Router />
           <EasterEgg isActive={isEasterEggActive} onClose={closeEasterEgg} />
           <KeyboardShortcuts />
+          <AsciiModeIndicator />
         </DragDropProvider>
       </TooltipProvider>
     </QueryClientProvider>

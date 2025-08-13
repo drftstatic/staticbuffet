@@ -68,15 +68,8 @@ interface AppStore extends AppState {
   setPanelSizes: (sizes: number[]) => void;
   
   // Easter Egg actions
-  setHulksterMode: (enabled: boolean) => void;
-  isDXMode: boolean;
-  setDXMode: (enabled: boolean) => void;
   isAsciiMode: boolean;
   setAsciiMode: (enabled: boolean) => void;
-  isMarioMode: boolean;
-  setMarioMode: (enabled: boolean) => void;
-  isDakotaVanillaMode: boolean;
-  setDakotaVanillaMode: (enabled: boolean) => void;
   isBlondieGeometryMode: boolean;
   setBlondieGeometryMode: (enabled: boolean) => void;
 }
@@ -84,11 +77,7 @@ interface AppStore extends AppState {
 export const useStore = create<AppStore>((set, get) => ({
   // Initial state
   brandSkin: 'testcard',
-  isHulksterMode: false,
-  isDXMode: false,
   isAsciiMode: false,
-  isMarioMode: false,
-  isDakotaVanillaMode: false,
   isBlondieGeometryMode: false,
   isResizableMode: true,
   panelSizes: [30, 40, 30],
@@ -98,8 +87,11 @@ export const useStore = create<AppStore>((set, get) => ({
   
   // Define default layout for reset functionality
   defaultFloatingPanelStates: {
+    // === VISIBLE BY DEFAULT PANELS ===
+    
+    // Core Search & Browse
     search: {
-      x: 50,
+      x: 165,
       y: 120,
       width: 380,
       height: 480,
@@ -108,8 +100,10 @@ export const useStore = create<AppStore>((set, get) => ({
       isDocked: true,
       visible: true,
     },
+    
+    // Main Player & Timeline
     player: {
-      x: 450,
+      x: 580,
       y: 120,
       width: 500,
       height: 350,
@@ -119,8 +113,8 @@ export const useStore = create<AppStore>((set, get) => ({
       visible: true,
     },
     queue: {
-      x: 50,
-      y: 600,
+      x: 165,
+      y: 620,
       width: 900,
       height: 160,
       zIndex: 1,
@@ -128,19 +122,35 @@ export const useStore = create<AppStore>((set, get) => ({
       isDocked: true,
       visible: true,
     },
-    liveVideo: {
-      x: 970,
+    
+    // Preview & Monitoring
+    preview: {
+      x: 1120,
       y: 120,
-      width: 280,
-      height: 200,
+      width: 320,
+      height: 240,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: true,
+    },
+
+    // === HIDDEN PANELS ===
+    
+    // Video Input & Recording
+    liveVideo: {
+      x: 1120,
+      y: 380,
+      width: 300,
+      height: 270,
       zIndex: 1,
       isLocked: false,
       isDocked: true,
       visible: false,
     },
     recordSet: {
-      x: 970,
-      y: 320,
+      x: 50,
+      y: 400,
       width: 240,
       height: 140,
       zIndex: 1,
@@ -149,9 +159,11 @@ export const useStore = create<AppStore>((set, get) => ({
       isMinimized: true,
       visible: false,
     },
+    
+    // Playback Controls
     loopControls: {
-      x: 970,
-      y: 480,
+      x: 310,
+      y: 400,
       width: 200,
       height: 120,
       zIndex: 1,
@@ -160,29 +172,9 @@ export const useStore = create<AppStore>((set, get) => ({
       isMinimized: true,
       visible: false,
     },
-    presetEffects: {
-      x: 1280,
-      y: 120,
-      width: 320,
-      height: 260,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: false,
-    },
-    resultsGrid: {
-      x: 450,
-      y: 470,
-      width: 600,
-      height: 500,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: false,
-    },
     mediaControls: {
-      x: 1280,
-      y: 380,
+      x: 580,
+      y: 500,
       width: 280,
       height: 180,
       zIndex: 1,
@@ -191,8 +183,8 @@ export const useStore = create<AppStore>((set, get) => ({
       visible: false,
     },
     popOutPlayer: {
-      x: 100,
-      y: 120,
+      x: 300,
+      y: 150,
       width: 400,
       height: 300,
       zIndex: 1,
@@ -200,49 +192,21 @@ export const useStore = create<AppStore>((set, get) => ({
       isDocked: false,
       visible: false,
     },
-    emergencyMix: {
+    
+    // Effects & Processing
+    presetEffects: {
       x: 50,
-      y: 800,
-      width: 320,
-      height: 220,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: false,
-    },
-    luckyDip: {
-      x: 390,
-      y: 800,
-      width: 280,
-      height: 160,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: false,
-    },
-    keyboardShortcuts: {
-      x: 1620,
       y: 120,
-      width: 380,
-      height: 320,
+      width: 320,
+      height: 260,
       zIndex: 1,
       isLocked: false,
       isDocked: false,
       visible: false,
-    },
-    preview: {
-      x: 450,
-      y: 470,
-      width: 320,
-      height: 240,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: true,
     },
     videoEffects: {
-      x: 1280,
-      y: 580,
+      x: 1460,
+      y: 120,
       width: 380,
       height: 450,
       zIndex: 1,
@@ -251,10 +215,66 @@ export const useStore = create<AppStore>((set, get) => ({
       visible: false,
     },
     audioEffects: {
-      x: 1680,
-      y: 580,
+      x: 1460,
+      y: 590,
       width: 360,
       height: 400,
+      zIndex: 5,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    geometry: {
+      x: 800,
+      y: 200,
+      width: 320,
+      height: 480,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    
+    // Browse & Search Tools
+    resultsGrid: {
+      x: 400,
+      y: 200,
+      width: 600,
+      height: 500,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    
+    // Creative Tools
+    emergencyMix: {
+      x: 50,
+      y: 560,
+      width: 320,
+      height: 220,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    luckyDip: {
+      x: 890,
+      y: 500,
+      width: 280,
+      height: 160,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    
+    // Help & Settings
+    keyboardShortcuts: {
+      x: 1200,
+      y: 400,
+      width: 380,
+      height: 320,
       zIndex: 1,
       isLocked: false,
       isDocked: false,
@@ -263,8 +283,11 @@ export const useStore = create<AppStore>((set, get) => ({
   },
   
   floatingPanelStates: {
+    // === VISIBLE BY DEFAULT PANELS ===
+    
+    // Core Search & Browse
     search: {
-      x: 50,
+      x: 165,
       y: 120,
       width: 380,
       height: 480,
@@ -273,8 +296,10 @@ export const useStore = create<AppStore>((set, get) => ({
       isDocked: true,
       visible: true,
     },
+    
+    // Main Player & Timeline
     player: {
-      x: 450,
+      x: 580,
       y: 120,
       width: 500,
       height: 350,
@@ -284,8 +309,8 @@ export const useStore = create<AppStore>((set, get) => ({
       visible: true,
     },
     queue: {
-      x: 50,
-      y: 600,
+      x: 165,
+      y: 620,
       width: 900,
       height: 160,
       zIndex: 1,
@@ -293,19 +318,35 @@ export const useStore = create<AppStore>((set, get) => ({
       isDocked: true,
       visible: true,
     },
-    liveVideo: {
-      x: 970,
+    
+    // Preview & Monitoring
+    preview: {
+      x: 1120,
       y: 120,
-      width: 280,
-      height: 200,
+      width: 320,
+      height: 240,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: true,
+    },
+
+    // === HIDDEN PANELS ===
+    
+    // Video Input & Recording
+    liveVideo: {
+      x: 1120,
+      y: 380,
+      width: 300,
+      height: 270,
       zIndex: 1,
       isLocked: false,
       isDocked: true,
       visible: false,
     },
     recordSet: {
-      x: 970,
-      y: 320,
+      x: 50,
+      y: 400,
       width: 240,
       height: 140,
       zIndex: 1,
@@ -314,9 +355,11 @@ export const useStore = create<AppStore>((set, get) => ({
       isMinimized: true,
       visible: false,
     },
+    
+    // Playback Controls
     loopControls: {
-      x: 970,
-      y: 480,
+      x: 310,
+      y: 400,
       width: 200,
       height: 120,
       zIndex: 1,
@@ -325,29 +368,9 @@ export const useStore = create<AppStore>((set, get) => ({
       isMinimized: true,
       visible: false,
     },
-    presetEffects: {
-      x: 1280,
-      y: 120,
-      width: 320,
-      height: 260,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: false,
-    },
-    resultsGrid: {
-      x: 450,
-      y: 470,
-      width: 600,
-      height: 500,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: false,
-    },
     mediaControls: {
-      x: 1280,
-      y: 380,
+      x: 580,
+      y: 500,
       width: 280,
       height: 180,
       zIndex: 1,
@@ -356,8 +379,8 @@ export const useStore = create<AppStore>((set, get) => ({
       visible: false,
     },
     popOutPlayer: {
-      x: 100,
-      y: 120,
+      x: 300,
+      y: 150,
       width: 400,
       height: 300,
       zIndex: 1,
@@ -365,49 +388,21 @@ export const useStore = create<AppStore>((set, get) => ({
       isDocked: false,
       visible: false,
     },
-    emergencyMix: {
+    
+    // Effects & Processing
+    presetEffects: {
       x: 50,
-      y: 800,
-      width: 320,
-      height: 220,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: false,
-    },
-    luckyDip: {
-      x: 390,
-      y: 800,
-      width: 280,
-      height: 160,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: false,
-    },
-    keyboardShortcuts: {
-      x: 1620,
       y: 120,
-      width: 380,
-      height: 320,
+      width: 320,
+      height: 260,
       zIndex: 1,
       isLocked: false,
       isDocked: false,
       visible: false,
-    },
-    preview: {
-      x: 450,
-      y: 470,
-      width: 320,
-      height: 240,
-      zIndex: 1,
-      isLocked: false,
-      isDocked: false,
-      visible: true,
     },
     videoEffects: {
-      x: 1280,
-      y: 580,
+      x: 1460,
+      y: 120,
       width: 380,
       height: 450,
       zIndex: 1,
@@ -416,10 +411,66 @@ export const useStore = create<AppStore>((set, get) => ({
       visible: false,
     },
     audioEffects: {
-      x: 1680,
-      y: 580,
+      x: 1460,
+      y: 590,
       width: 360,
       height: 400,
+      zIndex: 5,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    geometry: {
+      x: 800,
+      y: 200,
+      width: 320,
+      height: 480,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    
+    // Browse & Search Tools
+    resultsGrid: {
+      x: 400,
+      y: 200,
+      width: 600,
+      height: 500,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    
+    // Creative Tools
+    emergencyMix: {
+      x: 50,
+      y: 560,
+      width: 320,
+      height: 220,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    luckyDip: {
+      x: 890,
+      y: 500,
+      width: 280,
+      height: 160,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
+    },
+    
+    // Help & Settings
+    keyboardShortcuts: {
+      x: 1200,
+      y: 400,
+      width: 380,
+      height: 320,
       zIndex: 1,
       isLocked: false,
       isDocked: false,
@@ -505,8 +556,6 @@ export const useStore = create<AppStore>((set, get) => ({
   setBrandSkin: (skin) => set({ brandSkin: skin }),
   
   // Easter Egg actions
-  setHulksterMode: (enabled) => set({ isHulksterMode: enabled }),
-  setDXMode: (enabled) => set({ isDXMode: enabled }),
   setAsciiMode: (enabled) => set({ isAsciiMode: enabled }),
 
   // Search actions
@@ -627,13 +676,6 @@ export const useStore = create<AppStore>((set, get) => ({
   // Layout mode actions
   setResizableMode: (mode: boolean) => set({ isResizableMode: mode }),
   setPanelSizes: (sizes: number[]) => set({ panelSizes: sizes }),
-
-
-  // Mario Mode implementation
-  setMarioMode: (enabled) => set({ isMarioMode: enabled }),
-  
-  // Dakota Vanilla Mode implementation
-  setDakotaVanillaMode: (enabled) => set({ isDakotaVanillaMode: enabled }),
   
   // Blondie Geometry Mode implementation
   setBlondieGeometryMode: (enabled) => set({ isBlondieGeometryMode: enabled }),

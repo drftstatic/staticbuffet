@@ -40,6 +40,7 @@ export function AudioEffectsPanel() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Headphones className="h-4 w-4 text-green-500" />
+          <span className="text-xs font-medium text-gray-600">Audio Processing</span>
         </div>
         <Button 
           variant="ghost" 

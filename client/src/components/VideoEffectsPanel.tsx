@@ -58,6 +58,7 @@ export function VideoEffectsPanel() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Eye className="h-4 w-4 text-blue-500" />
+          <span className="text-xs font-medium text-gray-600">Visual Pipeline</span>
         </div>
         <Button 
           variant="ghost" 

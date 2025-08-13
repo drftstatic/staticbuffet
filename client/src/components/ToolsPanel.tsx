@@ -471,7 +471,7 @@ export function ToolsPanel() {
             <DialogTitle className={themeClasses.text}>Test Card - VJ Output</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="flex justify-center bg-black p-6 rounded-lg border border-gray-600">
+            <div className={`flex justify-center ${themeClasses.bgSecondary} p-6 rounded-lg border ${themeClasses.borderSecondary}`}>
               <div 
                 className="w-full max-w-lg aspect-[4/3] shadow-lg rounded"
                 style={{
@@ -556,14 +556,14 @@ export function ToolsPanel() {
                   });
                   setTestCardOpen(false);
                 }}
-                className={`${themeClasses.accent} ${themeClasses.bg}`}
+                className={`${themeClasses.accentBg} text-white hover:opacity-90`}
               >
                 Add to Output
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setTestCardOpen(false)}
-                className={`${themeClasses.border} ${themeClasses.textSecondary}`}
+                className={`border ${themeClasses.border} ${themeClasses.textSecondary} ${themeClasses.hover}`}
               >
                 Close
               </Button>

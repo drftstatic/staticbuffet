@@ -26,10 +26,12 @@ import { useToast } from '@/hooks/use-toast';
 import { ScaleTransition } from './AnimatedTransitions';
 import { useStore } from '@/lib/store';
 import { type TextSettings } from '@/lib/types';
+import { getThemeClasses } from '@/lib/theme-utils';
 
 export function TextGenerator() {
   const { toast } = useToast();
-  const { textOverlay, setTextOverlay, setTextOverlayVisible } = useStore();
+  const { textOverlay, setTextOverlay, setTextOverlayVisible, brandSkin } = useStore();
+  const themeClasses = getThemeClasses(brandSkin);
   
   // Initialize with default settings if no overlay exists
   const textSettings = textOverlay || {
@@ -174,10 +176,10 @@ export function TextGenerator() {
       {/* Live Preview - At Top */}
       <div className="space-y-2">
         <div className="flex items-center space-x-2">
-          <Zap className="h-3 w-3 text-purple-500" />
-          <Label className="text-xs font-medium text-gray-600">Live Preview</Label>
+          <Zap className={`h-3 w-3 ${themeClasses.accent}`} />
+          <Label className={`text-xs font-medium ${themeClasses.textSecondary}`}>Live Preview</Label>
         </div>
-        <div className="relative bg-black rounded-lg h-24 overflow-hidden border border-gray-300">
+        <div className={`relative ${themeClasses.bgSecondary} rounded-lg h-24 overflow-hidden border ${themeClasses.borderSecondary}`}>
           <div style={generateTextCSS()}>
             {textSettings.text}
           </div>
@@ -186,7 +188,7 @@ export function TextGenerator() {
 
       {/* Text Input */}
       <div className="space-y-2">
-        <Label className="text-xs font-medium text-gray-600">Text Content</Label>
+        <Label className={`text-xs font-medium ${themeClasses.textSecondary}`}>Text Content</Label>
         <Textarea
           value={textSettings.text}
           onChange={(e) => updateSetting('text', e.target.value)}

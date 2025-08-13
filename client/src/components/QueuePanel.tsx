@@ -84,6 +84,11 @@ export function QueuePanel() {
                           <div className="text-xs opacity-70">
                             {item.duration}
                           </div>
+                          {(item.trimIn !== '00:00' || item.trimOut !== item.duration) && (
+                            <div className="text-xs bg-orange-500 text-white px-1 rounded" title={`Trimmed: ${item.trimIn} - ${item.trimOut}`}>
+                              ✂
+                            </div>
+                          )}
                           {item.loop && (
                             <div className="text-xs bg-primary text-primary-foreground px-1 rounded">
                               🔄

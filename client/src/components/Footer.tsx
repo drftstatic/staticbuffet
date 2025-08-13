@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { Tv } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
 export function Footer() {
@@ -128,6 +129,7 @@ export function Footer() {
               Nulltone.TV
             </a>
           </span>
+          <Tv size={14} className="opacity-70" />
         </div>
       </div>
     </footer>

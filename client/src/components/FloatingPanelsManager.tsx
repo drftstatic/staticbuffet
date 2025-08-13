@@ -18,6 +18,7 @@ import { KeyboardShortcuts } from './KeyboardShortcuts';
 import { PreviewPanel } from './PreviewPanel';
 import { VideoEffectsPanel } from './VideoEffectsPanel';
 import { AudioEffectsPanel } from './AudioEffectsPanel';
+import { GeometryPanel } from './GeometryPanel';
 
 
 export function FloatingPanelsManager() {
@@ -198,6 +199,19 @@ export function FloatingPanelsManager() {
           <AudioEffectsPanel />
         </FloatingPanel>
       </div>
+
+      {/* Geometry Panel (Hidden Easter Egg) */}
+      {floatingPanelStates.geometry?.visible && (
+        <div className="pointer-events-auto">
+          <FloatingPanel
+            id="geometry"
+            title="📐 Geometry"
+            brandSkin={brandSkin}
+          >
+            <GeometryPanel />
+          </FloatingPanel>
+        </div>
+      )}
     </div>
   );
 }

@@ -90,6 +90,7 @@ export function StatusBar() {
              brandSkin === 'blondie' ? 'Suck it on the Side!' :
              brandSkin.toUpperCase()}
           </span>
+          <Tv size={10} className={themeClasses.accent} />
         </div>
       </div>
 
