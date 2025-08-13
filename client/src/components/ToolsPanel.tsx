@@ -4,6 +4,7 @@ import {
   Search, 
   Play, 
   Users, 
+  Camera,
   Sparkles, 
   Layers, 
   Palette, 
