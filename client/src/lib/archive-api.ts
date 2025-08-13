@@ -4,6 +4,27 @@ import { metadataCache } from './metadata-cache';
 
 // Global abort controller for cancelling requests
 let currentSearchController: AbortController | null = null;
+let searchDebounceTimer: NodeJS.Timeout | null = null;
+
+// Debounced search function
+export function searchVideosDebounced(filters: SearchState, delay: number = 300): Promise<any> {
+  return new Promise((resolve, reject) => {
+    // Clear existing timer
+    if (searchDebounceTimer) {
+      clearTimeout(searchDebounceTimer);
+    }
+    
+    // Set new timer
+    searchDebounceTimer = setTimeout(async () => {
+      try {
+        const result = await searchVideos(filters);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    }, delay);
+  });
+}
 
 export async function searchVideos(filters: SearchState) {
   console.log('searchVideos called with filters:', filters);
@@ -81,7 +102,7 @@ export async function searchVideos(filters: SearchState) {
   
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      console.log(`Client search attempt ${attempt}/2`);
+      console.log(`🔍 Client search attempt ${attempt}/2 - URL: /api/search?${params.toString()}`);
       
       const response = await fetch(`/api/search?${params.toString()}`, {
         signal: currentSearchController.signal,
@@ -96,8 +117,16 @@ export async function searchVideos(filters: SearchState) {
           throw new Error('Rate limited - please wait a moment before searching again');
         }
         
-        const errorText = await response.text();
-        throw new Error(`Search failed: ${response.status} ${response.statusText}. ${errorText}`);
+        let errorDetail = '';
+        try {
+          const errorData = await response.json();
+          errorDetail = errorData.error || errorData.message || '';
+        } catch {
+          errorDetail = await response.text();
+        }
+        
+        console.error(`❌ Client search failed: ${response.status} ${response.statusText}`, errorDetail);
+        throw new Error(`Search failed: ${response.status} ${response.statusText}${errorDetail ? '. ' + errorDetail : ''}`);
       }
       
       result = await response.json();
