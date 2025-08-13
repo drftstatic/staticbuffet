@@ -105,3 +105,28 @@ export type QueueItem = z.infer<typeof queueItemSchema>;
 export type PlaylistExport = z.infer<typeof playlistExportSchema>;
 export type EDLEvent = z.infer<typeof edlEventSchema>;
 export type EDLSession = z.infer<typeof edlSessionSchema>;
+
+// Metadata cache schema for database storage
+export const metadataCacheSchema = z.object({
+  id: z.string(),
+  identifier: z.string(),
+  metadata: z.record(z.any()),
+  files: z.array(z.object({
+    name: z.string(),
+    format: z.string(),
+    size: z.string().optional(),
+    md5: z.string().optional(),
+  })),
+  selectedFile: z.object({
+    name: z.string(),
+    format: z.string(),
+    size: z.string().optional(),
+    md5: z.string().optional(),
+    checksum: z.string().optional(),
+  }),
+  streamUrl: z.string(),
+  cachedAt: z.string(),
+  expiresAt: z.string(),
+});
+
+export type MetadataCache = z.infer<typeof metadataCacheSchema>;

@@ -2,6 +2,10 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { searchFiltersSchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
+import { metadataService } from "./metadata-service";
+import { transcodeService } from "./transcode-service";
+import { promises as fs } from 'fs';
+import path from 'path';
 
 // Rate limiter for Archive.org API calls - more generous limits
 const apiLimiter = rateLimit({
@@ -111,7 +115,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'User-Agent': 'VideoArchive/1.0 (+https://staticbuffet.tv)',
               'Accept': 'application/json',
             },
-            timeout: 10000, // 10 second timeout
           });
           
           if (!response.ok) {
@@ -186,41 +189,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get metadata for specific video
-  // Proxy video files through our server
+  // Proxy video files through our server with Range support
   app.get("/api/video/:identifier/:filename", apiLimiter, async (req, res) => {
     try {
       const { identifier, filename } = req.params;
       const videoUrl = `https://archive.org/download/${identifier}/${decodeURIComponent(filename)}`;
       
-      console.log(`🎥 Proxying video: ${videoUrl}`);
+      // Parse Range header if present
+      const range = req.headers.range;
+      const headers: Record<string, string> = {
+        'User-Agent': 'StaticBuffet/1.0 (+https://staticbuffet.tv)',
+        'Accept': '*/*',
+      };
       
-      const response = await fetch(videoUrl);
-      if (!response.ok) {
-        console.error(`❌ Video not found: ${videoUrl} (Status: ${response.status})`);
-        return res.status(404).json({ 
-          error: "Video file not found", 
-          url: videoUrl, 
-          status: response.status 
-        });
+      // Forward range header to upstream
+      if (range) {
+        headers['Range'] = range;
+        console.log(`🎥 Proxying video with range: ${videoUrl} [${range}]`);
+      } else {
+        console.log(`🎥 Proxying full video: ${videoUrl}`);
       }
       
-      // Set appropriate headers based on file extension
+      // Fetch with retry logic
+      let response: Response | null = null;
+      let lastError: Error | null = null;
+      const maxRetries = 3;
+      
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          response = await fetch(videoUrl, { headers });
+          
+          if (response.ok || response.status === 206) {
+            break; // Success
+          }
+          
+          if (response.status === 404) {
+            console.error(`❌ Video not found: ${videoUrl}`);
+            return res.status(404).json({ 
+              error: "Video file not found", 
+              url: videoUrl, 
+              status: response.status 
+            });
+          }
+          
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          
+        } catch (error) {
+          lastError = error as Error;
+          console.warn(`⚠️ Attempt ${attempt}/${maxRetries} failed:`, error);
+          
+          if (attempt < maxRetries) {
+            const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          }
+        }
+      }
+      
+      if (!response || (!response.ok && response.status !== 206)) {
+        throw lastError || new Error('Failed to fetch video after retries');
+      }
+      
+      // Determine content type
       const contentType = filename.toLowerCase().endsWith('.mp4') ? 'video/mp4' : 
+                         filename.toLowerCase().endsWith('.webm') ? 'video/webm' :
+                         filename.toLowerCase().endsWith('.ogv') ? 'video/ogg' :
                          filename.toLowerCase().endsWith('.avi') ? 'video/x-msvideo' :
                          filename.toLowerCase().endsWith('.mov') ? 'video/quicktime' :
                          'video/mp4';
       
-      res.set({
-        'Content-Type': contentType,
-        'Accept-Ranges': 'bytes',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=3600',
-        'Content-Length': response.headers.get('content-length') || ''
-      });
+      // Handle partial content response
+      if (response.status === 206) {
+        // Forward all relevant headers for partial content
+        const responseHeaders: Record<string, string> = {
+          'Content-Type': contentType,
+          'Accept-Ranges': 'bytes',
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'public, max-age=3600',
+        };
+        
+        // Forward range-related headers
+        const contentRange = response.headers.get('content-range');
+        const contentLength = response.headers.get('content-length');
+        
+        if (contentRange) responseHeaders['Content-Range'] = contentRange;
+        if (contentLength) responseHeaders['Content-Length'] = contentLength;
+        
+        res.status(206).set(responseHeaders);
+        
+      } else {
+        // Full content response
+        res.set({
+          'Content-Type': contentType,
+          'Accept-Ranges': 'bytes',
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'public, max-age=3600',
+          'Content-Length': response.headers.get('content-length') || ''
+        });
+      }
       
-      // Stream the video through our server
+      // Stream the video through our server with error handling
       if (response.body) {
         const reader = response.body.getReader();
+        let retryCount = 0;
+        const maxStreamRetries = 3;
         
         const pump = async (): Promise<void> => {
           try {
@@ -229,13 +300,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
               res.end();
               return;
             }
-            res.write(Buffer.from(value));
+            
+            // Write chunk to response
+            const writeSuccess = res.write(Buffer.from(value));
+            
+            if (!writeSuccess) {
+              // Back pressure - wait for drain
+              await new Promise(resolve => res.once('drain', resolve));
+            }
+            
+            // Reset retry count on successful chunk
+            retryCount = 0;
             return pump();
+            
           } catch (error) {
-            console.error('Streaming error:', error);
-            res.end();
+            retryCount++;
+            
+            if (retryCount < maxStreamRetries) {
+              console.warn(`⚠️ Stream error (attempt ${retryCount}/${maxStreamRetries}):`, error);
+              // Try to continue streaming
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              return pump();
+            } else {
+              console.error('❌ Stream failed after retries:', error);
+              res.end();
+            }
           }
         };
+        
+        // Handle client disconnect
+        req.on('close', () => {
+          console.log('🔌 Client disconnected, closing stream');
+          reader.cancel().catch(() => {});
+        });
         
         return pump();
       } else {
@@ -257,78 +354,232 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { identifier } = req.params;
       
-      const metadataUrl = `https://archive.org/metadata/${identifier}`;
-      const response = await fetch(metadataUrl);
+      // Use the metadata service with caching
+      const result = await metadataService.fetchMetadata(identifier);
       
-      if (!response.ok) {
-        throw new Error(`Archive.org metadata API error: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      // Find only browser-compatible video files (MP4, WebM, MOV)
-      const videoFiles = data.files?.filter((file: any) => 
-        file.format === 'MPEG4' || 
-        file.format === 'h.264' || 
-        file.format === 'MPEG-4' ||
-        file.name?.endsWith('.mp4') ||
-        file.name?.endsWith('.webm') ||
-        (file.name?.endsWith('.mov') && file.format !== 'JPEG')
-      ) || [];
-      
-      console.log(`📁 Found ${videoFiles.length} browser-compatible video files for ${identifier}:`, 
-        videoFiles.map((f: any) => `${f.name} (${f.format})`));
-      
-      // Sort by format compatibility and quality preference
-      const sortedVideoFiles = videoFiles.sort((a: any, b: any) => {
-        const aName = a.name?.toLowerCase() || '';
-        const bName = b.name?.toLowerCase() || '';
-        
-        // Strongly prefer MP4 for best browser compatibility
-        const aIsMp4 = aName.endsWith('.mp4') || a.format === 'MPEG4' || a.format === 'h.264';
-        const bIsMp4 = bName.endsWith('.mp4') || b.format === 'MPEG4' || b.format === 'h.264';
-        
-        if (aIsMp4 && !bIsMp4) return -1;
-        if (!aIsMp4 && bIsMp4) return 1;
-        
-        // Then prefer files without quality suffixes (original/full resolution)
-        const aHasQuality = aName.includes('_512kb') || aName.includes('_256kb') || aName.includes('_thumb');
-        const bHasQuality = bName.includes('_512kb') || bName.includes('_256kb') || bName.includes('_thumb');
-        
-        if (!aHasQuality && bHasQuality) return -1;
-        if (aHasQuality && !bHasQuality) return 1;
-        
-        // If both have quality indicators, prefer higher quality
-        if (aName.includes('_512kb') && bName.includes('_256kb')) return -1;
-        if (aName.includes('_256kb') && bName.includes('_512kb')) return 1;
-        
-        return 0;
-      });
-      
-      const bestVideoFile = sortedVideoFiles[0];
-      let streamUrl = null;
-      
-      if (bestVideoFile) {
-        // Use our server as a proxy for video files to avoid CORS issues
-        streamUrl = `/api/video/${identifier}/${encodeURIComponent(bestVideoFile.name)}`;
-        console.log(`🎥 Selected best video: ${bestVideoFile.name} (format: ${bestVideoFile.format})`);
-        console.log(`🎥 Using proxy URL: ${streamUrl}`);
-      } else {
-        console.warn(`⚠️ No browser-compatible video files found for ${identifier}`);
-      }
-      
+      // Return the cached or fresh metadata
       res.json({
-        metadata: data.metadata,
-        files: data.files,
-        videoFile: bestVideoFile,
-        videoFiles: sortedVideoFiles,
-        streamUrl: streamUrl,
+        metadata: result.metadata,
+        files: result.files,
+        videoFile: result.selectedFile,
+        videoFiles: result.files?.filter((f: any) => {
+          const name = f.name?.toLowerCase() || '';
+          const format = f.format?.toLowerCase() || '';
+          return (
+            name.endsWith('.mp4') ||
+            name.endsWith('.webm') ||
+            name.endsWith('.ogv') ||
+            format.includes('mp4') ||
+            format.includes('mpeg4') ||
+            format.includes('h.264') ||
+            format.includes('webm')
+          );
+        }) || [],
+        streamUrl: result.streamUrl,
+        checksum: result.checksum,
         detailsUrl: `https://archive.org/details/${identifier}`
       });
       
     } catch (error) {
       console.error("Metadata error:", error);
       res.status(500).json({ error: "Failed to get video metadata" });
+    }
+  });
+
+  // Check video cache and enqueue transcoding if needed
+  app.get("/api/cache/:identifier", apiLimiter, async (req, res) => {
+    try {
+      const { identifier } = req.params;
+      
+      // Check if video is already cached
+      const cacheStatus = await transcodeService.isCached(identifier);
+      
+      if (cacheStatus.cached) {
+        res.json({
+          cached: true,
+          paths: {
+            mp4: cacheStatus.mp4Path,
+            hls: cacheStatus.hlsPath,
+            dash: cacheStatus.dashPath,
+          }
+        });
+        return;
+      }
+      
+      // Not cached - check if job is already running
+      const existingJobs = transcodeService.getJobsByIdentifier(identifier);
+      const activeJob = existingJobs.find(job => 
+        job.status === 'pending' || 
+        job.status === 'downloading' || 
+        job.status === 'transcoding'
+      );
+      
+      if (activeJob) {
+        res.json({
+          cached: false,
+          warming: true,
+          jobId: activeJob.id,
+          status: activeJob.status,
+          progress: activeJob.progress
+        });
+        return;
+      }
+      
+      // Get metadata to find source URL
+      const metadata = await metadataService.fetchMetadata(identifier);
+      
+      if (!metadata.selectedFile) {
+        res.status(404).json({ error: "No suitable video file found" });
+        return;
+      }
+      
+      // Enqueue transcoding job
+      const sourceUrl = `https://archive.org/download/${identifier}/${metadata.selectedFile.name}`;
+      const jobId = await transcodeService.enqueueJob(identifier, sourceUrl);
+      
+      res.json({
+        cached: false,
+        warming: true,
+        jobId,
+        status: 'pending',
+        progress: 0
+      });
+      
+    } catch (error) {
+      console.error("Cache check error:", error);
+      res.status(500).json({ error: "Failed to check cache" });
+    }
+  });
+  
+  // Get transcoding job status
+  app.get("/api/jobs/:jobId", apiLimiter, async (req, res) => {
+    try {
+      const { jobId } = req.params;
+      const job = transcodeService.getJob(jobId);
+      
+      if (!job) {
+        res.status(404).json({ error: "Job not found" });
+        return;
+      }
+      
+      res.json({
+        id: job.id,
+        identifier: job.identifier,
+        status: job.status,
+        progress: job.progress,
+        createdAt: job.createdAt,
+        completedAt: job.completedAt,
+        error: job.error,
+        outputPaths: job.outputPaths
+      });
+      
+    } catch (error) {
+      console.error("Job status error:", error);
+      res.status(500).json({ error: "Failed to get job status" });
+    }
+  });
+  
+  // Serve cached videos
+  app.get("/api/cached-video/:identifier", apiLimiter, async (req, res) => {
+    try {
+      const { identifier } = req.params;
+      const cacheStatus = await transcodeService.isCached(identifier);
+      
+      if (!cacheStatus.cached || !cacheStatus.mp4Path) {
+        res.status(404).json({ error: "Video not cached" });
+        return;
+      }
+      
+      // Handle range requests for the cached file
+      const range = req.headers.range;
+      const videoPath = cacheStatus.mp4Path;
+      const stats = await fs.stat(videoPath);
+      const fileSize = stats.size;
+      
+      if (range) {
+        const parts = range.replace(/bytes=/, "").split("-");
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        const chunksize = (end - start) + 1;
+        
+        const stream = (await fs.open(videoPath, 'r')).createReadStream({ start, end });
+        
+        res.status(206).set({
+          'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunksize.toString(),
+          'Content-Type': 'video/mp4',
+          'Cache-Control': 'public, max-age=31536000', // 1 year cache
+        });
+        
+        stream.pipe(res);
+      } else {
+        res.set({
+          'Content-Length': fileSize.toString(),
+          'Content-Type': 'video/mp4',
+          'Accept-Ranges': 'bytes',
+          'Cache-Control': 'public, max-age=31536000', // 1 year cache
+        });
+        
+        const stream = (await fs.open(videoPath, 'r')).createReadStream();
+        stream.pipe(res);
+      }
+      
+    } catch (error) {
+      console.error("Cached video serve error:", error);
+      res.status(500).json({ error: "Failed to serve cached video" });
+    }
+  });
+  
+  // Serve HLS playlists and segments
+  app.get("/api/hls/:identifier/:file", apiLimiter, async (req, res) => {
+    try {
+      const { identifier, file } = req.params;
+      const hlsDir = path.join(process.env.VIDEO_CACHE_DIR || path.join(process.cwd(), 'video-cache'), 'hls', identifier);
+      const filePath = path.join(hlsDir, file);
+      
+      // Security check - ensure file is within HLS directory
+      if (!filePath.startsWith(hlsDir)) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      
+      // Check if file exists
+      try {
+        await fs.access(filePath);
+      } catch {
+        res.status(404).json({ error: "HLS file not found" });
+        return;
+      }
+      
+      // Set appropriate content type
+      const contentType = file.endsWith('.m3u8') ? 'application/vnd.apple.mpegurl' :
+                         file.endsWith('.ts') ? 'video/mp2t' :
+                         'application/octet-stream';
+      
+      res.set({
+        'Content-Type': contentType,
+        'Cache-Control': file.endsWith('.m3u8') ? 'no-cache' : 'public, max-age=31536000',
+        'Access-Control-Allow-Origin': '*',
+      });
+      
+      const stream = (await fs.open(filePath, 'r')).createReadStream();
+      stream.pipe(res);
+      
+    } catch (error) {
+      console.error("HLS serve error:", error);
+      res.status(500).json({ error: "Failed to serve HLS file" });
+    }
+  });
+  
+  // Cache statistics
+  app.get("/api/cache-stats", async (req, res) => {
+    try {
+      const stats = await transcodeService.getCacheStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Cache stats error:", error);
+      res.status(500).json({ error: "Failed to get cache stats" });
     }
   });
 

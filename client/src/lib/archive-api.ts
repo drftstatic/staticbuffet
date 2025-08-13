@@ -143,13 +143,96 @@ export async function searchVideos(filters: SearchState) {
 }
 
 export async function getVideoMetadata(identifier: string) {
+  // Check client-side cache first
+  const cacheKey = `metadata_${identifier}`;
+  const cached = metadataCache.getCachedThumbnailUrl(identifier);
+  
   const response = await fetch(`/api/metadata/${identifier}`);
   
   if (!response.ok) {
     throw new Error(`Failed to get metadata: ${response.statusText}`);
   }
   
+  const data = await response.json();
+  
+  // Log cache hit information
+  if (data.checksum) {
+    console.log(`✅ Metadata for ${identifier} - Checksum: ${data.checksum}`);
+  }
+  
+  return data;
+}
+
+// Check video cache status and initiate warming if needed
+export async function checkVideoCache(identifier: string) {
+  const response = await fetch(`/api/cache/${identifier}`);
+  
+  if (!response.ok) {
+    throw new Error(`Failed to check cache: ${response.statusText}`);
+  }
+  
   return response.json();
+}
+
+// Get transcoding job status
+export async function getJobStatus(jobId: string) {
+  const response = await fetch(`/api/jobs/${jobId}`);
+  
+  if (!response.ok) {
+    throw new Error(`Failed to get job status: ${response.statusText}`);
+  }
+  
+  return response.json();
+}
+
+// Get the best video URL (cached or fallback)
+export async function getVideoUrl(identifier: string): Promise<{
+  url: string;
+  cached: boolean;
+  warming?: boolean;
+  jobId?: string;
+  progress?: number;
+}> {
+  try {
+    // Check cache first
+    const cacheStatus = await checkVideoCache(identifier);
+    
+    if (cacheStatus.cached) {
+      return {
+        url: `/api/cached-video/${identifier}`,
+        cached: true
+      };
+    }
+    
+    if (cacheStatus.warming) {
+      // Return fallback URL while warming
+      const metadata = await getVideoMetadata(identifier);
+      
+      return {
+        url: metadata.streamUrl, // Fallback to direct IA streaming
+        cached: false,
+        warming: true,
+        jobId: cacheStatus.jobId,
+        progress: cacheStatus.progress
+      };
+    }
+    
+    // Not cached and not warming - this shouldn't happen if checkVideoCache worked
+    const metadata = await getVideoMetadata(identifier);
+    return {
+      url: metadata.streamUrl,
+      cached: false
+    };
+    
+  } catch (error) {
+    console.error('Failed to get video URL:', error);
+    // Fallback to metadata approach
+    const metadata = await getVideoMetadata(identifier);
+    return {
+      url: metadata.streamUrl,
+      cached: false
+    };
+  }
 }
 
 export function generateThumbnailUrl(identifier: string): string {
@@ -162,6 +245,38 @@ export function cancelCurrentSearch(): void {
     currentSearchController.abort();
     currentSearchController = null;
   }
+}
+
+// Poll job status until completion
+export async function pollJobStatus(
+  jobId: string, 
+  onProgress?: (progress: number, status: string) => void,
+  intervalMs: number = 2000
+): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const poll = async () => {
+      try {
+        const job = await getJobStatus(jobId);
+        
+        if (onProgress) {
+          onProgress(job.progress, job.status);
+        }
+        
+        if (job.status === 'completed') {
+          resolve(job);
+        } else if (job.status === 'failed') {
+          reject(new Error(job.error || 'Transcoding failed'));
+        } else {
+          // Continue polling
+          setTimeout(poll, intervalMs);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    poll();
+  });
 }
 
 // Preload thumbnail with retry logic
