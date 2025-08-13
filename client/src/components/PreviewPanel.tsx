@@ -62,14 +62,9 @@ export function PreviewPanel() {
   const previewVideo = getPreviewVideo();
 
   return (
-    <div className="space-y-3 p-4 max-h-[600px] overflow-y-auto">
+    <div className="space-y-1 p-2">
       {/* Header with Source Selection */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Eye className="h-4 w-4 text-blue-500" />
-          <span className="font-medium text-sm">Preview Window</span>
-        </div>
-        
         <div className="flex items-center space-x-1">
           {/* Source Selection Buttons */}
           <Button
@@ -107,27 +102,7 @@ export function PreviewPanel() {
         </div>
       </div>
 
-      {/* Preview Status */}
-      <div className="text-xs text-gray-500">
-        {previewSource === 'selected' && selectedVideo && (
-          <span>
-            {isLoadingUrl ? 'Loading preview...' : 'Previewing: Selected video from search results'}
-          </span>
-        )}
-        {previewSource === 'queue' && queueItems[currentQueueIndex + 1] && (
-          <span>Previewing: Next video in queue</span>
-        )}
-        {!previewVideo && !isLoadingUrl && (
-          <span>
-            {previewSource === 'selected' 
-              ? 'No video selected - click a video from search results'
-              : 'No next video in queue'
-            }
-          </span>
-        )}
-      </div>
 
-      {/* Preview Window */}
       {isExpanded && (
         <PreviewWindow
           videoUrl={previewVideo?.videoUrl}
@@ -136,18 +111,6 @@ export function PreviewPanel() {
         />
       )}
 
-      {/* Quick Instructions */}
-      {isExpanded && (
-        <div className="bg-gray-50/50 dark:bg-gray-800/50 rounded-lg p-3 text-xs text-gray-600 dark:text-gray-400">
-          <h4 className="font-medium mb-1">Preview Controls:</h4>
-          <ul className="space-y-1 text-xs">
-            <li>• <strong>Selected:</strong> Preview videos from search results</li>
-            <li>• <strong>Next:</strong> Preview the next video in your queue</li>
-            <li>• <strong>Cue:</strong> Send preview video to program output</li>
-            <li>• Preview is muted by default - use volume slider to hear audio</li>
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

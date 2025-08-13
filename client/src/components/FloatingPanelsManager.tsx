@@ -101,7 +101,7 @@ export function FloatingPanelsManager() {
       <div className="pointer-events-auto">
         <FloatingPanel
           id="presetEffects"
-          title="✨ Presets & Tools"
+          title="✨ Quick Effects"
           brandSkin={brandSkin}
         >
           <PresetEffectsPanel />
@@ -165,15 +165,17 @@ export function FloatingPanelsManager() {
       </div>
 
       {/* Preview Panel */}
-      <div className="pointer-events-auto">
-        <FloatingPanel
-          id="preview"
-          title="👁️ Preview Window"
-          brandSkin={brandSkin}
-        >
-          <PreviewPanel />
-        </FloatingPanel>
-      </div>
+      {floatingPanelStates.preview?.visible && (
+        <div className="pointer-events-auto">
+          <FloatingPanel
+            id="preview"
+            title="👁️ Preview"
+            brandSkin={brandSkin}
+          >
+            <PreviewPanel />
+          </FloatingPanel>
+        </div>
+      )}
 
       {/* Video Effects Panel */}
       <div className="pointer-events-auto">

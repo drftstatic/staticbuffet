@@ -177,19 +177,9 @@ export function PresetEffectsPanel() {
   };
 
   return (
-    <div className="space-y-4 p-4 max-h-[600px] overflow-y-auto">
-      {/* Header */}
-      <div className="flex items-center space-x-2">
-        <Sparkles className="h-4 w-4 text-purple-500" />
-        <h3 className="font-semibold text-sm">Quick Effect Presets</h3>
-      </div>
-      
+    <div className="space-y-3 p-3">
       {/* Professional Effect Presets */}
       <div className="space-y-3">
-        <div className="flex items-center space-x-2 mb-2">
-          <Sparkles className="h-3 w-3 text-purple-500" />
-          <Label className="text-xs font-medium text-gray-600">Quick Presets (1-8)</Label>
-        </div>
         
         <div className="grid grid-cols-2 gap-2">
           <ScaleTransition hoverScale={1.02} tapScale={0.98}>

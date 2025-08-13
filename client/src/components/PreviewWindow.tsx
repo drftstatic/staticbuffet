@@ -148,22 +148,20 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
 
   return (
     <div className={`${className}`}>
-      {/* Compact Video Preview */}
       <div className={`relative rounded-lg overflow-hidden border ${getThemeClasses()}`}>
         {isVideoLoading ? (
-          <div className="w-full h-32 flex items-center justify-center bg-black">
-            <VideoPlayerSkeleton />
+          <div className="w-full h-24 flex items-center justify-center bg-black">
+            <div className="text-white/60 text-xs">Loading...</div>
           </div>
         ) : videoLoadError || !videoUrl ? (
-          <div className="w-full h-32 flex flex-col items-center justify-center bg-black/80 text-gray-400">
-            <Eye size={24} className="mb-1 opacity-50" />
-            <p className="text-xs">{videoLoadError ? 'Load failed' : 'No preview'}</p>
+          <div className="w-full h-24 flex items-center justify-center bg-black/80 text-gray-400">
+            <p className="text-xs">{videoLoadError ? 'Failed' : 'Empty'}</p>
           </div>
         ) : (
           <>
             <video
               ref={videoRef}
-              className="w-full h-32 bg-black object-cover"
+              className="w-full h-24 bg-black object-cover"
               style={{
                 filter: `
                   brightness(${videoEffects.brightness}%) 
