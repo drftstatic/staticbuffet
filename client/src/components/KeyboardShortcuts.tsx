@@ -4,6 +4,12 @@ import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
 import { Kbd } from '@/components/ui/kbd';
 
+declare global {
+  interface Window {
+    showShortcuts: () => void;
+  }
+}
+
 interface ShortcutGroup {
   title: string;
   shortcuts: {
@@ -14,45 +20,32 @@ interface ShortcutGroup {
 
 const shortcutGroups: ShortcutGroup[] = [
   {
-    title: 'Playback',
+    title: 'Video Playback',
     shortcuts: [
       { keys: ['Space'], description: 'Play/Pause current video' },
-      { keys: ['→'], description: 'Next video in queue' },
-      { keys: ['←'], description: 'Previous video in queue' },
-      { keys: ['↑'], description: 'Volume up' },
-      { keys: ['↓'], description: 'Volume down' },
-      { keys: ['M'], description: 'Toggle mute' },
       { keys: ['F'], description: 'Toggle fullscreen' },
+      { keys: ['T'], description: 'Toggle text overlay' },
+      { keys: ['Esc'], description: 'Exit fullscreen' },
     ],
   },
   {
-    title: 'Search & Navigation',
+    title: 'Quick Effect Presets',
     shortcuts: [
-      { keys: ['/', 'Cmd', 'K'], description: 'Focus search bar' },
-      { keys: ['?'], description: 'Show keyboard shortcuts' },
-      { keys: ['L'], description: 'Lucky Dip search' },
-      { keys: ['E'], description: 'Generate Emergency Mix' },
-      { keys: ['Esc'], description: 'Close dialogs/clear focus' },
+      { keys: ['1'], description: 'Apply Cyberpunk preset' },
+      { keys: ['2'], description: 'Apply Vintage preset' },
+      { keys: ['3'], description: 'Apply Glitch preset' },
+      { keys: ['4'], description: 'Apply Film Noir preset' },
+      { keys: ['5'], description: 'Apply Video Vortex preset' },
+      { keys: ['6'], description: 'Apply Demonic Portal preset' },
+      { keys: ['7'], description: 'Apply Fractal Storm preset' },
+      { keys: ['8'], description: 'Apply Time Warp preset' },
     ],
   },
   {
-    title: 'Queue Management',
+    title: 'Navigation & Help',
     shortcuts: [
-      { keys: ['A'], description: 'Add selected video to queue' },
-      { keys: ['Delete'], description: 'Remove selected queue item' },
-      { keys: ['C'], description: 'Clear entire queue' },
-      { keys: ['S'], description: 'Save current queue' },
-      { keys: ['R'], description: 'Start/stop EDL recording' },
-    ],
-  },
-  {
-    title: 'Interface',
-    shortcuts: [
-      { keys: ['1'], description: 'Toggle search panel' },
-      { keys: ['2'], description: 'Toggle player panel' },
-      { keys: ['3'], description: 'Toggle effects panel' },
-      { keys: ['4'], description: 'Toggle queue panel' },
-      { keys: ['T'], description: 'Cycle themes' },
+      { keys: ['?'], description: 'Show this keyboard shortcuts panel' },
+      { keys: ['Esc'], description: 'Close dialogs and panels' },
     ],
   },
 ];
@@ -131,22 +124,22 @@ export function KeyboardShortcuts() {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className={`max-w-4xl max-h-[80vh] overflow-y-auto ${getThemeClasses()}`}>
+        <DialogContent className={`max-w-3xl max-h-[85vh] overflow-y-auto ${getThemeClasses()}`}>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <span>Keyboard Shortcuts</span>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <span>⌨️ Keyboard Shortcuts</span>
               <Kbd keys={['?']} />
             </DialogTitle>
           </DialogHeader>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
             {shortcutGroups.map((group) => (
               <div key={group.title} className="space-y-3">
                 <h3 className="font-semibold text-lg">{group.title}</h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {group.shortcuts.map((shortcut, index) => (
-                    <div key={index} className="flex items-center justify-between gap-4">
-                      <span className="text-sm">{shortcut.description}</span>
+                    <div key={index} className="flex items-center justify-between gap-4 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                      <span className="text-sm font-medium">{shortcut.description}</span>
                       <Kbd keys={shortcut.keys} />
                     </div>
                   ))}
@@ -157,8 +150,8 @@ export function KeyboardShortcuts() {
 
           <div className="mt-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              <strong>Pro Tip:</strong> Most shortcuts work globally except when typing in search fields. 
-              Press <Kbd keys={['Esc']} className="inline-flex mx-1" /> to clear focus and enable shortcuts.
+              <strong>Pro Tip:</strong> Effect presets (1-8) work globally and show confirmation toasts. 
+              Video controls (Space, F) work when a video is loaded. Press <Kbd keys={['Esc']} className="inline-flex mx-1" /> to close dialogs.
             </p>
           </div>
         </DialogContent>

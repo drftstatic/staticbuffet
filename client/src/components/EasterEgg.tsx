@@ -29,11 +29,6 @@ export function EasterEgg({ isActive, onClose }: EasterEggProps) {
     setVideoEffects({
       ...videoEffects,
       intensity: 100,
-      colorShift: 100,
-      kaleidoscope: true,
-      plasma: true,
-      strobe: true,
-      chromatic: true,
       brightness: 150,
       contrast: 200,
       saturation: 300,

@@ -1,25 +1,38 @@
 import { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, AlertCircle, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
 import { SmartQueryChips } from '@/components/SmartQueryChips';
-import { SourceToggles } from '@/components/SourceToggles';
-import { LuckyDip } from '@/components/LuckyDip';
-import { LicenseGuardrail } from '@/components/LicenseGuardrail';
+import { SavedSearches } from '@/components/SavedSearches';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  isLoading?: boolean;
+  error?: Error | null;
 }
 
-export function SearchBar({ onSearch }: SearchBarProps) {
+export function SearchBar({ onSearch, isLoading = false, error = null }: SearchBarProps) {
   const { searchState, setSearchState } = useStore();
   const [localQuery, setLocalQuery] = useState(searchState.query);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSearchState({ query: localQuery, page: 1 });
-    onSearch(localQuery);
+    
+    // Validate query
+    if (!localQuery || localQuery.trim().length === 0) {
+      console.warn('SearchBar: Empty query submitted');
+      return;
+    }
+    
+    if (localQuery.trim().length < 2) {
+      console.warn('SearchBar: Query too short');
+      return;
+    }
+    
+    console.log('SearchBar: handleSubmit called with localQuery:', localQuery);
+    setSearchState({ query: localQuery.trim(), page: 1 });
+    onSearch(localQuery.trim());
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -34,18 +47,11 @@ export function SearchBar({ onSearch }: SearchBarProps) {
     onSearch(query);
   };
 
-  const handleFiltersChange = () => {
-    onSearch(localQuery);
-  };
 
-  const handleLuckyDipResults = (results: any) => {
-    // Results are already set by LuckyDip component
-    console.log('Lucky Dip found', results.length, 'clips');
-  };
 
   return (
     <div className="space-y-2">      
-      {/* Compact Search Bar - no chips */}
+      {/* Compact Search Bar with integrated saved searches */}
       <div className="flex items-center space-x-1">
         <form onSubmit={handleSubmit} className="relative flex-1">
           <Input
@@ -61,27 +67,34 @@ export function SearchBar({ onSearch }: SearchBarProps) {
             type="submit"
             size="sm"
             data-testid="button-search"
-            className="absolute right-1 top-1/2 transform -translate-y-1/2 p-1 h-6 w-6 bg-transparent hover:bg-transparent text-gray-600"
+            disabled={isLoading}
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 p-1 h-6 w-6 bg-transparent hover:bg-transparent text-gray-600 disabled:opacity-50"
           >
-            <Search size={12} />
+            {isLoading ? (
+              <Loader2 size={12} className="animate-spin" />
+            ) : (
+              <Search size={12} />
+            )}
           </Button>
         </form>
-        
-        <div className="flex-shrink-0">
-          <div className="flex items-center">
-            <LuckyDip onDipResults={handleLuckyDipResults} />
-          </div>
-        </div>
+        <SavedSearches />
       </div>
       
-      {/* Collapsible Advanced Controls */}
-      <details className="group">
-        <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700">Advanced Options</summary>
-        <div className="mt-1 flex flex-wrap gap-2">
-          <SourceToggles onSourcesChange={handleFiltersChange} />
-          <LicenseGuardrail onLicenseChange={handleFiltersChange} />
+      {/* Error indicator */}
+      {error && (
+        <div className="flex items-center space-x-2 text-red-500 text-xs mt-1 px-2">
+          <AlertCircle size={12} />
+          <span>
+            {error.message.includes('Rate limited') 
+              ? 'Please wait a moment before searching again'
+              : error.message.includes('empty')
+              ? 'Please enter a search term'
+              : 'Search failed - please try again'
+            }
+          </span>
         </div>
-      </details>
+      )}
+      
     </div>
   );
 }

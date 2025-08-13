@@ -157,7 +157,6 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
                   <ResultCard
                     video={video}
                     onSelect={onVideoSelect}
-                    onAddToQueue={handleAddToQueue}
                   />
                 </div>
               </StaggerItem>

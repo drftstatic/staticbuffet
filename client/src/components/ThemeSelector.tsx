@@ -9,7 +9,8 @@ import {
   DropdownMenuItem 
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { Palette, Volume2 } from 'lucide-react';
+import { Palette } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { useStore } from '@/lib/store';
 
 const themes = [
@@ -22,48 +23,56 @@ const themes = [
   { id: 'maxheadroom', name: 'Max Headroom', color: 'bg-green-500' },
   { id: 'mario', name: 'Mario Plumber', color: 'bg-red-500' },
   { id: 'dakota', name: 'Dodge Dakota', color: 'bg-gray-600' },
-  { id: 'blondie', name: 'Blondie', color: 'bg-amber-600' }
+  { id: 'blondie', name: 'Blondie ETC.', color: 'bg-amber-600' }
 ] as const;
 
 export function ThemeSelector() {
-  const { brandSkin, setBrandSkin } = useStore();
+  const { brandSkin, setBrandSkin, adaptiveColorsEnabled, setAdaptiveColorsEnabled } = useStore();
   const [isOpen, setIsOpen] = useState(false);
 
   const currentTheme = themes.find(t => t.id === brandSkin) || themes[0];
-  const hasAudio = ['waffle', 'ozzy', 'mario', 'maxheadroom'].includes(brandSkin);
 
   return (
-    <div className="fixed top-4 right-4 z-50">
-      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="bg-black/80 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-            data-testid="button-theme-selector"
-          >
-            <div className={`w-3 h-3 rounded-full ${currentTheme.color} mr-2`} />
-            <Palette size={16} className="mr-1" />
-            {currentTheme.name}
-            {hasAudio && <Volume2 size={12} className="ml-1 opacity-60" />}
-          </Button>
-        </DropdownMenuTrigger>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button 
+          variant="ghost" 
+          size="sm"
+          className="p-2 text-white/70 hover:text-white backdrop-blur-sm"
+          data-testid="button-theme-selector"
+          title={`Current Theme: ${currentTheme.name}`}
+        >
+          <div className={`w-3 h-3 rounded-full ${currentTheme.color} mr-1`} />
+          <Palette size={14} />
+        </Button>
+      </DropdownMenuTrigger>
         
         <DropdownMenuContent 
           align="end" 
-          className="w-56 bg-black/90 border-white/20 text-white"
+          className="w-64 bg-black/40 backdrop-blur-xl border-white/20 text-white"
         >
+          {/* Adaptive Colors Toggle */}
+          <div className="flex items-center justify-between px-2 py-3">
+            <DropdownMenuLabel className="text-white/80 m-0">Adaptive Colors</DropdownMenuLabel>
+            <Switch
+              checked={adaptiveColorsEnabled}
+              onCheckedChange={setAdaptiveColorsEnabled}
+              data-testid="switch-adaptive-colors"
+            />
+          </div>
+          
+          <DropdownMenuSeparator className="bg-white/20" />
           <DropdownMenuLabel className="text-white/80">Visual Themes</DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-white/20" />
           
           {themes.map((theme) => {
             const isActive = brandSkin === theme.id;
-            const themeHasAudio = ['waffle', 'ozzy', 'mario', 'maxheadroom'].includes(theme.id);
             
             return (
               <DropdownMenuItem
                 key={theme.id}
                 onClick={() => setBrandSkin(theme.id)}
-                className="cursor-pointer hover:bg-white/20 focus:bg-white/20 text-white"
+                className="cursor-pointer hover:bg-white/30 focus:bg-white/30 text-white"
                 data-testid={`menu-theme-${theme.id}`}
               >
                 <div className="flex items-center justify-between w-full">
@@ -72,11 +81,8 @@ export function ThemeSelector() {
                     <span className={isActive ? 'font-semibold' : ''}>{theme.name}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    {themeHasAudio && (
-                      <Volume2 size={12} className="opacity-60" title="Has soundboard" />
-                    )}
                     {isActive && (
-                      <Badge variant="secondary" className="text-xs bg-white/20 text-white border-white/40">
+                      <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/30">
                         Active
                       </Badge>
                     )}
@@ -88,10 +94,9 @@ export function ThemeSelector() {
           
           <DropdownMenuSeparator className="bg-white/20" />
           <DropdownMenuLabel className="text-xs text-white/60">
-            Themes with <Volume2 size={10} className="inline mx-1" /> have soundboards (triple-click)
+            Choose a visual theme to customize the interface
           </DropdownMenuLabel>
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
   );
 }

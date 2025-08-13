@@ -1,0 +1,37 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#000000"/>
+  
+  <!-- Top color bars -->
+  <rect x="0" y="0" width="57" height="187" fill="#C0C0C0"/>
+  <rect x="57" y="0" width="57" height="187" fill="#C0C000"/>
+  <rect x="114" y="0" width="57" height="187" fill="#00C0C0"/>
+  <rect x="171" y="0" width="57" height="187" fill="#00C000"/>
+  <rect x="228" y="0" width="57" height="187" fill="#C000C0"/>
+  <rect x="285" y="0" width="57" height="187" fill="#C00000"/>
+  <rect x="342" y="0" width="58" height="187" fill="#0000C0"/>
+  
+  <!-- Mid section with ramp -->
+  <rect x="0" y="187" width="57" height="26" fill="#0000C0"/>
+  <rect x="57" y="187" width="57" height="26" fill="#000000"/>
+  <rect x="114" y="187" width="57" height="26" fill="#C000C0"/>
+  <rect x="171" y="187" width="57" height="26" fill="#000000"/>
+  <rect x="228" y="187" width="57" height="26" fill="#00C0C0"/>
+  <rect x="285" y="187" width="57" height="26" fill="#000000"/>
+  <rect x="342" y="187" width="58" height="26" fill="#C0C0C0"/>
+  
+  <!-- Bottom section -->
+  <rect x="0" y="213" width="100" height="87" fill="#000040"/>
+  <rect x="100" y="213" width="67" height="87" fill="#FFFFFF"/>
+  <rect x="167" y="213" width="66" height="87" fill="#400040"/>
+  <rect x="233" y="213" width="67" height="87" fill="#000000"/>
+  <rect x="300" y="213" width="100" height="87" fill="#000000"/>
+  
+  <!-- Center circle -->
+  <circle cx="200" cy="256" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
+  <circle cx="200" cy="256" r="15" fill="#000000"/>
+  
+  <!-- Text -->
+  <text x="200" y="40" text-anchor="middle" fill="#000000" font-family="monospace" font-size="16" font-weight="bold">TEST CARD</text>
+  <text x="200" y="280" text-anchor="middle" fill="#FFFFFF" font-family="monospace" font-size="12">PHILIPS PM5544</text>
+</svg>

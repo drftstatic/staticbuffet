@@ -1,4 +1,4 @@
-export type BrandSkin = 'testcard' | 'waffle' | 'ebn' | 'ozzy' | 'hogan' | 'dx' | 'maxheadroom' | 'mario' | 'dakota' | 'blondie';
+export type BrandSkin = 'testcard' | 'waffle' | 'ebn' | 'ozzy' | 'hogan' | 'dx' | 'maxheadroom' | 'mario' | 'dakota' | 'blondie' | 'diner';
 
 export interface SearchState {
   query: string;
@@ -58,6 +58,14 @@ export interface VideoEffects {
   scanlines: boolean;
   datamosh: boolean;
   pixelate: number;
+  intensity: number;
+  gamma: number;
+  exposure: number;
+  temperature: number;
+  tint: number;
+  vignette: number;
+  sharpen: number;
+  noise: number;
 }
 
 export interface AudioEffects {
@@ -74,12 +82,6 @@ export interface AudioEffects {
   highpass: number;
 }
 
-export interface PanelStates {
-  searchCollapsed: boolean;
-  playerCollapsed: boolean;
-  queueCollapsed: boolean;
-  effectsCollapsed: boolean;
-}
 
 export interface PanelPosition {
   x: number;
@@ -89,6 +91,8 @@ export interface PanelPosition {
   zIndex: number;
   isLocked: boolean;
   isDocked: boolean;
+  isMinimized?: boolean;
+  visible?: boolean;
 }
 
 export interface FloatingPanelStates {
@@ -96,18 +100,20 @@ export interface FloatingPanelStates {
   player: PanelPosition;
   queue: PanelPosition;
   effects: PanelPosition;
+  liveVideo: PanelPosition;
+  recordSet: PanelPosition;
+  loopControls: PanelPosition;
+  videoEffects: PanelPosition;
+  audioEffects: PanelPosition;
+  presetEffects: PanelPosition;
+  resultsGrid: PanelPosition;
+  mediaControls: PanelPosition;
+  popOutPlayer: PanelPosition;
+  emergencyMix: PanelPosition;
+  luckyDip: PanelPosition;
+  keyboardShortcuts: PanelPosition;
 }
 
-export interface WorkspaceLayout {
-  id: string;
-  name: string;
-  description?: string;
-  panelStates: PanelStates;
-  createdAt: string;
-  updatedAt: string;
-  layoutMode: 'panels' | 'grid';
-  panelSizes?: number[]; // For resizable panels mode [leftWidth, centerWidth, rightWidth]
-}
 
 export interface AppState {
   brandSkin: BrandSkin;
@@ -128,12 +134,13 @@ export interface AppState {
   timelineLoop: boolean; // Loop entire timeline
   videoEffects: VideoEffects;
   audioEffects: AudioEffects;
-  panelStates: PanelStates;
-  savedWorkspaceLayouts: WorkspaceLayout[];
   isResizableMode: boolean;
   panelSizes: number[];
   floatingPanelStates: FloatingPanelStates;
   isFloatingMode: boolean;
+  // Text overlay state
+  textOverlay: TextSettings | null;
+  isTextOverlayVisible: boolean;
 }
 
 export interface QueueItem {
@@ -184,4 +191,28 @@ export interface EDLSession {
     totalClips?: number;
     totalCuts?: number;
   };
+}
+
+export interface TextSettings {
+  text: string;
+  fontFamily: string;
+  fontSize: number;
+  fontWeight: string;
+  fontStyle: string;
+  textDecoration: string;
+  color: string;
+  backgroundColor: string;
+  textAlign: string;
+  positionX: number;
+  positionY: number;
+  rotation: number;
+  opacity: number;
+  strokeWidth: number;
+  strokeColor: string;
+  shadowOffsetX: number;
+  shadowOffsetY: number;
+  shadowBlur: number;
+  shadowColor: string;
+  animation: string;
+  animationDuration: number;
 }

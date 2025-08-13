@@ -256,6 +256,9 @@ export function applyAdaptivePalette(palette: ColorPalette, intensity: number = 
   root.style.setProperty('--adaptive-text', palette.text);
   root.style.setProperty('--adaptive-muted', palette.muted);
   root.style.setProperty('--adaptive-intensity', intensity.toString());
+  
+  // Add adaptive-colors class to enable CSS styling
+  document.body.classList.add('adaptive-colors');
 }
 
 /**
@@ -270,4 +273,7 @@ export function resetAdaptiveColors(): void {
   root.style.removeProperty('--adaptive-text');
   root.style.removeProperty('--adaptive-muted');
   root.style.removeProperty('--adaptive-intensity');
+  
+  // Remove adaptive-colors class to disable CSS styling
+  document.body.classList.remove('adaptive-colors');
 }

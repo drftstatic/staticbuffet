@@ -14,49 +14,49 @@ const THEME_EXPLANATIONS = [
     icon: '🧇',
     name: 'Waffle House',
     description: 'Inspired by the Waffle House menu, the unofficial after-gig hangout for every VJ. Cozy diner colors, laminated-menu vibes, late-night comfort food aesthetic.',
-    features: ['Triple-click WH button for authentic diner soundboard', 'Warm yellows and ambers', 'Southern comfort theme']
+    features: ['Warm yellows and ambers', 'Southern comfort theme', 'Classic diner aesthetic']
   },
   {
     id: 'ebn',
     icon: '📺',
     name: 'EBN Hijack',
     description: 'A nod to the pioneers at Emergency Broadcast Network. Tactical overlays, neon alerts, hacked-broadcast energy with animated scanlines.',
-    features: ['Triple-click EB button for electronic civil disobedience quotes', 'Lime green and purple cyberpunk colors', 'Animated scanline effects']
+    features: ['Lime green and purple cyberpunk colors', 'Animated scanline effects', 'Video art glitch aesthetic']
   },
   {
     id: 'ozzy',
     icon: '🦇',
     name: 'Heavy Metal',
     description: 'A tribute to Ozzy Osbourne and the heavy metal aesthetic. Dark metallic textures, blood-red accents, and industrial brutality for the headbanging VJ.',
-    features: ['Triple-click OZ button for classic Ozzy and Black Sabbath quotes', 'Dark metallics with red accents', 'Diagonal metal texture patterns']
+    features: ['Dark metallics with red accents', 'Diagonal metal texture patterns', 'Heavy metal aesthetic']
   },
   {
     id: 'hogan',
     icon: '💪',
     name: 'NWO Hollywood',
     description: 'Channel the Hollywood Hogan era with NWO red, black, and gold. Wrestling stripes and attitude-era energy.',
-    features: ['Triple-click HH button to unlock HULKSTER mode', '8 classic Hulk Hogan soundboard quotes', 'Red wrestling stripes with golden pulsing effects']
+    features: ['Red wrestling stripes with golden pulsing effects', 'NWO black and white styling', 'Wrestling attitude era aesthetic']
   },
   {
     id: 'dx',
     icon: '🤘',
     name: 'D-Generation X',
     description: 'WWE attitude-era styling with blue and pink gradients. Rebellious energy from the legendary DX faction.',
-    features: ['Triple-click DX button for authentic "Suck It" soundboard', 'Blue and pink wrestling colors', 'Pulsing pink border effects in DX Mode']
+    features: ['Green and black wrestling colors', 'Pulsing border effects in DX Mode', 'Attitude era rebellion styling']
   },
   {
     id: 'maxheadroom',
     icon: '📺',
     name: 'Max Headroom',
     description: 'Retro-futuristic green matrix aesthetic with cyberpunk elements. Digital prophet from the edge of tomorrow.',
-    features: ['Triple-click MX button to activate ASCII Mode', 'Green monospace retro computing experience', 'Screen flicker effects and terminal aesthetics']
+    features: ['Orange and yellow digital colors', 'Screen flicker effects and terminal aesthetics', '80s TV digital character styling']
   },
   {
     id: 'mario',
     icon: '🍄',
     name: 'Sexy Mario Plumber',
     description: 'Meme-inspired theme with Italian-American charm and Nintendo colors. Inappropriate-but-funny plumber humor.',
-    features: ['Triple-click MA button for SEXY MARIO MODE', '8 corny plumber double entendres with Italian accent', 'Rainbow Mario colors with coin sparkle effects']
+    features: ['Rainbow Mario colors with coin sparkle effects', 'Nintendo-inspired visual styling', 'Classic video game aesthetic']
   }
 ];
 
