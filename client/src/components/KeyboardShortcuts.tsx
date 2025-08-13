@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
 import { Kbd } from '@/components/ui/kbd';
+import { toast } from '@/hooks/use-toast';
 
 declare global {
   interface Window {
@@ -24,8 +25,20 @@ const shortcutGroups: ShortcutGroup[] = [
     shortcuts: [
       { keys: ['Space'], description: 'Play/Pause current video' },
       { keys: ['F'], description: 'Toggle fullscreen' },
-      { keys: ['T'], description: 'Toggle text overlay' },
       { keys: ['Esc'], description: 'Exit fullscreen' },
+      { keys: ['←'], description: 'Skip back 10 seconds' },
+      { keys: ['→'], description: 'Skip forward 10 seconds' },
+      { keys: ['↑'], description: 'Increase volume' },
+      { keys: ['↓'], description: 'Decrease volume' },
+    ],
+  },
+  {
+    title: 'Trim Controls',
+    shortcuts: [
+      { keys: ['Ctrl', 'T'], description: 'Toggle trim controls visibility (⌘+T on Mac)' },
+      { keys: ['I'], description: 'Set trim in point' },
+      { keys: ['O'], description: 'Set trim out point' },
+      { keys: ['Ctrl', 'R'], description: 'Reset trim points' },
     ],
   },
   {
@@ -45,20 +58,62 @@ const shortcutGroups: ShortcutGroup[] = [
     title: 'Navigation & Help',
     shortcuts: [
       { keys: ['?'], description: 'Show this keyboard shortcuts panel' },
+      { keys: ['/'], description: 'Focus search input' },
+      { keys: ['Ctrl', 'K'], description: 'Open command palette' },
+      { keys: ['Ctrl', 'P'], description: 'Pop-out player window' },
       { keys: ['Esc'], description: 'Close dialogs and panels' },
+    ],
+  },
+  {
+    title: 'Hidden Features 🥚',
+    shortcuts: [
+      { keys: ['bb'], description: 'Acid Trip Mode (type quickly)' },
+      { keys: ['etc'], description: 'Unlock Geometry Panel (type anywhere)' },
+      { keys: ['Ctrl', 'Shift', 'A'], description: 'Toggle ASCII Terminal Mode (⌘+Shift+A on Mac)' },
     ],
   },
 ];
 
 export function KeyboardShortcuts() {
   const [isOpen, setIsOpen] = useState(false);
-  const { brandSkin } = useStore();
+  const [typingSequence, setTypingSequence] = useState<string>('');
+  const [lastTypingTime, setLastTypingTime] = useState(0);
+  const { brandSkin, isAsciiMode, setAsciiMode, setFloatingPanelVisible } = useStore();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Don't trigger shortcuts when typing in inputs
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
         return;
+      }
+
+      // Handle typing sequence for "etc" easter egg
+      const currentTime = Date.now();
+      if (currentTime - lastTypingTime > 2000) {
+        setTypingSequence(''); // Reset if too much time has passed
+      }
+      setLastTypingTime(currentTime);
+
+      // Only track single letter keys (no modifiers)
+      if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        const newSequence = typingSequence + event.key.toLowerCase();
+        setTypingSequence(newSequence);
+        
+        // Check for "etc" sequence
+        if (newSequence.endsWith('etc')) {
+          event.preventDefault();
+          setFloatingPanelVisible('geometry', true);
+          setTypingSequence(''); // Reset sequence
+          toast({
+            title: "🔓 Easter Egg Unlocked!",
+            description: "Geometry Panel is now available",
+          });
+        }
+        
+        // Keep sequence manageable (last 10 chars)
+        if (newSequence.length > 10) {
+          setTypingSequence(newSequence.slice(-10));
+        }
       }
 
       if (event.key === '?' && !event.shiftKey) {
@@ -68,12 +123,22 @@ export function KeyboardShortcuts() {
 
       if (event.key === 'Escape') {
         setIsOpen(false);
+        // Also exit ASCII mode on Escape
+        if (isAsciiMode) {
+          setAsciiMode(false);
+        }
+      }
+
+      // ASCII Terminal Mode: Ctrl+Shift+A (or Cmd+Shift+A on Mac)
+      if (event.key === 'a' && (event.ctrlKey || event.metaKey) && event.shiftKey) {
+        event.preventDefault();
+        setAsciiMode(!isAsciiMode);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [typingSequence, lastTypingTime, isAsciiMode]);
 
   // Global keyboard shortcut handler
   useEffect(() => {
@@ -151,7 +216,8 @@ export function KeyboardShortcuts() {
           <div className="mt-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               <strong>Pro Tip:</strong> Effect presets (1-8) work globally and show confirmation toasts. 
-              Video controls (Space, F) work when a video is loaded. Press <Kbd keys={['Esc']} className="inline-flex mx-1" /> to close dialogs.
+              Video controls work when a video is loaded. Trim controls (Ctrl+T, I, O) help set precise in/out points. 
+              Press <Kbd keys={['Esc']} className="inline-flex mx-1" /> to close dialogs. Shortcuts are disabled while typing in form inputs.
             </p>
           </div>
         </DialogContent>

@@ -3,7 +3,7 @@ import { useAdaptiveColors } from '@/hooks/use-adaptive-colors';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize, Scissors, Square, RotateCcw } from 'lucide-react';
 import { PopOutPlayer } from '@/components/PopOutPlayer';
 import { videoPreloader } from '@/lib/video-preloader';
 import { VideoPlayerSkeleton } from './SkeletonLoader';
@@ -30,6 +30,9 @@ export function Player() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isVideoLoading, setIsVideoLoading] = useState(false);
   const [videoLoadError, setVideoLoadError] = useState(false);
+  const [showTrimControls, setShowTrimControls] = useState(false);
+  const [trimInTime, setTrimInTime] = useState(0);
+  const [trimOutTime, setTrimOutTime] = useState(0);
 
   const { 
     queueItems, 
@@ -44,7 +47,8 @@ export function Player() {
     setVideoEffects,
     textOverlay,
     isTextOverlayVisible,
-    setTextOverlayVisible
+    setTextOverlayVisible,
+    updateQueueItem
   } = useStore();
 
   const currentVideo = queueItems[currentQueueIndex];
@@ -52,6 +56,71 @@ export function Player() {
   
   // Initialize adaptive colors
   const { analyzeCurrentFrame } = useAdaptiveColors(videoRef);
+
+  // Helper functions for time conversion
+  const timeToSeconds = (timeStr: string): number => {
+    const parts = timeStr.split(':').map(Number);
+    if (parts.length === 2) {
+      return parts[0] * 60 + parts[1]; // MM:SS
+    } else if (parts.length === 3) {
+      return parts[0] * 3600 + parts[1] * 60 + parts[2]; // HH:MM:SS
+    }
+    return 0;
+  };
+
+  const secondsToTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Update trim times when video changes
+  useEffect(() => {
+    if (currentVideo) {
+      setTrimInTime(timeToSeconds(currentVideo.trimIn));
+      setTrimOutTime(timeToSeconds(currentVideo.trimOut));
+    }
+  }, [currentVideo?.id]);
+
+  // Trim control functions
+  const setTrimIn = () => {
+    const newTrimIn = Math.min(currentTime, trimOutTime - 1);
+    setTrimInTime(newTrimIn);
+    if (currentVideo) {
+      updateQueueItem(currentVideo.id, { trimIn: secondsToTime(newTrimIn) });
+      toast({
+        title: "Trim In Set",
+        description: `In point set to ${secondsToTime(newTrimIn)}`,
+      });
+    }
+  };
+
+  const setTrimOut = () => {
+    const newTrimOut = Math.max(currentTime, trimInTime + 1);
+    setTrimOutTime(newTrimOut);
+    if (currentVideo) {
+      updateQueueItem(currentVideo.id, { trimOut: secondsToTime(newTrimOut) });
+      toast({
+        title: "Trim Out Set",
+        description: `Out point set to ${secondsToTime(newTrimOut)}`,
+      });
+    }
+  };
+
+  const resetTrim = () => {
+    setTrimInTime(0);
+    setTrimOutTime(duration);
+    if (currentVideo) {
+      updateQueueItem(currentVideo.id, { 
+        trimIn: '00:00', 
+        trimOut: secondsToTime(duration) 
+      });
+      toast({
+        title: "Trim Reset",
+        description: "In/Out points reset to full duration",
+      });
+    }
+  };
 
   useEffect(() => {
     if (videoRef.current && currentVideo) {
@@ -394,6 +463,18 @@ export function Player() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!currentVideo) return;
+      
+      // Don't trigger shortcuts when user is typing in inputs, textareas, or contenteditable elements
+      const target = e.target as HTMLElement;
+      if (target && (
+        target.tagName === 'INPUT' || 
+        target.tagName === 'TEXTAREA' || 
+        target.tagName === 'SELECT' ||
+        target.contentEditable === 'true' ||
+        target.closest('[contenteditable="true"]')
+      )) {
+        return;
+      }
 
       switch (e.code) {
         case 'Space':
@@ -450,13 +531,45 @@ export function Player() {
           e.preventDefault();
           applyPreset('noir');
           break;
-        case 'KeyT':
+        case 'Digit5':
           e.preventDefault();
-          setTextOverlayVisible(!isTextOverlayVisible);
-          toast({
-            title: isTextOverlayVisible ? "Text Overlay Hidden" : "Text Overlay Shown",
-            description: isTextOverlayVisible ? "Text overlay removed from program output" : "Text overlay added to program output",
-          });
+          applyPreset('vortex');
+          break;
+        case 'Digit6':
+          e.preventDefault();
+          applyPreset('portal');
+          break;
+        case 'Digit7':
+          e.preventDefault();
+          applyPreset('fractal');
+          break;
+        case 'Digit8':
+          e.preventDefault();
+          applyPreset('timewarp');
+          break;
+        case 'KeyT':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setShowTrimControls(!showTrimControls);
+            toast({
+              title: showTrimControls ? "Trim Controls Hidden" : "Trim Controls Shown",
+              description: showTrimControls ? "Trim controls panel closed" : "Trim controls panel opened",
+            });
+          }
+          break;
+        case 'KeyI':
+          e.preventDefault();
+          setTrimIn();
+          break;
+        case 'KeyO':
+          e.preventDefault();
+          setTrimOut();
+          break;
+        case 'KeyR':
+          if (e.ctrlKey) {
+            e.preventDefault();
+            resetTrim();
+          }
           break;
         case 'KeyP':
           if (e.ctrlKey || e.metaKey) {
@@ -927,10 +1040,51 @@ export function Player() {
                   <span className="text-white text-sm w-12">{volume[0]}%</span>
                 </div>
 
+                {/* Trim Controls in Fullscreen */}
+                {showTrimControls && currentVideo && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center space-x-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={setTrimIn}
+                        className="text-green-400 hover:bg-green-500/20"
+                      >
+                        <Square className="h-4 w-4 mr-1" />
+                        Set In ({secondsToTime(trimInTime)})
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={setTrimOut}
+                        className="text-red-400 hover:bg-red-500/20"
+                      >
+                        <Square className="h-4 w-4 mr-1" />
+                        Set Out ({secondsToTime(trimOutTime)})
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={resetTrim}
+                        className="text-white hover:bg-white/20"
+                      >
+                        <RotateCcw className="h-4 w-4 mr-1" />
+                        Reset
+                      </Button>
+                    </div>
+                    <div className="text-center text-gray-300 text-sm">
+                      Duration: {secondsToTime(Math.max(0, trimOutTime - trimInTime))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Keyboard Shortcuts Hint */}
                 <div className="text-center text-gray-400 text-sm">
                   F: fullscreen • Space: play/pause • ← →: seek • ↑ ↓: volume • ESC: exit • Ctrl+P: pop-out<br/>
-                  1: Cyberpunk • 2: Vintage • 3: Glitch • 4: Film Noir
+                  1-8: effect presets • Ctrl+T: trim controls • I: set in • O: set out • Ctrl+R: reset trim<br/>
+                  ?: shortcuts • bb: acid trip • etc: geometry • Ctrl+Shift+A: ASCII mode
                 </div>
               </div>
             </div>
@@ -1015,6 +1169,96 @@ export function Player() {
               />
             </div>
           </div>
+          
+          {/* Trim Controls */}
+          {currentVideo && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Trim Controls</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowTrimControls(!showTrimControls)}
+                  title="Toggle trim controls"
+                >
+                  <Scissors className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              {showTrimControls && (
+                <div className="space-y-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                  {/* Trim Markers on Progress Bar */}
+                  <div className="relative">
+                    <Slider
+                      value={[currentTime]}
+                      max={duration || 100}
+                      step={1}
+                      onValueChange={handleSeek}
+                      className="w-full"
+                    />
+                    {/* In/Out Point Markers */}
+                    <div 
+                      className="absolute top-0 w-1 h-6 bg-green-500 pointer-events-none"
+                      style={{ left: `${(trimInTime / (duration || 100)) * 100}%` }}
+                      title={`In: ${secondsToTime(trimInTime)}`}
+                    />
+                    <div 
+                      className="absolute top-0 w-1 h-6 bg-red-500 pointer-events-none"
+                      style={{ left: `${(trimOutTime / (duration || 100)) * 100}%` }}
+                      title={`Out: ${secondsToTime(trimOutTime)}`}
+                    />
+                  </div>
+                  
+                  {/* Trim Time Display */}
+                  <div className="flex justify-between text-xs text-gray-600">
+                    <span className="text-green-600">In: {secondsToTime(trimInTime)}</span>
+                    <span className="text-gray-500">Current: {formatTime(currentTime)}</span>
+                    <span className="text-red-600">Out: {secondsToTime(trimOutTime)}</span>
+                  </div>
+                  
+                  {/* Trim Control Buttons */}
+                  <div className="flex items-center justify-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={setTrimIn}
+                      className="text-green-600 border-green-300 hover:bg-green-50"
+                      title="Set In Point at current time"
+                    >
+                      <Square className="h-3 w-3 mr-1" />
+                      Set In
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={setTrimOut}
+                      className="text-red-600 border-red-300 hover:bg-red-50"
+                      title="Set Out Point at current time"
+                    >
+                      <Square className="h-3 w-3 mr-1" />
+                      Set Out
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={resetTrim}
+                      title="Reset to full duration"
+                    >
+                      <RotateCcw className="h-3 w-3 mr-1" />
+                      Reset
+                    </Button>
+                  </div>
+                  
+                  {/* Trimmed Duration */}
+                  <div className="text-center text-xs text-gray-500">
+                    Trimmed duration: {secondsToTime(Math.max(0, trimOutTime - trimInTime))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </>
       )}
 

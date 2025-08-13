@@ -102,6 +102,22 @@ export function AboutDialog({ children }: AboutDialogProps) {
             </p>
           </div>
 
+          {/* Keyboard Shortcuts */}
+          <div className={`p-4 rounded-lg ${themeClasses.bgSecondary} ${themeClasses.border} border`}>
+            <h3 className={`font-bold ${themeClasses.text} text-center mb-3`}>Need Help?</h3>
+            <div className="flex justify-center space-x-3">
+              <Button
+                onClick={() => {
+                  const event = new KeyboardEvent('keydown', { key: '?' });
+                  window.dispatchEvent(event);
+                }}
+                className={`${themeClasses.accentBg} text-white hover:opacity-90`}
+              >
+                View Keyboard Shortcuts (?)
+              </Button>
+            </div>
+          </div>
+
           {/* Bug Reports & Feature Requests */}
           <div className={`p-4 rounded-lg ${themeClasses.bgSecondary} ${themeClasses.border} border`}>
             <h3 className={`font-bold ${themeClasses.text} text-center mb-3`}>Found a Bug or Have an Idea?</h3>
@@ -114,14 +130,11 @@ export function AboutDialog({ children }: AboutDialogProps) {
                 <span>Report Bug</span>
               </a>
               <a 
-                href="https://github.com/trashteam/static-buffet/issues/new?template=feature_request.md" 
-                target="_blank" 
-                rel="noopener noreferrer"
+                href="mailto:robb@fladrycreative.com?subject=Static Buffet Feature Request" 
                 className={`inline-flex items-center space-x-2 px-3 py-2 rounded border transition-colors text-sm ${themeClasses.border} ${themeClasses.textSecondary} hover:${themeClasses.accent} hover:border-current`}
               >
                 <Lightbulb size={16} />
                 <span>Request Feature</span>
-                <ExternalLink size={12} />
               </a>
             </div>
           </div>

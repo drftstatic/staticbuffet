@@ -10,7 +10,6 @@ import { BottomHUD } from '@/components/BottomHUD';
 import { StatusBar } from '@/components/StatusBar';
 import { StreamlinedWelcome } from '@/components/StreamlinedWelcome';
 import { ThemeSelector } from '@/components/ThemeSelector';
-import { MarioPipeEffect } from '@/components/MarioPipeEffect';
 import { FloatingPanelsManager } from '@/components/FloatingPanelsManager';
 import { DevicePrompt } from '@/components/DevicePrompt';
 import { MainToolbar } from '@/components/MainToolbar';
@@ -38,11 +37,7 @@ export default function Home() {
     addToQueue,
     
     // Effects modes
-    isHulksterMode,
-    isDXMode,
     isAsciiMode,
-    isMarioMode,
-    isDakotaVanillaMode,
     isBlondieGeometryMode
   } = useStore();
 
@@ -134,7 +129,9 @@ export default function Home() {
   return (
     <ResponsiveLayoutManager>
     <div className={`h-screen w-screen flex flex-col transition-all duration-500 overflow-hidden ${
-        brandSkin === 'testcard'
+        isAsciiMode 
+        ? 'ascii-terminal-mode bg-black text-green-400 font-mono'
+        : brandSkin === 'testcard'
         ? 'testcard-gradient testcard-grid'
         : brandSkin === 'waffle'
         ? 'waffle-gradient waffle-texture'
@@ -142,24 +139,14 @@ export default function Home() {
         ? 'ebn-gradient'
         : brandSkin === 'ozzy'
         ? 'ozzy-gradient'
-        : brandSkin === 'hogan' && isHulksterMode
-        ? 'hogan-gradient hulkster-mode'
         : brandSkin === 'hogan'
         ? 'hogan-gradient'
-        : brandSkin === 'dx' && isDXMode
-        ? 'dx-gradient dx-pulse dx-mode'
         : brandSkin === 'dx'
         ? 'dx-gradient dx-pulse'
-        : brandSkin === 'mario' && isMarioMode
-        ? 'mario-gradient mario-sparkles mario-powerup'
         : brandSkin === 'mario'
         ? 'mario-gradient mario-sparkles mario-powerup'
-        : brandSkin === 'maxheadroom' && isAsciiMode
-        ? 'maxheadroom-gradient terminal-flicker ascii-mode'
         : brandSkin === 'maxheadroom'
         ? 'maxheadroom-gradient terminal-flicker'
-        : brandSkin === 'dakota' && isDakotaVanillaMode
-        ? 'dakota-gradient dakota-vanilla-filter'
         : brandSkin === 'dakota'
         ? 'dakota-gradient'
         : brandSkin === 'blondie' && isBlondieGeometryMode
@@ -225,11 +212,7 @@ export default function Home() {
               <div className="flex flex-col items-end space-y-0.5">
                 <div className="flex items-center space-x-2">
                   <h1 className={`font-bold text-lg min-w-[200px] text-right ${getTextClasses(brandSkin, 'primary')}`}>
-                    {brandSkin === 'hogan' && isHulksterMode ? 'HULKSTER BUFFET' : 
-                    brandSkin === 'dx' && isDXMode ? 'DX BUFFET' : 
-                    brandSkin === 'mario' && isMarioMode ? 'SEXY MARIO BUFFET' :
-                    brandSkin === 'dakota' && isDakotaVanillaMode ? 'VANILLA BUFFET' :
-                    brandSkin === 'blondie' && isBlondieGeometryMode ? 'PARALLEL BUFFET' :
+                    {brandSkin === 'blondie' && isBlondieGeometryMode ? 'PARALLEL BUFFET' :
                     brandSkin === 'testcard' ? 'STATIC BUFFET' :
                     brandSkin === 'waffle' ? 'SYRUP BUFFET' :
                     brandSkin === 'ebn' ? 'HIJACK BUFFET' :
@@ -332,7 +315,6 @@ export default function Home() {
       <FirstRunTour />
       
       {/* Mario Pipe Effect */}
-      {isMarioMode && <MarioPipeEffect />}
     </div>
     </ResponsiveLayoutManager>
   );

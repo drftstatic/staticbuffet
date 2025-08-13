@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Search, Play, List, Zap, Tv, Archive } from 'lucide-react';
+import { Search, Play, List, Zap, Tv } from 'lucide-react';
 import { useStore } from '@/lib/store';
+import { getThemeClasses } from '@/lib/theme-utils';
 
 export function StreamlinedWelcome() {
   const [isOpen, setIsOpen] = useState(false);
   const { brandSkin } = useStore();
+  const themeClasses = getThemeClasses(brandSkin);
 
   // Public method to show welcome (can be called from other components)
   const showWelcome = () => setIsOpen(true);
@@ -34,19 +35,15 @@ export function StreamlinedWelcome() {
   };
 
   const features = [
-    { icon: Search, title: 'Search Archive.org', desc: 'Find public domain videos' },
-    { icon: Play, title: 'Preview & Queue', desc: 'Test clips before adding to set' },
-    { icon: List, title: 'Live Mixing', desc: 'Real-time video transitions' },
-    { icon: Zap, title: 'Audio Reactive', desc: 'Sync to microphone input' }
+    { icon: Search, title: 'Content Discovery', desc: 'Search thousands of public domain videos' },
+    { icon: Play, title: 'Preview & Queue', desc: 'Test and trim clips before performance' },
+    { icon: List, title: 'Live Mixing', desc: 'Real-time video playback and transitions' },
+    { icon: Zap, title: 'Professional Effects', desc: 'Video and audio processing pipeline' }
   ];
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className={`max-w-md ${
-        brandSkin === 'testcard' ? 'bg-slate-900/95 border-blue-400/50 text-blue-100' :
-        brandSkin === 'waffle' ? 'bg-yellow-50/95 border-amber-400/50 text-amber-900' :
-        'bg-slate-900/95 border-blue-400/50 text-blue-100'
-      }`}>
+      <DialogContent className={`max-w-md ${themeClasses.bg} ${themeClasses.border} ${themeClasses.text}`}>
         <DialogHeader>
           <DialogTitle className="text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
@@ -61,7 +58,7 @@ export function StreamlinedWelcome() {
 
         <div className="space-y-4">
           <p className="text-sm text-center opacity-80">
-            Search, preview, and mix public domain video content from Archive.org for live performances.
+            Professional VJ tool for discovering, previewing, and mixing public domain video content for live performances.
           </p>
 
           <div className="grid gap-3">
@@ -76,20 +73,23 @@ export function StreamlinedWelcome() {
             ))}
           </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <Badge variant="outline" className="text-xs">
-              <Archive size={12} className="mr-1" />
-              Free Archive.org content
-            </Badge>
-            
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleClose}>
-                Skip
-              </Button>
-              <Button size="sm" onClick={handleClose}>
-                Get Started
-              </Button>
-            </div>
+          <div className="flex justify-center gap-3 pt-4">
+            <Button variant="outline" size="sm" onClick={handleClose}>
+              Close
+            </Button>
+            <Button 
+              size="sm" 
+              onClick={() => {
+                handleClose();
+                // Start the tour
+                setTimeout(() => {
+                  (window as any).startStaticBuffetTour?.();
+                }, 300);
+              }}
+              className={`${themeClasses.accentBg} text-white hover:opacity-90`}
+            >
+              Take Interactive Tour
+            </Button>
           </div>
         </div>
       </DialogContent>

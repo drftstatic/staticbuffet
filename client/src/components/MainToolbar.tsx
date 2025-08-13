@@ -49,41 +49,11 @@ export function MainToolbar() {
   };
 
   const toolbarSections = [
+    // === VISIBLE BY DEFAULT ===
     {
-      title: "Effects",
-      icon: Wand2,
-      description: "Video & Audio Effects",
-      items: [
-        {
-          id: 'presetEffects',
-          label: 'INSTANT FX',
-          icon: Sparkles,
-          color: 'text-purple-500',
-          bgColor: 'bg-purple-50 hover:bg-purple-100',
-          borderColor: 'border-purple-200'
-        },
-        {
-          id: 'videoEffects',
-          label: 'Video FX',
-          icon: Eye,
-          color: 'text-blue-500',
-          bgColor: 'bg-blue-50 hover:bg-blue-100',
-          borderColor: 'border-blue-200'
-        },
-        {
-          id: 'audioEffects', 
-          label: 'Audio FX',
-          icon: Headphones,
-          color: 'text-green-500',
-          bgColor: 'bg-green-50 hover:bg-green-100',
-          borderColor: 'border-green-200'
-        }
-      ]
-    },
-    {
-      title: "Search & Browse",
+      title: "Core Panels",
       icon: Compass,
-      description: "Find & Discover Content",
+      description: "Main Interface (Always Visible)",
       items: [
         {
           id: 'search',
@@ -94,27 +64,36 @@ export function MainToolbar() {
           borderColor: 'border-orange-200'
         },
         {
-          id: 'resultsGrid',
-          label: 'Results',
-          icon: Grid3x3,
-          color: 'text-indigo-500',
-          bgColor: 'bg-indigo-50 hover:bg-indigo-100',
-          borderColor: 'border-indigo-200'
+          id: 'player',
+          label: 'Player',
+          icon: MonitorPlay,
+          color: 'text-blue-600',
+          bgColor: 'bg-blue-50 hover:bg-blue-100',
+          borderColor: 'border-blue-200'
         },
         {
           id: 'queue',
-          label: 'Queue',
+          label: 'Timeline',
           icon: List,
           color: 'text-teal-500',
           bgColor: 'bg-teal-50 hover:bg-teal-100',
           borderColor: 'border-teal-200'
+        },
+        {
+          id: 'preview',
+          label: 'Preview',
+          icon: Eye,
+          color: 'text-purple-500',
+          bgColor: 'bg-purple-50 hover:bg-purple-100',
+          borderColor: 'border-purple-200'
         }
       ]
     },
+    // === HIDDEN PANELS ===
     {
-      title: "Media & Player",
-      icon: MonitorPlay,
-      description: "Playback & Controls",
+      title: "Video Input",
+      icon: Video,
+      description: "Recording & Live Input",
       items: [
         {
           id: 'liveVideo',
@@ -125,12 +104,35 @@ export function MainToolbar() {
           borderColor: 'border-red-200'
         },
         {
+          id: 'recordSet',
+          label: 'Record Set',
+          icon: FileText,
+          color: 'text-orange-600',
+          bgColor: 'bg-orange-50 hover:bg-orange-100',
+          borderColor: 'border-orange-200'
+        }
+      ]
+    },
+    {
+      title: "Playback Controls",
+      icon: Play,
+      description: "Media Control & Loops",
+      items: [
+        {
           id: 'mediaControls',
           label: 'Controls',
           icon: Play,
           color: 'text-gray-600',
           bgColor: 'bg-gray-50 hover:bg-gray-100',
           borderColor: 'border-gray-200'
+        },
+        {
+          id: 'loopControls',
+          label: 'Loops',
+          icon: BarChart3,
+          color: 'text-indigo-500',
+          bgColor: 'bg-indigo-50 hover:bg-indigo-100',
+          borderColor: 'border-indigo-200'
         },
         {
           id: 'popOutPlayer',
@@ -143,9 +145,86 @@ export function MainToolbar() {
       ]
     },
     {
-      title: "Tools & Utilities",
-      icon: Wrench,
-      description: "Settings & Help",
+      title: "Effects & Processing",
+      icon: Wand2,
+      description: "Video & Audio Effects",
+      items: [
+        {
+          id: 'presetEffects',
+          label: 'Instant FX',
+          icon: Sparkles,
+          color: 'text-purple-500',
+          bgColor: 'bg-purple-50 hover:bg-purple-100',
+          borderColor: 'border-purple-200'
+        },
+        {
+          id: 'videoEffects',
+          label: 'Video FX',
+          icon: Palette,
+          color: 'text-blue-500',
+          bgColor: 'bg-blue-50 hover:bg-blue-100',
+          borderColor: 'border-blue-200'
+        },
+        {
+          id: 'audioEffects', 
+          label: 'Audio FX',
+          icon: Headphones,
+          color: 'text-green-500',
+          bgColor: 'bg-green-50 hover:bg-green-100',
+          borderColor: 'border-green-200'
+        },
+        {
+          id: 'geometry',
+          label: 'Geometry',
+          icon: Square,
+          color: 'text-pink-500',
+          bgColor: 'bg-pink-50 hover:bg-pink-100',
+          borderColor: 'border-pink-200'
+        }
+      ]
+    },
+    {
+      title: "Browse & Search",
+      icon: Grid3x3,
+      description: "Content Discovery",
+      items: [
+        {
+          id: 'resultsGrid',
+          label: 'Results Grid',
+          icon: Grid3x3,
+          color: 'text-indigo-500',
+          bgColor: 'bg-indigo-50 hover:bg-indigo-100',
+          borderColor: 'border-indigo-200'
+        }
+      ]
+    },
+    {
+      title: "Creative Tools",
+      icon: Layers,
+      description: "Experimental Features",
+      items: [
+        {
+          id: 'emergencyMix',
+          label: 'Emergency Mix',
+          icon: Layers,
+          color: 'text-red-600',
+          bgColor: 'bg-red-50 hover:bg-red-100',
+          borderColor: 'border-red-200'
+        },
+        {
+          id: 'luckyDip',
+          label: 'Lucky Dip',
+          icon: Compass,
+          color: 'text-yellow-600',
+          bgColor: 'bg-yellow-50 hover:bg-yellow-100',
+          borderColor: 'border-yellow-200'
+        }
+      ]
+    },
+    {
+      title: "Help & Settings",
+      icon: Settings,
+      description: "Support & Configuration",
       items: [
         {
           id: 'keyboardShortcuts',

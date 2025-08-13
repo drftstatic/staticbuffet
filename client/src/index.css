@@ -1253,3 +1253,88 @@
 .animate-panel-rearrange {
   animation: panel-rearrange 0.8s ease-in-out;
 }
+
+/* ASCII Terminal Mode - Global Override */
+.ascii-terminal-mode {
+  font-family: 'Courier New', monospace !important;
+  background: #000000 !important;
+  color: #00ff00 !important;
+  text-shadow: 0 0 2px #00ff00;
+}
+
+.ascii-terminal-mode * {
+  font-family: 'Courier New', monospace !important;
+  color: #00ff00 !important;
+  background: transparent !important;
+  border-color: #00ff00 !important;
+  font-weight: normal !important;
+  letter-spacing: 0.05em;
+}
+
+/* Override specific elements */
+.ascii-terminal-mode .bg-white,
+.ascii-terminal-mode .bg-gray-50,
+.ascii-terminal-mode .bg-purple-950,
+.ascii-terminal-mode .bg-yellow-50,
+.ascii-terminal-mode [class*="bg-"] {
+  background: #000000 !important;
+}
+
+/* Make buttons look like terminal elements */
+.ascii-terminal-mode button {
+  border: 1px solid #00ff00 !important;
+  background: transparent !important;
+  color: #00ff00 !important;
+}
+
+.ascii-terminal-mode button:hover {
+  background: #00ff00 !important;
+  color: #000000 !important;
+}
+
+/* Style inputs */
+.ascii-terminal-mode input,
+.ascii-terminal-mode select,
+.ascii-terminal-mode textarea {
+  background: #000000 !important;
+  border: 1px solid #00ff00 !important;
+  color: #00ff00 !important;
+}
+
+/* Floating panels */
+.ascii-terminal-mode [class*="bg-purple"],
+.ascii-terminal-mode [class*="bg-yellow"],
+.ascii-terminal-mode [class*="bg-black"] {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid #00ff00 !important;
+}
+
+/* Video elements keep their natural colors */
+.ascii-terminal-mode video {
+  filter: none !important;
+}
+
+/* Scanlines effect */
+.ascii-terminal-mode::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.1) 2px,
+    rgba(0, 255, 0, 0.1) 4px
+  );
+  z-index: 1000;
+  animation: ascii-flicker 0.15s infinite linear alternate;
+}
+
+@keyframes ascii-flicker {
+  0% { opacity: 0.95; }
+  100% { opacity: 1; }
+}
