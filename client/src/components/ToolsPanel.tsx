@@ -47,6 +47,7 @@ export function ToolsPanel() {
     setQueueItems,
     setSearchState,
     setSearchResults,
+    addToQueue,
     setTotalResults,
     setLoading,
     resetToDefaultLayout
@@ -246,7 +247,7 @@ export function ToolsPanel() {
     { id: "search", icon: Search, label: "Search Results", tooltip: "Show/Hide Search Results Panel" },
     { id: "player", icon: Play, label: "Program Output", tooltip: "Show/Hide Program Output Panel" },
     { id: "queue", icon: Users, label: "Queue", tooltip: "Show/Hide Queue Panel" },
-    { id: "textTool", icon: Type, label: "Text Tool", tooltip: "Open Text Generator", isSpecial: true },
+    { id: "liveVideo", icon: Camera, label: "Live Input", tooltip: "Enable Live Video Input", isSpecial: true },
     { id: "videoEffects", icon: Video, label: "Video FX", tooltip: "Show/Hide Video Effects Panel" }
   ];
 
@@ -254,7 +255,8 @@ export function ToolsPanel() {
   const rightColumnTools = [
     { id: "audioEffects", icon: Music, label: "Audio FX", tooltip: "Show/Hide Audio Effects Panel" },
     { id: "preview", icon: Eye, label: "Preview", tooltip: "Show/Hide Preview Window" },
-    { id: "presetEffects", icon: Palette, label: "Presets", tooltip: "Show/Hide Preset Effects Panel" },
+    { id: "presetEffects", icon: Palette, label: "Quick Effects", tooltip: "Show/Hide Quick Effects Panel" },
+    { id: "textTool", icon: Type, label: "Text Tool", tooltip: "Open Text Generator", isSpecial: true },
     { id: "testCard", icon: Monitor, label: "Test Card", tooltip: "Show Test Card for VJ Output", isSpecial: true }
   ];
 
@@ -469,27 +471,87 @@ export function ToolsPanel() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex justify-center bg-black p-6 rounded-lg border border-gray-600">
-              <img 
-                src="/test-card.svg" 
-                alt="Philips PM5544 Test Card Pattern" 
-                className="w-full max-w-lg h-auto shadow-lg"
-                style={{ imageRendering: 'auto' }}
-                onError={(e) => {
-                  console.error('Test card image failed to load');
-                  e.currentTarget.style.display = 'none';
-                }}
-                onLoad={() => {
-                  console.log('Test card image loaded successfully');
+              <div 
+                className="w-full max-w-lg aspect-[4/3] shadow-lg rounded"
+                style={{
+                  background: `
+                    repeating-conic-gradient(
+                      from 0deg at 50% 50%,
+                      #000000 0deg 45deg,
+                      #dc2626 45deg 90deg,
+                      #22c55e 90deg 135deg,
+                      #3b82f6 135deg 180deg,
+                      #06b6d4 180deg 225deg,
+                      #ec4899 225deg 270deg,
+                      #eab308 270deg 315deg,
+                      #ffffff 315deg 360deg
+                    ),
+                    radial-gradient(circle at 50% 50%, 
+                      rgba(255, 255, 255, 0.9) 0%, 
+                      rgba(255, 255, 255, 0.9) 8%, 
+                      transparent 8%, 
+                      transparent 15%,
+                      rgba(0, 0, 0, 0.1) 15%,
+                      transparent 16%
+                    ),
+                    radial-gradient(circle at 50% 50%, 
+                      transparent 0%, 
+                      transparent 70%,
+                      rgba(255, 255, 255, 0.3) 70%, 
+                      rgba(255, 255, 255, 0.3) 72%, 
+                      transparent 72%
+                    )
+                  `,
+                  backgroundSize: '100% 100%, 150px 150px, 300px 300px',
+                  backgroundPosition: 'center, center, center'
                 }}
               />
             </div>
             <div className="flex justify-center space-x-2">
               <Button
                 onClick={() => {
-                  // Add test card to output
+                  // Create a test card video item
+                  const testCardVideo = {
+                    identifier: 'static-buffet-test-card',
+                    title: 'Static Buffet Test Card Pattern',
+                    creator: 'Static Buffet VJ Tool',
+                    year: new Date().getFullYear().toString(),
+                    description: 'Professional broadcast test card pattern for VJ output',
+                    duration: '∞',
+                    licenseurl: 'https://creativecommons.org/licenses/publicdomain/',
+                    downloads: 1,
+                    date: new Date().toISOString().split('T')[0]
+                  };
+                  
+                  // Use data URL for the test card pattern
+                  const testCardDataUrl = 'data:image/svg+xml;base64,' + btoa(`
+                    <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <pattern id="testPattern" x="0" y="0" width="80" height="60" patternUnits="userSpaceOnUse">
+                          <rect width="80" height="60" fill="#000"/>
+                          <rect width="10" height="60" fill="#dc2626"/>
+                          <rect x="10" width="10" height="60" fill="#22c55e"/>
+                          <rect x="20" width="10" height="60" fill="#3b82f6"/>
+                          <rect x="30" width="10" height="60" fill="#06b6d4"/>
+                          <rect x="40" width="10" height="60" fill="#ec4899"/>
+                          <rect x="50" width="10" height="60" fill="#eab308"/>
+                          <rect x="60" width="10" height="60" fill="#fff"/>
+                          <rect x="70" width="10" height="60" fill="#6b7280"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#testPattern)"/>
+                      <circle cx="320" cy="240" r="50" fill="white" fill-opacity="0.9"/>
+                      <circle cx="320" cy="240" r="40" fill="none" stroke="black" stroke-width="2"/>
+                      <line x1="320" y1="200" x2="320" y2="280" stroke="black" stroke-width="2"/>
+                      <line x1="280" y1="240" x2="360" y2="240" stroke="black" stroke-width="2"/>
+                    </svg>
+                  `);
+
+                  addToQueue(testCardVideo, testCardDataUrl);
+                  
                   toast({
-                    title: "Test Card Added",
-                    description: "Test card pattern added to VJ output",
+                    title: "Test Card Added to Queue",
+                    description: "Professional test card pattern added to playback queue",
                   });
                   setTestCardOpen(false);
                 }}

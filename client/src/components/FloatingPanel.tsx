@@ -4,7 +4,7 @@ import { Lock, Unlock, X } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { PanelPosition, FloatingPanelStates, BrandSkin } from '@/lib/types';
 import { getThemeClasses } from '@/lib/theme-utils';
-import { FloatingPanelTransition, ScaleTransition } from './AnimatedTransitions';
+import { ScaleTransition } from './AnimatedTransitions';
 
 interface FloatingPanelProps {
   id: keyof FloatingPanelStates;
@@ -145,14 +145,13 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
   }
 
   return (
-    <FloatingPanelTransition isDragging={isDragging}>
       <div
         ref={panelRef}
-        className={`fixed border rounded-lg shadow-2xl backdrop-blur-sm transition-shadow duration-200 ${
+        className={`fixed border rounded-lg shadow-2xl backdrop-blur-sm transition-all duration-200 ${
           position.isLocked 
             ? `${themeClasses.bgSecondary} border-green-500/50 shadow-green-500/20` 
             : `${themeClasses.bgSecondary} ${themeClasses.border} hover:shadow-2xl`
-        } ${isDragging ? 'cursor-grabbing select-none' : ''}`}
+        } ${isDragging ? 'cursor-grabbing select-none scale-[1.02]' : ''}`}
         style={{
           left: position.x,
           top: position.y,
@@ -227,6 +226,5 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
         />
       )}
     </div>
-    </FloatingPanelTransition>
   );
 }

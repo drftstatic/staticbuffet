@@ -68,15 +68,15 @@ export const getThemeClasses = (brandSkin: BrandSkin): {
     case 'hogan':
       return {
         text: 'text-white',
-        textSecondary: 'text-red-300',
+        textSecondary: 'text-yellow-300',
         textMuted: 'text-gray-300',
         bg: 'bg-black/95',
-        bgSecondary: 'bg-red-950/80',
-        hover: 'hover:bg-red-900/60',
-        border: 'border-white/40',
-        borderSecondary: 'border-red-500/30',
-        accent: 'text-white',
-        accentBg: 'bg-red-700'
+        bgSecondary: 'bg-black/90',
+        hover: 'hover:bg-yellow-500/20',
+        border: 'border-yellow-400/50',
+        borderSecondary: 'border-white/30',
+        accent: 'text-yellow-400',
+        accentBg: 'bg-yellow-500'
       };
     case 'dx':
       return {

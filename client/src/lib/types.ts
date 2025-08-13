@@ -112,6 +112,7 @@ export interface FloatingPanelStates {
   emergencyMix: PanelPosition;
   luckyDip: PanelPosition;
   keyboardShortcuts: PanelPosition;
+  preview: PanelPosition;
 }
 
 

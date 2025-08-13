@@ -7,6 +7,7 @@ import { Filters } from '@/components/Filters';
 import { DetailDrawer } from '@/components/DetailDrawer';
 import { EffectPresetNotification } from '@/components/EffectPresetNotification';
 import { BottomHUD } from '@/components/BottomHUD';
+import { StatusBar } from '@/components/StatusBar';
 import { StreamlinedWelcome } from '@/components/StreamlinedWelcome';
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { MarioPipeEffect } from '@/components/MarioPipeEffect';
@@ -34,6 +35,7 @@ export default function Home() {
     queueItems,
     setSearchResults,
     setTotalResults,
+    addToQueue,
     
     // Effects modes
     isHulksterMode,
@@ -87,6 +89,29 @@ export default function Home() {
     }
   }, [error]);
 
+  // Preload default Atari 2600 commercial on first visit
+  useEffect(() => {
+    // Only add if queue is empty to avoid duplicates
+    if (queueItems.length === 0) {
+      const defaultVideo: VideoResult = {
+        identifier: 'atari-2600-1986-television-commercial-480p',
+        title: 'Atari 2600 Television Commercial (1986)',
+        creator: 'Atari Corporation',
+        year: '1986',
+        description: 'Classic Atari 2600 television commercial from 1986',
+        duration: '0:30',
+        licenseurl: 'https://creativecommons.org/licenses/publicdomain/',
+        downloads: 50000,
+        date: '1986-01-01'
+      };
+
+      const videoUrl = 'https://archive.org/download/atari-2600-1986-television-commercial-480p/atari-2600-1986-television-commercial-480p.mp4';
+      
+      console.log('🎮 Preloading default Atari 2600 commercial');
+      addToQueue(defaultVideo, videoUrl);
+    }
+  }, []); // Empty dependency array to run only once on mount
+
   const handleSearch = useCallback((query: string) => {
     console.log('handleSearch called with query:', query);
     // Update search state to trigger React Query
@@ -108,9 +133,9 @@ export default function Home() {
 
   return (
     <ResponsiveLayoutManager>
-    <div className={`min-h-screen flex flex-col transition-all duration-500 ${
+    <div className={`h-screen w-screen flex flex-col transition-all duration-500 overflow-hidden ${
         brandSkin === 'testcard'
-        ? 'testcard-gradient'
+        ? 'testcard-gradient testcard-grid'
         : brandSkin === 'waffle'
         ? 'waffle-gradient waffle-texture'
         : brandSkin === 'ebn'
@@ -263,8 +288,8 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Floating Panel Workspace */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Floating Panel Workspace - Account for status bar */}
+      <div className="flex-1 flex flex-col overflow-hidden pb-6">
         <div className="flex-1 overflow-hidden relative">
           {/* Background workspace - behind panels */}
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm pointer-events-none">
@@ -290,6 +315,9 @@ export default function Home() {
 
       {/* Bottom HUD (EBN mode only) */}
       <BottomHUD />
+      
+      {/* Status Bar - Always visible */}
+      <StatusBar />
 
       {/* Effect Preset Notifications */}
       <EffectPresetNotification />
