@@ -48,7 +48,9 @@ export function Player() {
     textOverlay,
     isTextOverlayVisible,
     setTextOverlayVisible,
-    updateQueueItem
+    updateQueueItem,
+    liveStream,
+    getLiveStream
   } = useStore();
 
   const currentVideo = queueItems[currentQueueIndex];
@@ -134,34 +136,56 @@ export function Player() {
       setIsVideoLoading(true);
       setVideoLoadError(false);
       
-      // Check if we have a preloaded video
-      const preloadedVideo = videoPreloader.getPreloadedVideo(currentVideo.videoUrl);
-      
-      if (preloadedVideo) {
-        console.log('🚀 Using preloaded video for smooth transition');
-        // Copy properties from preloaded video
-        video.src = preloadedVideo.src;
-        video.currentTime = preloadedVideo.currentTime;
-        video.volume = volume[0] / 100;
-        video.muted = false;
-        setIsVideoLoading(false);
-      } else {
-        // Reset video element
-        video.src = '';
-        video.load();
+      // Special handling for live webcam streams
+      if (currentVideo.videoUrl === 'live_webcam_stream') {
+        console.log('📹 Loading live webcam stream');
+        const stream = getLiveStream();
         
-        // Set new source and properties
-        console.log('🔗 Setting video src to:', currentVideo.videoUrl);
-        video.src = currentVideo.videoUrl;
-        video.volume = volume[0] / 100;
-        video.muted = false;
-        video.autoplay = false;
-        video.preload = 'auto'; // Changed from 'metadata' to 'auto' for better loading
-        video.crossOrigin = 'anonymous'; // Add CORS support
+        if (stream) {
+          console.log('✅ Found live stream, connecting to video element');
+          video.srcObject = stream;
+          video.volume = volume[0] / 100;
+          video.muted = false;
+          setIsVideoLoading(false);
+        } else {
+          console.warn('⚠️ No live stream available');
+          setVideoLoadError(true);
+          setIsVideoLoading(false);
+        }
+      } else {
+        // Normal video file handling
+        // Check if we have a preloaded video
+        const preloadedVideo = videoPreloader.getPreloadedVideo(currentVideo.videoUrl);
+        
+        if (preloadedVideo) {
+          console.log('🚀 Using preloaded video for smooth transition');
+          // Copy properties from preloaded video
+          video.src = preloadedVideo.src;
+          video.currentTime = preloadedVideo.currentTime;
+          video.volume = volume[0] / 100;
+          video.muted = false;
+          setIsVideoLoading(false);
+        } else {
+          // Reset video element
+          video.src = '';
+          video.srcObject = null; // Clear any existing stream
+          video.load();
+          
+          // Set new source and properties
+          console.log('🔗 Setting video src to:', currentVideo.videoUrl);
+          video.src = currentVideo.videoUrl;
+          video.volume = volume[0] / 100;
+          video.muted = false;
+          video.autoplay = false;
+          video.preload = 'auto'; // Changed from 'metadata' to 'auto' for better loading
+          video.crossOrigin = 'anonymous'; // Add CORS support
+        }
       }
       
-      // Preload next video in queue
-      videoPreloader.preloadNext(queueItems, currentQueueIndex);
+      // Preload next video in queue (skip for live streams)
+      if (currentVideo.videoUrl !== 'live_webcam_stream') {
+        videoPreloader.preloadNext(queueItems, currentQueueIndex);
+      }
       
       // Add comprehensive event listeners for debugging
       const handleCanPlay = () => {
@@ -253,7 +277,7 @@ export function Player() {
         video.removeEventListener('emptied', handleEmptied);
       };
     }
-  }, [currentVideo]);
+  }, [currentVideo, liveStream, volume, getLiveStream]);
 
   useEffect(() => {
     const video = videoRef.current;

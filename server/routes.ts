@@ -329,7 +329,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'Content-Type': contentType,
           'Accept-Ranges': 'bytes',
           'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=86400, immutable', // 24 hour cache for better performance
+          'Cache-Control': 'public, max-age=604800, immutable', // 7 day cache for better performance
           'Connection': 'keep-alive',
           'Access-Control-Expose-Headers': 'Content-Range, Content-Length, Accept-Ranges'
         };
@@ -349,7 +349,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'Content-Type': contentType,
           'Accept-Ranges': 'bytes',
           'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=86400, immutable', // 24 hour cache
+          'Cache-Control': 'public, max-age=604800, immutable', // 7 day cache
           'Connection': 'keep-alive',
           'Content-Length': response.headers.get('content-length') || '',
           'Access-Control-Expose-Headers': 'Content-Length, Accept-Ranges'

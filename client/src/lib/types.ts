@@ -124,6 +124,12 @@ export interface FloatingPanelStates {
 }
 
 
+export interface LiveStreamState {
+  isActive: boolean;
+  stream: MediaStream | null;
+  selectedCameraId: string;
+}
+
 export interface AppState {
   brandSkin: BrandSkin;
   isHulksterMode: boolean;
@@ -150,6 +156,8 @@ export interface AppState {
   // Text overlay state
   textOverlay: TextSettings | null;
   isTextOverlayVisible: boolean;
+  // Live stream state
+  liveStream: LiveStreamState;
 }
 
 export interface QueueItem {

@@ -74,6 +74,10 @@ interface AppStore extends AppState {
   setAsciiMode: (enabled: boolean) => void;
   isBlondieGeometryMode: boolean;
   setBlondieGeometryMode: (enabled: boolean) => void;
+  
+  // Live stream actions
+  setLiveStream: (stream: MediaStream | null, isActive: boolean, selectedCameraId?: string) => void;
+  getLiveStream: () => MediaStream | null;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
@@ -553,6 +557,13 @@ export const useStore = create<AppStore>((set, get) => ({
   // Text overlay state
   textOverlay: null,
   isTextOverlayVisible: false,
+  
+  // Live stream state
+  liveStream: {
+    isActive: false,
+    stream: null,
+    selectedCameraId: '',
+  },
 
   // Theme actions
   setBrandSkin: (skin) => set({ brandSkin: skin }),
@@ -809,4 +820,15 @@ export const useStore = create<AppStore>((set, get) => ({
   resetToDefaultLayout: () => set((state) => ({
     floatingPanelStates: JSON.parse(JSON.stringify(state.defaultFloatingPanelStates)),
   })),
+  
+  // Live stream actions
+  setLiveStream: (stream, isActive, selectedCameraId = '') => set({
+    liveStream: {
+      stream,
+      isActive,
+      selectedCameraId,
+    },
+  }),
+  
+  getLiveStream: () => get().liveStream.stream,
 }));
