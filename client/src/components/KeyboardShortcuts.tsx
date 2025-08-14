@@ -152,12 +152,8 @@ export function KeyboardShortcuts() {
         return;
       }
 
-      // Command palette
-      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-        event.preventDefault();
-        // TODO: Open command palette
-        console.log('Command palette triggered');
-      }
+      // Command palette - handled by useCommandPalette hook in App component
+      // No need to handle here as it's managed globally
 
       // Search focus
       if (event.key === '/') {

@@ -102,9 +102,49 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
 
   if (!searchState.query) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-gray-400">
-        <p className="text-lg mb-2">Enter a search term to get started</p>
-        <p className="text-sm">Try: "public domain psa", "educational film", "newsreel"</p>
+      <div className="flex flex-col items-center justify-center h-full min-h-[400px] px-6">
+        <div className="text-center space-y-6 max-w-md">
+          <div className="space-y-2">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+              Ready to Mix
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Search the archive for videos to add to your timeline
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              VJ Search Ideas:
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="space-y-2">
+                <div className="font-medium text-gray-800 dark:text-gray-200">Visual:</div>
+                <div className="space-y-1 text-gray-600 dark:text-gray-400">
+                  <div>"abstract film"</div>
+                  <div>"kaleidoscope"</div>
+                  <div>"liquid motion"</div>
+                  <div>"geometric"</div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="font-medium text-gray-800 dark:text-gray-200">Content:</div>
+                <div className="space-y-1 text-gray-600 dark:text-gray-400">
+                  <div>"vintage commercial"</div>
+                  <div>"space documentary"</div>
+                  <div>"industrial film"</div>
+                  <div>"experimental"</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-500">
+              All content from Internet Archive • Public Domain
+            </p>
+          </div>
+        </div>
       </div>
     );
   }

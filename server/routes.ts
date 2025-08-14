@@ -4,9 +4,10 @@ import { searchFiltersSchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
 import { metadataService } from "./metadata-service";
 import { transcodeService } from "./transcode-service";
-// import { CacheService } from "./cache-service";
+import { searchCacheService } from "./search-cache-service";
 import { promises as fs } from 'fs';
 import path from 'path';
+import express from 'express';
 
 // Rate limiter for Archive.org API calls - more generous limits
 const apiLimiter = rateLimit({
@@ -18,6 +19,18 @@ const apiLimiter = rateLimit({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Serve static files from public directory
+  app.use(express.static(path.join(process.cwd(), 'public')));
+  
+  // Setup periodic cache cleanup (every 2 hours)
+  setInterval(async () => {
+    console.log('🧹 Running scheduled cache cleanup...');
+    await Promise.all([
+      searchCacheService.cleanupExpiredCache(),
+      metadataService.cleanupExpiredCache(),
+    ]);
+  }, 2 * 60 * 60 * 1000); // 2 hours
   
   // Search Archive.org with filters
   app.get("/api/search", apiLimiter, async (req, res) => {
@@ -36,10 +49,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const filters = searchFiltersSchema.parse(queryData);
       
       // Check cache first
-      // const cachedResults = CacheService.getCachedSearchResults(filters);
-      // if (cachedResults) {
-      //   return res.json(cachedResults);
-      // }
+      const cachedResults = await searchCacheService.getCachedResults(filters);
+      if (cachedResults) {
+        return res.json(cachedResults);
+      }
       
       // Build Archive.org search query with better sanitization
       let query = filters.query.trim();
@@ -243,13 +256,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       // Cache the successful result
-      // CacheService.cacheSearchResults(filters, result, 30); // Cache for 30 minutes
+      await searchCacheService.saveResults(filters, result);
       
       res.json(result);
       
     } catch (error) {
       console.error("Search error:", error);
-      res.status(500).json({ error: "Failed to search videos" });
+      
+      // Determine error type and provide helpful response
+      let statusCode = 500;
+      let errorMessage = "Failed to search videos";
+      let errorType = "unknown";
+      let suggestions: string[] = [];
+      
+      if (error instanceof Error) {
+        const lowerMessage = error.message.toLowerCase();
+        
+        if (lowerMessage.includes('rate') || lowerMessage.includes('429')) {
+          statusCode = 429;
+          errorMessage = "Archive.org rate limit reached";
+          errorType = "rate-limit";
+          suggestions = [
+            "Wait 10-15 seconds before searching again",
+            "Archive.org protects their free service with rate limits",
+            "Try more specific search terms to get better results faster"
+          ];
+        } else if (lowerMessage.includes('network') || lowerMessage.includes('fetch')) {
+          statusCode = 502;
+          errorMessage = "Cannot connect to Archive.org";
+          errorType = "network";
+          suggestions = [
+            "Archive.org may be experiencing high traffic",
+            "Try again in a few moments",
+            "Check if archive.org is accessible in your region"
+          ];
+        } else if (lowerMessage.includes('json') || lowerMessage.includes('parse')) {
+          statusCode = 502;
+          errorMessage = "Archive.org sent malformed data";
+          errorType = "api-format";
+          suggestions = [
+            "Archive.org's response format was unexpected",
+            "This usually resolves quickly",
+            "Try a different search term"
+          ];
+        } else if (lowerMessage.includes('empty') || lowerMessage.includes('sanitization')) {
+          statusCode = 400;
+          errorMessage = "Search query is invalid or too short";
+          errorType = "validation";
+          suggestions = [
+            "Enter at least 2 characters",
+            "Avoid special characters",
+            "Try common words like 'documentary' or 'nature'"
+          ];
+        } else if (lowerMessage.includes('timeout')) {
+          statusCode = 504;
+          errorMessage = "Archive.org search timed out";
+          errorType = "timeout";
+          suggestions = [
+            "Archive.org took too long to respond",
+            "Try a more specific search",
+            "Archive.org servers may be overloaded"
+          ];
+        }
+      }
+      
+      res.status(statusCode).json({ 
+        error: errorMessage,
+        type: errorType,
+        suggestions,
+        service: "archive.org",
+        isFreeTier: true,
+        timestamp: new Date().toISOString()
+      });
     }
   });
 
@@ -658,12 +736,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Cache statistics
   app.get("/api/cache-stats", async (req, res) => {
     try {
-      const transcodeStats = await transcodeService.getCacheStats();
-      // const cacheStats = CacheService.getStats();
+      const [transcodeStats, searchCacheStats] = await Promise.all([
+        transcodeService.getCacheStats(),
+        searchCacheService.getCacheStats(),
+      ]);
       
       res.json({
         transcode: transcodeStats,
-        // memory: cacheStats,
+        searchCache: searchCacheStats,
         timestamp: new Date().toISOString()
       });
     } catch (error) {

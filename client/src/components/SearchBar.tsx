@@ -1,18 +1,20 @@
 import { useState } from 'react';
-import { Search, AlertCircle, Loader2 } from 'lucide-react';
+import { Search, AlertCircle, Loader2, Info, RefreshCw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
 import { SmartQueryChips } from '@/components/SmartQueryChips';
 import { SavedSearches } from '@/components/SavedSearches';
+import { SearchErrorAnalyzer } from '@/lib/error-handler';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
   isLoading?: boolean;
   error?: Error | null;
+  onRetry?: () => void;
 }
 
-export function SearchBar({ onSearch, isLoading = false, error = null }: SearchBarProps) {
+export function SearchBar({ onSearch, isLoading = false, error = null, onRetry }: SearchBarProps) {
   const { searchState, setSearchState } = useStore();
   const [localQuery, setLocalQuery] = useState(searchState.query);
 
@@ -80,18 +82,62 @@ export function SearchBar({ onSearch, isLoading = false, error = null }: SearchB
         <SavedSearches />
       </div>
       
-      {/* Error indicator */}
+      {/* Enhanced error display with education */}
       {error && (
-        <div className="flex items-center space-x-2 text-red-500 text-xs mt-1 px-2">
-          <AlertCircle size={12} />
-          <span>
-            {error.message.includes('Rate limited') 
-              ? 'Please wait a moment before searching again'
-              : error.message.includes('empty')
-              ? 'Please enter a search term'
-              : 'Search failed - please try again'
-            }
-          </span>
+        <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="flex items-start space-x-2">
+            <AlertCircle size={14} className="text-red-500 mt-0.5 flex-shrink-0" />
+            <div className="flex-1 space-y-2">
+              <div className="text-sm font-medium text-red-700 dark:text-red-300">
+                Search Issue Detected
+              </div>
+              
+              {(() => {
+                const errorInfo = SearchErrorAnalyzer.analyzeError(error);
+                
+                return (
+                  <>
+                    <div className="text-sm text-red-600 dark:text-red-400">
+                      {errorInfo.userMessage}
+                    </div>
+                    
+                    {errorInfo.suggestions.length > 0 && (
+                      <div className="space-y-1">
+                        <div className="text-xs font-medium text-gray-600 dark:text-gray-300 flex items-center gap-1">
+                          <Info size={10} />
+                          Suggestions:
+                        </div>
+                        <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc list-inside space-y-0.5 ml-3">
+                          {errorInfo.suggestions.map((suggestion, i) => (
+                            <li key={i}>{suggestion}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded">
+                        💡 Static Buffet uses Archive.org's free database - occasional delays are normal
+                      </div>
+                      
+                      {SearchErrorAnalyzer.shouldShowRetryButton(errorInfo) && onRetry && (
+                        <Button
+                          onClick={onRetry}
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-xs"
+                          disabled={isLoading}
+                        >
+                          <RefreshCw size={10} className="mr-1" />
+                          Retry
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
         </div>
       )}
       

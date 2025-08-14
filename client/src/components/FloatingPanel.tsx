@@ -67,7 +67,7 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
         // Header: ~70px
         const headerHeight = window.innerWidth >= 1024 ? 80 : 90;
         const newX = Math.max(0, Math.min(window.innerWidth - position.width, e.clientX - dragStart.x));
-        const newY = Math.max(headerHeight, Math.min(window.innerHeight - position.height, e.clientY - dragStart.y));
+        const newY = Math.max(headerHeight, Math.min(window.innerHeight - position.height - 10, e.clientY - dragStart.y)); // Added 10px compensation
         
         updatePanelPosition(id, { x: newX, y: newY });
       } else if (isResizing) {
@@ -75,7 +75,7 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
         const deltaY = e.clientY - resizeStart.y;
         
         const newWidth = Math.max(300, Math.min(window.innerWidth - position.x, resizeStart.width + deltaX));
-        const newHeight = Math.max(200, Math.min(window.innerHeight - position.y, resizeStart.height + deltaY));
+        const newHeight = Math.max(200, Math.min(window.innerHeight - position.y - 10, resizeStart.height + deltaY)); // Added 10px compensation
         
         updatePanelPosition(id, { width: newWidth, height: newHeight });
       }
@@ -126,7 +126,7 @@ export function FloatingPanel({ id, title, children, brandSkin }: FloatingPanelP
       }
       
       if (position.height > window.innerHeight - headerHeight) {
-        updates.height = Math.max(200, window.innerHeight - headerHeight - 40);
+        updates.height = Math.max(200, window.innerHeight - headerHeight - 50); // Added extra 10px compensation
         needsUpdate = true;
       }
       

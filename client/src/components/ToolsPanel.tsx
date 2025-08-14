@@ -25,7 +25,8 @@ import {
   Type,
   Lock,
   Unlock,
-  Move
+  Move,
+  Repeat
 } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { getThemeClasses } from '@/lib/theme-utils';
@@ -51,7 +52,8 @@ export function ToolsPanel() {
     addToQueue,
     setTotalResults,
     setLoading,
-    resetToDefaultLayout
+    resetToDefaultLayout,
+    generateAutoLayout
   } = useStore();
   
   const { toast } = useToast();
@@ -325,22 +327,8 @@ export function ToolsPanel() {
                 <Dice6 size={14} />
               </Button>
               
-              <Button
-                onClick={() => {
-                  resetToDefaultLayout();
-                  toast({
-                    title: "Layout Reset",
-                    description: "Panels restored to default positions",
-                  });
-                }}
-                variant="ghost"
-                size="sm"
-                className={`w-8 h-8 p-0 transition-all duration-200 ${themeClasses.textSecondary} hover:${themeClasses.accent}`}
-                title="Reset Layout"
-              >
-                <RefreshCw size={14} />
-              </Button>
             </div>
+            
           </div>
         </div>
 
@@ -461,6 +449,48 @@ export function ToolsPanel() {
             </div>
           </div>
         </div>
+
+        {/* Separator */}
+        <div className={`w-full h-px ${themeClasses.border} my-2`} />
+
+        {/* Layout Preferences Section */}
+        <div className="space-y-1">
+          <div className="text-xs text-center font-medium opacity-60 mb-2">LAYOUT</div>
+          
+          <div className="flex justify-center gap-1">
+            <Button
+              onClick={() => {
+                generateAutoLayout();
+                toast({
+                  title: "Auto Layout Applied",
+                  description: "Panels arranged for your screen size",
+                });
+              }}
+              variant="ghost"
+              size="sm"
+              className={`w-8 h-8 p-0 transition-all duration-200 ${themeClasses.textSecondary} hover:${themeClasses.accent}`}
+              title="Auto-arrange panels for screen size"
+            >
+              <Grid3X3 size={14} />
+            </Button>
+
+            <Button
+              onClick={() => {
+                resetToDefaultLayout();
+                toast({
+                  title: "Layout Reset",
+                  description: "Panels restored to default positions",
+                });
+              }}
+              variant="ghost"
+              size="sm"
+              className={`w-8 h-8 p-0 transition-all duration-200 ${themeClasses.textSecondary} hover:${themeClasses.accent}`}
+              title="Reset to default layout"
+            >
+              <RefreshCw size={14} />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
       
@@ -511,49 +541,25 @@ export function ToolsPanel() {
             <div className="flex justify-center space-x-2">
               <Button
                 onClick={() => {
-                  // Create a test card video item
                   const testCardVideo = {
                     identifier: 'static-buffet-test-card',
-                    title: 'Static Buffet Test Card Pattern',
+                    title: 'SMPTE Color Bars Test Pattern',
                     creator: 'Static Buffet VJ Tool',
-                    year: new Date().getFullYear().toString(),
-                    description: 'Professional broadcast test card pattern for VJ output',
-                    duration: '∞',
+                    year: '2025',
+                    description: 'Professional SMPTE color bars test pattern video',
+                    duration: '00:30',
                     licenseurl: 'https://creativecommons.org/licenses/publicdomain/',
                     downloads: 1,
                     date: new Date().toISOString().split('T')[0]
                   };
                   
-                  // Use data URL for the test card pattern
-                  const testCardDataUrl = 'data:image/svg+xml;base64,' + btoa(`
-                    <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg">
-                      <defs>
-                        <pattern id="testPattern" x="0" y="0" width="80" height="60" patternUnits="userSpaceOnUse">
-                          <rect width="80" height="60" fill="#000"/>
-                          <rect width="10" height="60" fill="#dc2626"/>
-                          <rect x="10" width="10" height="60" fill="#22c55e"/>
-                          <rect x="20" width="10" height="60" fill="#3b82f6"/>
-                          <rect x="30" width="10" height="60" fill="#06b6d4"/>
-                          <rect x="40" width="10" height="60" fill="#ec4899"/>
-                          <rect x="50" width="10" height="60" fill="#eab308"/>
-                          <rect x="60" width="10" height="60" fill="#fff"/>
-                          <rect x="70" width="10" height="60" fill="#6b7280"/>
-                        </pattern>
-                      </defs>
-                      <rect width="100%" height="100%" fill="url(#testPattern)"/>
-                      <circle cx="320" cy="240" r="50" fill="white" fill-opacity="0.9"/>
-                      <circle cx="320" cy="240" r="40" fill="none" stroke="black" stroke-width="2"/>
-                      <line x1="320" y1="200" x2="320" y2="280" stroke="black" stroke-width="2"/>
-                      <line x1="280" y1="240" x2="360" y2="240" stroke="black" stroke-width="2"/>
-                    </svg>
-                  `);
-
-                  addToQueue(testCardVideo, testCardDataUrl);
+                  addToQueue(testCardVideo, '/test-card.mp4');
                   
                   toast({
-                    title: "Test Card Added to Queue",
-                    description: "Professional test card pattern added to playback queue",
+                    title: "Test Card Added",
+                    description: "SMPTE test pattern added to queue",
                   });
+                  
                   setTestCardOpen(false);
                 }}
                 className={`${themeClasses.accentBg} text-white hover:opacity-90`}
@@ -573,8 +579,29 @@ export function ToolsPanel() {
       </Dialog>
       
       {/* Text Tool Dialog */}
-      <Dialog open={textToolOpen} onOpenChange={setTextToolOpen}>
-        <DialogContent className={`max-w-md max-h-[85vh] overflow-y-auto ${themeClasses.bg} ${themeClasses.border}`}>
+      <Dialog 
+        open={textToolOpen} 
+        onOpenChange={(open) => {
+          setTextToolOpen(open);
+          // Ensure focus is properly managed when dialog closes
+          if (!open) {
+            setTimeout(() => {
+              // Return focus to document body to prevent focus trapping
+              if (document.activeElement && document.activeElement !== document.body) {
+                (document.activeElement as HTMLElement).blur();
+              }
+            }, 100);
+          }
+        }} 
+        modal={true}
+      >
+        <DialogContent 
+          className={`max-w-md max-h-[85vh] overflow-y-auto ${themeClasses.bg} ${themeClasses.border}`}
+          onInteractOutside={(e) => {
+            // Allow interaction outside to prevent focus trapping issues
+            e.preventDefault();
+          }}
+        >
           <DialogHeader>
             <DialogTitle className={`${themeClasses.text} flex items-center gap-2`}>
               <Type size={16} />

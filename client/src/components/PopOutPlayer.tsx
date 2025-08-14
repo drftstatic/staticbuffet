@@ -14,7 +14,16 @@ interface PopOutPlayerProps {
 }
 
 export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
-  const { brandSkin, queueItems, currentQueueIndex, isPlaying } = useStore();
+  const { 
+    brandSkin, 
+    queueItems, 
+    currentQueueIndex, 
+    isPlaying,
+    nextTrack,
+    previousTrack,
+    setVideoEffects,
+    videoEffects
+  } = useStore();
   const { toast } = useToast();
   const windowCheckInterval = useRef<NodeJS.Timeout>();
   
@@ -46,6 +55,223 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
       default:
         return 'text-blue-400 hover:bg-blue-400/10';
     }
+  };
+
+  // Effect presets for keyboard shortcuts
+  const applyPreset = (preset: string) => {
+    switch (preset) {
+      case 'cyberpunk':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 120,
+          contrast: 140,
+          saturation: 150,
+          hue: 180,
+          chromaticAberration: 30,
+          scanlines: true,
+        });
+        break;
+      case 'vintage':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 90,
+          contrast: 110,
+          saturation: 80,
+          sepia: 40,
+          blur: 1,
+        });
+        break;
+      case 'glitch':
+        setVideoEffects({
+          ...videoEffects,
+          glitchIntensity: 50,
+          chromaticAberration: 60,
+          datamosh: true,
+          pixelate: 30,
+        });
+        break;
+      case 'noir':
+        setVideoEffects({
+          ...videoEffects,
+          grayscale: 100,
+          contrast: 150,
+          brightness: 80,
+        });
+        break;
+      case 'vortex':
+        setVideoEffects({
+          ...videoEffects,
+          rotate: 180,
+          scaleX: 120,
+          scaleY: 80,
+          blur: 2,
+          brightness: 130,
+          contrast: 160,
+          saturation: 200,
+          hue: 120,
+          chromaticAberration: 40,
+          pixelate: 15,
+        });
+        break;
+      case 'portal':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 80,
+          contrast: 200,
+          saturation: 50,
+          hue: -60,
+          invert: 30,
+          sepia: 20,
+          chromaticAberration: 80,
+          glitchIntensity: 60,
+          scaleX: 150,
+          scaleY: 150,
+        });
+        break;
+      case 'fractal':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 140,
+          contrast: 180,
+          saturation: 250,
+          hue: 240,
+          blur: 1,
+          scaleX: 110,
+          scaleY: 110,
+          rotate: 45,
+          chromaticAberration: 25,
+          pixelate: 8,
+        });
+        break;
+      case 'timewarp':
+        setVideoEffects({
+          ...videoEffects,
+          brightness: 110,
+          contrast: 130,
+          saturation: 120,
+          hue: 30,
+          blur: 3,
+          sepia: 40,
+          scaleX: 95,
+          scaleY: 105,
+          rotate: -15,
+          glitchIntensity: 35,
+        });
+        break;
+    }
+  };
+
+  // Handle keyboard commands from pop-out window
+  const handleKeyboardCommand = (keyCode: string, modifiers: { ctrlKey: boolean; metaKey: boolean; altKey: boolean; shiftKey: boolean }) => {
+    if (!currentVideo) return;
+
+    switch (keyCode) {
+      case 'Space':
+        // Toggle play/pause via video element in pop-out
+        if (globalPopOutWindow && !globalPopOutWindow.closed) {
+          const video = globalPopOutWindow.document.querySelector('video') as HTMLVideoElement;
+          if (video) {
+            if (video.paused) {
+              video.play();
+            } else {
+              video.pause();
+            }
+          }
+        }
+        toast({
+          title: isPlaying ? "Video Paused" : "Video Playing",
+          description: `${currentVideo.title}`,
+        });
+        break;
+      case 'ArrowLeft':
+        // Seek backward
+        if (globalPopOutWindow && !globalPopOutWindow.closed) {
+          const video = globalPopOutWindow.document.querySelector('video') as HTMLVideoElement;
+          if (video) {
+            video.currentTime = Math.max(0, video.currentTime - 10);
+          }
+        }
+        break;
+      case 'ArrowRight':
+        // Seek forward
+        if (globalPopOutWindow && !globalPopOutWindow.closed) {
+          const video = globalPopOutWindow.document.querySelector('video') as HTMLVideoElement;
+          if (video) {
+            video.currentTime = Math.min(video.duration || 0, video.currentTime + 10);
+          }
+        }
+        break;
+      case 'ArrowUp':
+        // Volume up
+        if (globalPopOutWindow && !globalPopOutWindow.closed) {
+          const video = globalPopOutWindow.document.querySelector('video') as HTMLVideoElement;
+          if (video) {
+            video.volume = Math.min(1, video.volume + 0.1);
+          }
+        }
+        break;
+      case 'ArrowDown':
+        // Volume down
+        if (globalPopOutWindow && !globalPopOutWindow.closed) {
+          const video = globalPopOutWindow.document.querySelector('video') as HTMLVideoElement;
+          if (video) {
+            video.volume = Math.max(0, video.volume - 0.1);
+          }
+        }
+        break;
+      case 'Digit1':
+        applyPreset('cyberpunk');
+        toast({ title: "Cyberpunk Effect Applied", description: "High contrast, neon colors" });
+        break;
+      case 'Digit2':
+        applyPreset('vintage');
+        toast({ title: "Vintage Effect Applied", description: "Warm, sepia tones" });
+        break;
+      case 'Digit3':
+        applyPreset('glitch');
+        toast({ title: "Glitch Effect Applied", description: "Digital distortion" });
+        break;
+      case 'Digit4':
+        applyPreset('noir');
+        toast({ title: "Noir Effect Applied", description: "Black and white, high contrast" });
+        break;
+      case 'Digit5':
+        applyPreset('vortex');
+        toast({ title: "Vortex Effect Applied", description: "Twisted reality" });
+        break;
+      case 'Digit6':
+        applyPreset('portal');
+        toast({ title: "Portal Effect Applied", description: "Otherworldly distortion" });
+        break;
+      case 'Digit7':
+        applyPreset('fractal');
+        toast({ title: "Fractal Effect Applied", description: "Geometric patterns" });
+        break;
+      case 'Digit8':
+        applyPreset('timewarp');
+        toast({ title: "Timewarp Effect Applied", description: "Temporal distortion" });
+        break;
+    }
+  };
+
+  // Apply video effects to pop-out video element
+  const applyEffectsToPopOutVideo = (video: HTMLVideoElement) => {
+    const filterString = `
+      brightness(${videoEffects.brightness}%) 
+      contrast(${videoEffects.contrast}%) 
+      saturate(${videoEffects.saturation}%) 
+      hue-rotate(${videoEffects.hue}deg) 
+      blur(${videoEffects.blur}px) 
+      opacity(${videoEffects.opacity}%) 
+      grayscale(${videoEffects.grayscale}%) 
+      invert(${videoEffects.invert}%) 
+      sepia(${videoEffects.sepia}%)
+    `;
+    
+    const transformString = `rotate(${videoEffects.rotate}deg) scaleX(${videoEffects.scaleX / 100}) scaleY(${videoEffects.scaleY / 100})`;
+    
+    video.style.filter = filterString;
+    video.style.transform = transformString;
   };
 
   const openPopOutPlayer = () => {
@@ -222,6 +448,12 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
             <div id="currentTrack">Track 1 of 1</div>
             <div id="trackTitle">No video loaded</div>
           </div>
+          
+          <!-- Keyboard shortcuts overlay -->
+          <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); padding: 8px 12px; border-radius: 4px; font-size: 11px; color: ${theme.text}; opacity: 0.7; pointer-events: none;">
+            Space: play/pause • ← →: seek • ↑ ↓: volume<br/>
+            1-8: effect presets • F: fullscreen
+          </div>
         </div>
       </body>
       </html>
@@ -244,6 +476,50 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
       globalPopOutWindow = null;
       setIsPopOutOpen(false);
     });
+
+    // Add keyboard shortcuts to the pop-out window
+    const setupKeyboardShortcuts = () => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        // Don't trigger shortcuts when user is typing in inputs, textareas, or contenteditable elements
+        const target = e.target as HTMLElement;
+        if (target && (
+          target.tagName === 'INPUT' || 
+          target.tagName === 'TEXTAREA' || 
+          target.tagName === 'SELECT' ||
+          target.contentEditable === 'true' ||
+          target.closest('[contenteditable="true"]')
+        )) {
+          return;
+        }
+
+        // Send keyboard command back to main window
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage({
+            type: 'KEYBOARD_COMMAND',
+            keyCode: e.code,
+            ctrlKey: e.ctrlKey,
+            metaKey: e.metaKey,
+            altKey: e.altKey,
+            shiftKey: e.shiftKey
+          }, '*');
+          e.preventDefault();
+        }
+      };
+
+      window.document.addEventListener('keydown', handleKeyDown);
+      
+      // Cleanup function
+      return () => {
+        window.document.removeEventListener('keydown', handleKeyDown);
+      };
+    };
+
+    // Set up keyboard shortcuts after DOM is ready
+    if (window.document.readyState === 'complete') {
+      setupKeyboardShortcuts();
+    } else {
+      window.addEventListener('load', setupKeyboardShortcuts);
+    }
   };
 
   const updatePopOutVideo = (popWindow: Window, data: any) => {
@@ -278,6 +554,9 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
       video.autoplay = isPlaying;
       video.crossOrigin = 'anonymous'; // Add CORS support like main player
       video.preload = 'auto'; // Match main player settings
+      
+      // Apply current video effects
+      applyEffectsToPopOutVideo(video);
       
       console.log('🎬 Creating pop-out video element:', {
         src: videoUrl,
@@ -356,6 +635,36 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
     }
   }, [isPlaying]);
 
+  // Listen for keyboard commands from pop-out window
+  useEffect(() => {
+    const handlePopOutMessage = (event: MessageEvent) => {
+      if (event.data.type === 'KEYBOARD_COMMAND') {
+        handleKeyboardCommand(event.data.keyCode, {
+          ctrlKey: event.data.ctrlKey,
+          metaKey: event.data.metaKey,
+          altKey: event.data.altKey,
+          shiftKey: event.data.shiftKey
+        });
+      }
+    };
+
+    window.addEventListener('message', handlePopOutMessage);
+    
+    return () => {
+      window.removeEventListener('message', handlePopOutMessage);
+    };
+  }, [currentVideo, isPlaying, videoEffects]);
+
+  // Update video effects in pop-out window when they change
+  useEffect(() => {
+    if (globalPopOutWindow && !globalPopOutWindow.closed) {
+      const video = globalPopOutWindow.document.querySelector('video') as HTMLVideoElement;
+      if (video) {
+        applyEffectsToPopOutVideo(video);
+      }
+    }
+  }, [videoEffects]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -403,24 +712,22 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
           }}
           variant="ghost"
           size="sm"
-          className={`flex items-center space-x-1 px-2 py-1 ${getThemeClasses()}`}
+          className={`w-8 h-8 p-0 ${getThemeClasses()}`}
           title="Open video player in separate window"
           data-testid="button-pop-out-player"
         >
           <ExternalLink size={14} />
-          <span className="text-xs">Pop Out</span>
         </Button>
       ) : (
         <Button
           onClick={closePopOut}
           variant="ghost"
           size="sm"
-          className={`flex items-center space-x-1 px-2 py-1 ${getThemeClasses()}`}
+          className={`w-8 h-8 p-0 ${getThemeClasses()}`}
           title="Close pop-out player"
           data-testid="button-close-pop-out"
         >
           <X size={14} />
-          <span className="text-xs">Close Pop-out</span>
         </Button>
       )}
     </div>

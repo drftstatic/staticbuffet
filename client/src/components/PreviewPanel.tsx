@@ -21,15 +21,24 @@ export function PreviewPanel() {
   // Fetch video URL when selected video changes
   useEffect(() => {
     if (selectedVideo && previewSource === 'selected') {
+      console.log('🎯 PreviewPanel: Fetching metadata for preview:', selectedVideo.identifier);
       setIsLoadingUrl(true);
       getVideoMetadata(selectedVideo.identifier)
         .then((metadata) => {
+          console.log('📺 PreviewPanel: Got metadata:', { 
+            identifier: selectedVideo.identifier, 
+            hasStreamUrl: !!metadata.streamUrl,
+            streamUrl: metadata.streamUrl?.substring(0, 100) + '...'
+          });
           if (metadata.streamUrl) {
             setSelectedVideoUrl(metadata.streamUrl);
+          } else {
+            console.warn('⚠️ PreviewPanel: No streamUrl in metadata');
+            setSelectedVideoUrl(null);
           }
         })
         .catch((error) => {
-          console.error('Failed to get video metadata for preview:', error);
+          console.error('❌ PreviewPanel: Failed to get video metadata for preview:', error);
           setSelectedVideoUrl(null);
         })
         .finally(() => {
@@ -50,16 +59,38 @@ export function PreviewPanel() {
         } : null;
       case 'queue':
         const nextVideo = queueItems[currentQueueIndex + 1];
-        return nextVideo ? { 
-          ...nextVideo.video, 
-          videoUrl: nextVideo.videoUrl 
-        } : null;
+        if (nextVideo) {
+          // Queue items already have the videoUrl, unlike search results
+          return {
+            identifier: nextVideo.identifier,
+            title: nextVideo.title,
+            creator: nextVideo.creator,
+            videoUrl: nextVideo.videoUrl
+          };
+        }
+        return null;
       default:
         return null;
     }
   };
 
   const previewVideo = getPreviewVideo();
+  
+  // Debug logging
+  useEffect(() => {
+    console.log('🎯 PreviewPanel state:', {
+      previewSource,
+      hasSelectedVideo: !!selectedVideo,
+      selectedVideoId: selectedVideo?.identifier,
+      selectedVideoUrl,
+      isLoadingUrl,
+      hasPreviewVideo: !!previewVideo,
+      previewVideoUrl: previewVideo?.videoUrl?.substring(0, 50) + '...',
+      queueLength: queueItems.length,
+      currentQueueIndex,
+      hasNextInQueue: !!(queueItems[currentQueueIndex + 1])
+    });
+  }, [previewSource, selectedVideo, selectedVideoUrl, isLoadingUrl, previewVideo, queueItems, currentQueueIndex]);
 
   return (
     <div className="space-y-1 p-2">

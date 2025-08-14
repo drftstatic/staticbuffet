@@ -57,6 +57,7 @@ interface AppStore extends AppState {
   bringPanelToFront: (panel: keyof FloatingPanelStates) => void;
   setFloatingPanelVisible: (panel: keyof FloatingPanelStates, visible: boolean) => void;
   setFloatingPanelMinimized: (panel: keyof FloatingPanelStates, minimized: boolean) => void;
+  generateAutoLayout: () => void;
   resetToDefaultLayout: () => void;
   
   // Adaptive color actions
@@ -81,15 +82,16 @@ interface AppStore extends AppState {
 }
 
 export const useStore = create<AppStore>((set, get) => ({
-  // Initial state
-  brandSkin: 'testcard',
-  isAsciiMode: false,
-  isBlondieGeometryMode: false,
-  isResizableMode: true,
-  panelSizes: [30, 40, 30],
-  
-  // Floating panel states
-  isFloatingMode: true,
+    // Initial state
+    brandSkin: 'testcard',
+    isAsciiMode: false,
+    isBlondieGeometryMode: false,
+    isHulksterMode: false,
+    isResizableMode: true,
+    panelSizes: [30, 40, 30],
+    
+    // Floating panel states
+    isFloatingMode: true,
   
   // Define default layout for reset functionality
   defaultFloatingPanelStates: {
@@ -112,11 +114,21 @@ export const useStore = create<AppStore>((set, get) => ({
       x: 580,
       y: 120,
       width: 500,
-      height: 350,
+      height: 465,
       zIndex: 1,
       isLocked: false,
       isDocked: true,
       visible: true,
+    },
+    effects: {
+      x: 1100, // To the right of player (580 + 500 + 20)
+      y: 120,  // Same Y as player
+      width: 280,
+      height: 220,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
     },
     queue: {
       x: 165,
@@ -211,8 +223,8 @@ export const useStore = create<AppStore>((set, get) => ({
       visible: false,
     },
     videoEffects: {
-      x: 1460,
-      y: 120,
+      x: 1120,
+      y: 380,
       width: 380,
       height: 450,
       zIndex: 1,
@@ -308,11 +320,21 @@ export const useStore = create<AppStore>((set, get) => ({
       x: 580,
       y: 120,
       width: 500,
-      height: 350,
+      height: 465,
       zIndex: 1,
       isLocked: false,
       isDocked: true,
       visible: true,
+    },
+    effects: {
+      x: 1100, // To the right of player (580 + 500 + 20)
+      y: 120,  // Same Y as player
+      width: 280,
+      height: 220,
+      zIndex: 1,
+      isLocked: false,
+      isDocked: false,
+      visible: false,
     },
     queue: {
       x: 165,
@@ -407,8 +429,8 @@ export const useStore = create<AppStore>((set, get) => ({
       visible: false,
     },
     videoEffects: {
-      x: 1460,
-      y: 120,
+      x: 1120,
+      y: 380,
       width: 380,
       height: 450,
       zIndex: 1,
@@ -653,14 +675,24 @@ export const useStore = create<AppStore>((set, get) => ({
   
   nextTrack: () => set((state) => {
     const nextIndex = (state.currentQueueIndex + 1) % state.queueItems.length;
-    return { currentQueueIndex: nextIndex };
+    console.log('🎵 Next track:', { from: state.currentQueueIndex, to: nextIndex, wasPlaying: state.isPlaying });
+    return { 
+      currentQueueIndex: nextIndex,
+      // Preserve playing state when changing tracks
+      isPlaying: state.isPlaying
+    };
   }),
   
   previousTrack: () => set((state) => {
     const prevIndex = state.currentQueueIndex === 0 
       ? state.queueItems.length - 1 
       : state.currentQueueIndex - 1;
-    return { currentQueueIndex: prevIndex };
+    console.log('🎵 Previous track:', { from: state.currentQueueIndex, to: prevIndex, wasPlaying: state.isPlaying });
+    return { 
+      currentQueueIndex: prevIndex,
+      // Preserve playing state when changing tracks  
+      isPlaying: state.isPlaying
+    };
   }),
 
   // Audio reactive
@@ -682,55 +714,45 @@ export const useStore = create<AppStore>((set, get) => ({
       saturation: 100,
       hue: 0,
       blur: 0,
-      sharpness: 0,
       opacity: 100,
-      invert: false,
       grayscale: 0,
+      invert: 0,
       sepia: 0,
       rotate: 0,
-      scaleX: 1,
-      scaleY: 1,
-      skewX: 0,
-      skewY: 0,
-      flipH: false,
-      flipV: false,
-      pixelate: 0,
-      edgeDetection: false,
-      emboss: false,
+      scaleX: 100,
+      scaleY: 100,
       glitchIntensity: 0,
       chromaticAberration: 0,
-      filmGrain: 0,
+      scanlines: false,
+      datamosh: false,
+      pixelate: 0,
+      intensity: 0,
+      gamma: 100,
+      exposure: 0,
+      temperature: 0,
+      tint: 0,
       vignette: 0,
-      motionBlur: 0,
-      zoom: 1,
-      kaleidoscope: 0,
-      mirror: false,
-      thermal: false,
-      night: false,
-      xray: false
+      sharpen: 0,
+      noise: 0,
+      skewX: 0,
+      skewY: 0,
+      translateX: 0,
+      translateY: 0,
     }
   }),
   resetAudioEffects: () => set({
     audioEffects: {
-      volume: 100,
+      gain: 100,
       bass: 0,
       mid: 0,
       treble: 0,
+      distortion: 0,
       reverb: 0,
       delay: 0,
-      distortion: 0,
-      compressor: false,
-      limiter: false,
-      normalize: false,
-      pitch: 0,
-      speed: 1,
-      echo: 0,
       chorus: 0,
-      flanger: 0,
-      phaser: 0,
       bitcrush: 0,
-      filter: 0,
-      stereoWidth: 100
+      lowpass: 20000,
+      highpass: 20,
     }
   }),
   
@@ -817,6 +839,207 @@ export const useStore = create<AppStore>((set, get) => ({
     },
   })),
 
+  generateAutoLayout: () => set((state) => {
+    const currentPanels = state.floatingPanelStates;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    
+    // Define toolbar width to account for it
+    const toolbarWidth = 128;
+    const toolbarPadding = 16;
+    const availableWidth = screenWidth - toolbarWidth - toolbarPadding;
+    
+    // Calculate grid-based positions for a professional layout
+    const padding = 20;
+    const headerHeight = 100; // Account for header to prevent overlap
+    const footerHeight = 60; // Account for status bar/footer to prevent overlap
+    const workArea = {
+      x: toolbarWidth + toolbarPadding + padding,
+      y: headerHeight + padding,
+      width: availableWidth - padding * 2,
+      height: screenHeight - headerHeight - footerHeight - padding * 2
+    };
+    
+    // Define panel dimensions as ratios of available space
+    const panelSizes = {
+      // Core panels (visible by default)
+      search: { w: 0.25, h: 0.6 },      // 25% width, 60% height
+      player: { w: 0.35, h: 0.55 },     // Main player - central focus
+      queue: { w: 0.65, h: 0.2 },       // Queue spans bottom
+      preview: { w: 0.22, h: 0.3 },     // Preview window - compact
+      
+      // Effects panels
+      videoEffects: { w: 0.25, h: 0.55 },
+      audioEffects: { w: 0.25, h: 0.4 },
+      presetEffects: { w: 0.22, h: 0.35 },
+      
+      // Utility panels
+      liveVideo: { w: 0.2, h: 0.3 },
+      effects: { w: 0.25, h: 0.45 },
+      keyboardShortcuts: { w: 0.28, h: 0.4 },
+    };
+    
+    // Calculate positions for a logical workflow layout
+    const col1X = workArea.x;                                    // Left column
+    const col2X = workArea.x + workArea.width * 0.27;          // Search results / controls
+    const col3X = workArea.x + workArea.width * 0.54;          // Main player area  
+    const col4X = workArea.x + workArea.width * 0.77;          // Effects/preview
+    
+    const row1Y = workArea.y;                                   // Top row
+    const row2Y = workArea.y + workArea.height * 0.35;         // Mid row
+    const row3Y = workArea.y + workArea.height * 0.65;         // Lower row
+    const row4Y = workArea.y + workArea.height * 0.8;          // Bottom row
+    
+    // Define position templates but preserve existing visibility and other states
+    const positionTemplates = {
+      // === MAIN WORKFLOW ===
+      search: {
+        x: col1X,
+        y: row1Y,
+        width: Math.floor(workArea.width * panelSizes.search.w),
+        height: Math.floor(workArea.height * panelSizes.search.h) - 10, // Added 10px compensation
+      },
+      
+      player: {
+        x: col2X,
+        y: row1Y,
+        width: Math.floor(workArea.width * panelSizes.player.w),
+        height: Math.floor(workArea.height * panelSizes.player.h) - 10, // Added 10px compensation
+      },
+      
+      preview: {
+        x: col4X,
+        y: row1Y,
+        width: Math.floor(workArea.width * panelSizes.preview.w),
+        height: Math.floor(workArea.height * panelSizes.preview.h) - 10, // Added 10px compensation
+      },
+      
+      queue: {
+        x: col1X,
+        y: row4Y,
+        width: Math.floor(workArea.width * panelSizes.queue.w),
+        height: Math.floor(workArea.height * panelSizes.queue.h) - 10, // Added 10px compensation
+      },
+      
+      // === EFFECTS PANELS ===
+      videoEffects: {
+        x: col4X,
+        y: row2Y,
+        width: Math.floor(workArea.width * panelSizes.videoEffects.w),
+        height: Math.floor(workArea.height * panelSizes.videoEffects.h) - 10, // Added 10px compensation
+      },
+      
+      audioEffects: {
+        x: col4X,
+        y: row3Y + 20, // Slight offset from video effects
+        width: Math.floor(workArea.width * panelSizes.audioEffects.w),
+        height: Math.floor(workArea.height * panelSizes.audioEffects.h) - 10, // Added 10px compensation
+      },
+      
+      presetEffects: {
+        x: col1X,
+        y: row2Y,
+        width: Math.floor(workArea.width * panelSizes.presetEffects.w),
+        height: Math.floor(workArea.height * panelSizes.presetEffects.h) - 10, // Added 10px compensation
+      },
+      
+      // === UTILITY PANELS ===
+      liveVideo: {
+        x: col3X,
+        y: row2Y + 100,
+        width: Math.floor(workArea.width * panelSizes.liveVideo.w),
+        height: Math.floor(workArea.height * panelSizes.liveVideo.h) - 10, // Added 10px compensation
+      },
+      
+      effects: {
+        x: col3X,
+        y: row1Y,
+        width: Math.floor(workArea.width * panelSizes.effects.w),
+        height: Math.floor(workArea.height * panelSizes.effects.h) - 10, // Added 10px compensation
+      },
+      
+      keyboardShortcuts: {
+        x: Math.floor(screenWidth * 0.5 - (workArea.width * panelSizes.keyboardShortcuts.w) / 2), // Center horizontally
+        y: Math.floor(screenHeight * 0.3),
+        width: Math.floor(workArea.width * panelSizes.keyboardShortcuts.w),
+        height: Math.floor(workArea.height * panelSizes.keyboardShortcuts.h) - 10, // Added 10px compensation
+      },
+      
+      // === LESS USED PANELS ===
+      recordSet: {
+        x: col1X,
+        y: row3Y,
+        width: 240,
+        height: 140,
+      },
+      
+      loopControls: {
+        x: col2X,
+        y: row3Y,
+        width: 200,
+        height: 120,
+      },
+      
+      mediaControls: {
+        x: col2X + 50,
+        y: row2Y + 50,
+        width: 280,
+        height: 180,
+      },
+      
+      popOutPlayer: {
+        x: Math.floor(screenWidth * 0.3),
+        y: Math.floor(screenHeight * 0.25),
+        width: Math.min(500, Math.floor(screenWidth * 0.4)),
+        height: Math.floor((Math.min(500, Math.floor(screenWidth * 0.4))) * 0.75), // 4:3 aspect ratio
+      },
+      
+      geometry: {
+        x: col3X - 50,
+        y: row2Y,
+        width: 320,
+        height: 480,
+      },
+      
+      resultsGrid: {
+        x: Math.floor(screenWidth * 0.2),
+        y: Math.floor(screenHeight * 0.15),
+        width: Math.floor(screenWidth * 0.6),
+        height: Math.floor(screenHeight * 0.7),
+      },
+      
+      emergencyMix: {
+        x: col1X,
+        y: row3Y + 50,
+        width: 320,
+        height: 220,
+      },
+      
+      luckyDip: {
+        x: col2X + 100,
+        y: row3Y + 30,
+        width: 280,
+        height: 160,
+      },
+    };
+    
+    // Create new panel states preserving existing visibility and other properties
+    const newPanelStates = { ...currentPanels };
+    
+    Object.keys(positionTemplates).forEach(panelKey => {
+      const panel = panelKey as keyof FloatingPanelStates;
+      if (newPanelStates[panel] && positionTemplates[panel]) {
+        // Only update position and size, preserve all other properties
+        newPanelStates[panel] = {
+          ...newPanelStates[panel],
+          ...positionTemplates[panel]
+        };
+      }
+    });
+    
+    return { floatingPanelStates: newPanelStates };
+  }),
+
   resetToDefaultLayout: () => set((state) => ({
     floatingPanelStates: JSON.parse(JSON.stringify(state.defaultFloatingPanelStates)),
   })),
@@ -832,3 +1055,10 @@ export const useStore = create<AppStore>((set, get) => ({
   
   getLiveStream: () => get().liveStream.stream,
 }));
+
+// Apply auto layout on initial load after a brief delay
+setTimeout(() => {
+  if (typeof window !== 'undefined') {
+    useStore.getState().generateAutoLayout();
+  }
+}, 100);

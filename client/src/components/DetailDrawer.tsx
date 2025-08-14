@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { X, Download, Plus } from 'lucide-react';
+import { X, Download, Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
 import { getVideoMetadata } from '@/lib/archive-api';
 import { LicenseBadge } from './LicenseBadge';
+import { SearchErrorAnalyzer } from '@/lib/error-handler';
 
 export function DetailDrawer() {
   const { 
@@ -15,14 +16,28 @@ export function DetailDrawer() {
   
   const [metadata, setMetadata] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const loadMetadata = async () => {
+    if (!selectedVideo) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const data = await getVideoMetadata(selectedVideo.identifier);
+      setMetadata(data);
+    } catch (err) {
+      console.error('Metadata loading error:', err);
+      setError(err instanceof Error ? err : new Error(String(err)));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (selectedVideo && isDetailDrawerOpen) {
-      setLoading(true);
-      getVideoMetadata(selectedVideo.identifier)
-        .then(setMetadata)
-        .catch(console.error)
-        .finally(() => setLoading(false));
+      loadMetadata();
     }
   }, [selectedVideo, isDetailDrawerOpen]);
 
@@ -77,7 +92,43 @@ export function DetailDrawer() {
             </Button>
           </div>
 
-          {loading ? (
+          {error ? (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-start space-x-2">
+                <AlertCircle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="text-sm font-medium text-red-700 dark:text-red-300">
+                    Failed to Load Video Details
+                  </div>
+                  {(() => {
+                    const errorInfo = SearchErrorAnalyzer.analyzeError(error);
+                    return (
+                      <>
+                        <div className="text-sm text-red-600 dark:text-red-400">
+                          {errorInfo.userMessage}
+                        </div>
+                        <div className="flex justify-between items-center pt-2">
+                          <div className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded">
+                            💡 Video details from Archive.org
+                          </div>
+                          <Button
+                            onClick={loadMetadata}
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            disabled={loading}
+                          >
+                            <RefreshCw size={10} className="mr-1" />
+                            Retry
+                          </Button>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            </div>
+          ) : loading ? (
             <div className="space-y-4">
               <div className="w-full aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
               <div className="space-y-2">

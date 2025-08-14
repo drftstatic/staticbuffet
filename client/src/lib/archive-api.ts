@@ -96,70 +96,120 @@ export async function searchVideos(filters: SearchState) {
   // Set default rows if not specified (reduced for faster loading)
   params.set('rows', '25');
 
-  // Add client-side retry logic with exponential backoff
+  // Pre-cache popular queries when user is idle
+  if (cleanQuery.length > 0) {
+    queuePopularQueryPrecache(cleanQuery);
+  }
+
+  // Enhanced client-side retry logic with intelligent backoff
   let lastError;
   let result;
+  const maxRetries = 3; // Increased from 2 for better resilience
   
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`🔍 Client search attempt ${attempt}/2 - URL: /api/search?${params.toString()}`);
+      console.log(`🔍 Client search attempt ${attempt}/${maxRetries} - URL: /api/search?${params.toString()}`);
       
-      const response = await fetch(`/api/search?${params.toString()}`, {
-        signal: currentSearchController.signal,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // Add timeout to prevent hanging requests
+      const timeoutMs = 15000 + (attempt * 5000); // Progressive timeout: 15s, 20s, 25s
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       
-      if (!response.ok) {
-        // Check for rate limiting
-        if (response.status === 429) {
-          throw new Error('Rate limited - please wait a moment before searching again');
+      try {
+        const response = await fetch(`/api/search?${params.toString()}`, {
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Retry-Attempt': attempt.toString(),
+            'X-Client-Version': '2.0'
+          },
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          let errorData: any = {};
+          try {
+            errorData = await response.json();
+          } catch {
+            errorData = { error: await response.text() };
+          }
+          
+          // Enhanced error messages with server context
+          const serverError = errorData.error || 'Unknown error';
+          const suggestions = errorData.suggestions || [];
+          const errorType = errorData.type || 'unknown';
+          
+          console.error(`❌ Client search failed: ${response.status}`, {
+            error: serverError,
+            type: errorType,
+            suggestions,
+            attempt
+          });
+          
+          // Create contextual error messages
+          if (response.status === 429) {
+            throw new Error('Archive.org rate limit reached - please wait 10-15 seconds before trying again');
+          } else if (response.status === 502 || response.status === 503) {
+            throw new Error(`Archive.org servers are overloaded (${response.status}) - try again in a few moments`);
+          } else if (response.status === 400) {
+            throw new Error(`${serverError}${suggestions.length ? '. Try: ' + suggestions[0] : ''}`);
+          } else {
+            throw new Error(`${serverError} (HTTP ${response.status})`);
+          }
+        }
+      
+        result = await response.json();
+        
+        // Validate result structure
+        if (!result || typeof result !== 'object') {
+          throw new Error('Invalid response format from search API');
         }
         
-        let errorDetail = '';
-        try {
-          const errorData = await response.json();
-          errorDetail = errorData.error || errorData.message || '';
-        } catch {
-          errorDetail = await response.text();
-        }
+        console.log(`✅ Client search successful on attempt ${attempt}, found ${result.numFound || 0} results`);
+        break; // Success, exit retry loop
         
-        console.error(`❌ Client search failed: ${response.status} ${response.statusText}`, errorDetail);
-        throw new Error(`Search failed: ${response.status} ${response.statusText}${errorDetail ? '. ' + errorDetail : ''}`);
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        throw fetchError;
       }
-      
-      result = await response.json();
-      
-      // Validate result structure
-      if (!result || typeof result !== 'object') {
-        throw new Error('Invalid response format from search API');
-      }
-      
-      console.log(`Client search successful on attempt ${attempt}, found ${result.numFound || 0} results`);
-      break; // Success, exit retry loop
       
     } catch (error) {
       lastError = error;
       
-      // Don't retry if the request was aborted
-      if (error instanceof Error && error.name === 'AbortError') {
+      // Don't retry if the request was aborted by user (not timeout)
+      if (error instanceof Error && error.name === 'AbortError' && !error.message.includes('timeout')) {
         throw error;
       }
       
-      console.error(`Client search attempt ${attempt} failed:`, error instanceof Error ? error.message : error);
+      console.error(`❌ Client search attempt ${attempt} failed:`, error instanceof Error ? error.message : error);
       
-      if (attempt < 2) {
-        // Wait before retrying (short delay for client-side retries)
-        const delay = 500 * attempt;
-        console.log(`Retrying in ${delay}ms...`);
+      if (attempt < maxRetries) {
+        // Smart retry delay based on error type
+        let delay = 1000; // Base delay
+        
+        if (error instanceof Error) {
+          const errorMsg = error.message.toLowerCase();
+          if (errorMsg.includes('rate limit') || errorMsg.includes('429')) {
+            delay = 12000; // Longer delay for rate limits
+          } else if (errorMsg.includes('overloaded') || errorMsg.includes('503')) {
+            delay = 5000 * attempt; // Progressive delay for server issues
+          } else if (errorMsg.includes('timeout')) {
+            delay = 2000 * attempt; // Moderate delay for timeouts
+          } else {
+            delay = 1000 * Math.pow(2, attempt - 1); // Exponential backoff for other errors
+          }
+        }
+        
+        console.log(`⏳ Retrying search in ${delay}ms... (attempt ${attempt + 1}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
   
   if (!result) {
-    throw new Error(`Search failed after 2 attempts. Last error: ${lastError instanceof Error ? lastError.message : lastError}`);
+    const finalError = lastError instanceof Error ? lastError.message : String(lastError);
+    throw new Error(`Search failed after ${maxRetries} attempts. Archive.org may be experiencing issues. Last error: ${finalError}`);
   }
   
   // Cache the results only if we have valid data
@@ -362,4 +412,95 @@ export async function preloadThumbnail(identifier: string, signal?: AbortSignal)
     img.addEventListener('error', onError);
     img.src = thumbnailUrl;
   });
+}
+
+// Popular search queries for pre-caching
+const POPULAR_QUERIES = [
+  'nature documentary',
+  'vintage commercial',
+  'educational film',
+  'newsreel',
+  'cartoon animation',
+  'music performance',
+  'travel footage',
+  'science experiment',
+  'historical events',
+  'space exploration'
+];
+
+// Pre-cache popular queries to improve search performance
+let precacheTimer: NodeJS.Timeout | null = null;
+let precacheIndex = 0;
+
+export function queuePopularQueryPrecache(userQuery: string): void {
+  // Clear existing precache timer
+  if (precacheTimer) {
+    clearTimeout(precacheTimer);
+  }
+  
+  // Wait 5 seconds after user stops typing to start precaching
+  precacheTimer = setTimeout(() => {
+    precachePopularQueries(userQuery);
+  }, 5000);
+}
+
+async function precachePopularQueries(excludeQuery?: string): Promise<void> {
+  try {
+    // Find queries similar to user's search or use popular ones
+    const querySet = new Set(POPULAR_QUERIES);
+    
+    // Add variations of the user's query
+    if (excludeQuery && excludeQuery.length > 3) {
+      const words = excludeQuery.toLowerCase().split(' ');
+      if (words.length === 1) {
+        // Add common combinations with single words
+        querySet.add(`${words[0]} documentary`);
+        querySet.add(`vintage ${words[0]}`);
+        querySet.add(`${words[0]} history`);
+      }
+    }
+    
+    const queries = Array.from(querySet).filter(q => q !== excludeQuery);
+    
+    // Precache 3 queries maximum to avoid overwhelming Archive.org
+    for (let i = 0; i < Math.min(3, queries.length); i++) {
+      const queryIndex = (precacheIndex + i) % queries.length;
+      const query = queries[queryIndex];
+      
+      // Check if already cached
+      const cacheKey = JSON.stringify({ query, page: 1 });
+      const cached = metadataCache.get(cacheKey, 1);
+      
+      if (!cached) {
+        console.log(`🔮 Pre-caching popular query: "${query}"`);
+        
+        try {
+          // Use a minimal search to warm the cache
+          await searchVideos({
+            query,
+            page: 1,
+            yearFrom: '',
+            yearTo: '',
+            duration: 'all',
+            license: 'all',
+            sort: 'relevance',
+            sources: [],
+            allowRestrictedLicenses: false
+          });
+          
+          // Small delay between precache requests
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } catch (error) {
+          // Don't log precache errors as they're not user-facing
+          console.debug(`Precache failed for "${query}":`, error);
+        }
+      }
+    }
+    
+    // Update index for next precache cycle
+    precacheIndex = (precacheIndex + 3) % queries.length;
+    
+  } catch (error) {
+    console.debug('Precache operation failed:', error);
+  }
 }

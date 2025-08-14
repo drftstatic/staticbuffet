@@ -19,6 +19,7 @@ import { PreviewPanel } from './PreviewPanel';
 import { VideoEffectsPanel } from './VideoEffectsPanel';
 import { AudioEffectsPanel } from './AudioEffectsPanel';
 import { GeometryPanel } from './GeometryPanel';
+import { TrimControlsPanel } from './TrimControlsPanel';
 
 
 export function FloatingPanelsManager() {
@@ -197,6 +198,17 @@ export function FloatingPanelsManager() {
           brandSkin={brandSkin}
         >
           <AudioEffectsPanel />
+        </FloatingPanel>
+      </div>
+
+      {/* Effects Panel (Trim Controls) */}
+      <div className="pointer-events-auto">
+        <FloatingPanel
+          id="effects"
+          title="✂️ Trim Controls"
+          brandSkin={brandSkin}
+        >
+          <TrimControlsPanel />
         </FloatingPanel>
       </div>
 

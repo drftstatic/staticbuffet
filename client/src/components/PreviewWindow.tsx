@@ -1,20 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
 import { 
   Play, 
   Pause, 
-  SkipBack, 
-  SkipForward, 
-  Volume2, 
-  RotateCcw, 
-  Eye,
-  Monitor,
-  Maximize2,
   ArrowRight
 } from 'lucide-react';
-import { VideoPlayerSkeleton } from './SkeletonLoader';
 
 interface PreviewWindowProps {
   videoUrl?: string;
@@ -24,9 +15,7 @@ interface PreviewWindowProps {
 
 export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindowProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState([50]);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isVideoLoading, setIsVideoLoading] = useState(false);
@@ -35,15 +24,20 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
   const { 
     brandSkin,
     videoEffects,
-    audioEffects,
-    queueItems,
     addToQueue
   } = useStore();
 
-  // Load video when URL changes
+  // Check if this is static content (images, not videos)
+  const isStaticImage = videoUrl?.endsWith('.svg') || videoUrl?.endsWith('.png') || videoUrl?.endsWith('.jpg') || videoUrl?.endsWith('.jpeg') || videoUrl?.endsWith('.gif');
+  
+  // Load video when URL changes (only for actual video content)
   useEffect(() => {
-    if (videoRef.current && videoUrl) {
-      console.log('🎬 Loading preview video:', videoUrl);
+    if (videoRef.current && videoUrl && !isStaticImage) {
+      console.log('🎬 PreviewWindow: Loading preview video:', {
+        url: videoUrl.substring(0, 100) + '...',
+        hasVideo: !!video,
+        videoIdentifier: video?.identifier
+      });
       setIsVideoLoading(true);
       setVideoLoadError(false);
       
@@ -60,7 +54,14 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
       };
 
       const handleError = (e: any) => {
-        console.error('❌ Preview video load error:', e);
+        console.error('❌ PreviewWindow: Video load error:', {
+          error: e,
+          videoUrl: videoUrl?.substring(0, 100) + '...',
+          errorCode: video.error?.code,
+          errorMessage: video.error?.message,
+          networkState: video.networkState,
+          readyState: video.readyState
+        });
         setIsVideoLoading(false);
         setVideoLoadError(true);
       };
@@ -83,17 +84,25 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
         video.removeEventListener('error', handleError);
         video.removeEventListener('timeupdate', handleTimeUpdate);
       };
+    } else if (isStaticImage) {
+      // For static content, immediately set as loaded
+      setIsVideoLoading(false);
+      setVideoLoadError(false);
+      setDuration(0); // Static images have no duration
     }
-  }, [videoUrl]);
+  }, [videoUrl, isStaticImage]);
 
-  // Apply volume changes
+  // Apply volume changes (only for video content)
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.volume = volume[0] / 100;
+    if (videoRef.current && !isStaticImage) {
+      videoRef.current.volume = 0.5; // Set default volume for preview
     }
-  }, [volume]);
+  }, [isStaticImage]);
 
   const handlePlayPause = () => {
+    // Static images can't be played/paused
+    if (isStaticImage) return;
+    
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
@@ -105,32 +114,12 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
     }
   };
 
-  const handleSeek = (value: number[]) => {
-    if (videoRef.current) {
-      const newTime = (value[0] / 100) * duration;
-      videoRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
-    }
-  };
-
-  const handleRestart = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      setCurrentTime(0);
-    }
-  };
 
   const handleCueToProgram = () => {
     if (video && videoUrl) {
       console.log('🎯 Cueing video to program output:', video.identifier);
       addToQueue(video, videoUrl, true); // Add to front of queue
     }
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const getThemeClasses = () => {
@@ -150,47 +139,88 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
     <div className={`${className}`}>
       <div className={`relative rounded-lg overflow-hidden border ${getThemeClasses()}`}>
         {isVideoLoading ? (
-          <div className="w-full h-24 flex items-center justify-center bg-black">
-            <div className="text-white/60 text-xs">Loading...</div>
+          <div className="w-full h-32 flex items-center justify-center bg-black">
+            <div className="text-white/60 text-xs">
+              Loading preview...
+              {video && <div className="text-xs mt-1 opacity-60">{video.title?.substring(0, 30)}...</div>}
+            </div>
           </div>
         ) : videoLoadError || !videoUrl ? (
-          <div className="w-full h-24 flex items-center justify-center bg-black/80 text-gray-400">
-            <p className="text-xs">{videoLoadError ? 'Failed' : 'Empty'}</p>
+          <div className="w-full h-32 flex items-center justify-center bg-black/80 text-gray-400">
+            <div className="text-center">
+              <p className="text-xs">{videoLoadError ? 'Load failed' : 'No preview'}</p>
+              {videoLoadError && videoUrl && (
+                <p className="text-xs opacity-60 mt-1">Check console for details</p>
+              )}
+              {!videoUrl && video && (
+                <p className="text-xs opacity-60 mt-1">{video.title?.substring(0, 30)}...</p>
+              )}
+            </div>
           </div>
         ) : (
           <>
-            <video
-              ref={videoRef}
-              className="w-full h-24 bg-black object-cover"
-              style={{
-                filter: `
-                  brightness(${videoEffects.brightness}%) 
-                  contrast(${videoEffects.contrast}%) 
-                  saturate(${videoEffects.saturation}%) 
-                  hue-rotate(${videoEffects.hue}deg) 
-                  blur(${videoEffects.blur}px) 
-                  opacity(${videoEffects.opacity}%) 
-                  grayscale(${videoEffects.grayscale}%) 
-                  invert(${videoEffects.invert}%) 
-                  sepia(${videoEffects.sepia}%)
-                `,
-                transform: `rotate(${videoEffects.rotate}deg) scaleX(${videoEffects.scaleX}%) scaleY(${videoEffects.scaleY}%)`
-              }}
-              muted
-              playsInline
-            />
+            {/* Handle static images */}
+            {isStaticImage ? (
+              <div className="w-full h-32 bg-black flex items-center justify-center">
+                <img 
+                  src={videoUrl} 
+                  alt="Static Preview" 
+                  className="w-full h-full object-contain"
+                  style={{
+                    filter: `
+                      brightness(${videoEffects.brightness}%) 
+                      contrast(${videoEffects.contrast}%) 
+                      saturate(${videoEffects.saturation}%) 
+                      hue-rotate(${videoEffects.hue}deg) 
+                      blur(${videoEffects.blur}px) 
+                      opacity(${videoEffects.opacity}%) 
+                      grayscale(${videoEffects.grayscale}%) 
+                      invert(${videoEffects.invert}%) 
+                      sepia(${videoEffects.sepia}%)
+                    `,
+                    transform: `rotate(${videoEffects.rotate}deg) scaleX(${videoEffects.scaleX}%) scaleY(${videoEffects.scaleY}%)`
+                  }}
+                />
+              </div>
+            ) : (
+              <video
+                ref={videoRef}
+                className="w-full h-32 bg-black object-cover"
+                style={{
+                  filter: `
+                    brightness(${videoEffects.brightness}%) 
+                    contrast(${videoEffects.contrast}%) 
+                    saturate(${videoEffects.saturation}%) 
+                    hue-rotate(${videoEffects.hue}deg) 
+                    blur(${videoEffects.blur}px) 
+                    opacity(${videoEffects.opacity}%) 
+                    grayscale(${videoEffects.grayscale}%) 
+                    invert(${videoEffects.invert}%) 
+                    sepia(${videoEffects.sepia}%)
+                  `,
+                  transform: `rotate(${videoEffects.rotate}deg) scaleX(${videoEffects.scaleX / 100}) scaleY(${videoEffects.scaleY / 100})`
+                }}
+                muted
+                playsInline
+                preload="metadata"
+                crossOrigin="anonymous"
+              />
+            )}
             
             {/* Compact Controls Overlay */}
             <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
               <div className="flex items-center space-x-2">
-                <Button
-                  onClick={handlePlayPause}
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0 text-white hover:bg-white/20 bg-black/40"
-                >
-                  {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-                </Button>
+                {/* Only show play/pause for video content */}
+                {!isStaticImage && (
+                  <Button
+                    onClick={handlePlayPause}
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0 text-white hover:bg-white/20 bg-black/40"
+                  >
+                    {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                  </Button>
+                )}
                 
                 {video && (
                   <Button
@@ -205,8 +235,8 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
               </div>
             </div>
 
-            {/* Progress Bar */}
-            {duration > 0 && (
+            {/* Progress Bar - only for video content with duration */}
+            {duration > 0 && !isStaticImage && (
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/50">
                 <div 
                   className="h-full bg-blue-500 transition-all"
