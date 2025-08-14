@@ -84,25 +84,26 @@ export default function Home() {
     }
   }, [error]);
 
-  // Preload default Atari 2600 commercial on first visit
+  // Preload default video on first visit
   useEffect(() => {
+    console.log('🔍 Checking queue length:', queueItems.length);
     // Only add if queue is empty to avoid duplicates
     if (queueItems.length === 0) {
       const defaultVideo: VideoResult = {
-        identifier: 'atari-2600-1986-television-commercial-480p',
-        title: 'Atari 2600 Television Commercial (1986)',
-        creator: 'Atari Corporation',
-        year: '1986',
-        description: 'Classic Atari 2600 television commercial from 1986',
-        duration: '0:30',
+        identifier: 'AttheEnd1946_2',
+        title: 'At the End of the Rainbow (Part II)',
+        creator: 'Handy (Jam) Organization',
+        year: '1946',
+        description: 'Sponsored film promoting ultraviolet light: its history, physics and health-giving properties.',
+        duration: '12:40',
         licenseurl: 'https://creativecommons.org/licenses/publicdomain/',
-        downloads: 50000,
-        date: '1986-01-01'
+        downloads: 28877,
+        date: '1946-01-01'
       };
 
-      const videoUrl = 'https://archive.org/download/atari-2600-1986-television-commercial-480p/atari-2600-1986-television-commercial-480p.mp4';
+      const videoUrl = '/api/video/AttheEnd1946_2/AttheEnd1946_2_edit.mp4';
       
-      console.log('🎮 Preloading default Atari 2600 commercial');
+      console.log('🎬 Preloading default video: At the End of the Rainbow');
       addToQueue(defaultVideo, videoUrl);
     }
   }, []); // Empty dependency array to run only once on mount

@@ -2,7 +2,35 @@
 
 All notable changes to Static Buffet will be documented in this file.
 
-## [Unreleased]
+## [1.0.0] - 2025-08-14
+
+### 🎉 First Stable Release
+Static Buffet v1.0.0 marks the first stable release with comprehensive video playback functionality and all core VJ features.
+
+### ✅ Video Playback System - Fully Operational
+- **Fixed Default Video**: Changed from broken Atari video to working Archive.org video (At the End of the Rainbow Part II)
+- **Enhanced Video Player**: Improved preload settings (auto instead of metadata) with crossOrigin support
+- **Robust Error Handling**: Comprehensive error catching with user feedback via toast notifications
+- **Metadata Service**: Expanded video format detection for MP4, WebM, OGV, AVI, MOV, M4V, MKV, MPEG2, Cinepack
+- **URL Resolution**: All videos now use proxy URLs (/api/video/) instead of direct Archive.org URLs
+- **Pop-out Player**: Fully functional with proper video data synchronization and theme support
+- **Easter Egg**: Fixed easter egg video URL for Marilyn Manson - Get Your Gunn
+
+### 🔧 Technical Improvements
+- **Server Streaming**: Express proxy with range request support (HTTP 206) for smooth video streaming
+- **HMR Integration**: Seamless Hot Module Replacement with Vite for development
+- **Archive.org API**: Reliable metadata fetching with fallback error handling
+- **Queue Management**: Drag-and-drop video adding with metadata validation
+- **Cross-Platform**: Full compatibility across desktop and mobile browsers
+
+### 🎨 User Experience
+- **10 Complete Themes**: Test Card, Waffle House, EBN Hijack, Heavy Metal, NWO Hollywood, D-Generation X, Max Headroom, Mario, Dakota, Blondie
+- **Responsive Design**: Professional VJ workstation interface with floating panels
+- **Real-time Search**: Archive.org search with advanced filters and licensing options
+- **Professional Features**: Queue management, crossfades, trim points, export capabilities
+
+### 📋 Previous Development (Pre-v1.0)
+All previous versions (0.1.0-alpha through 0.7.2) were pre-release development versions with inconsistent numbering. This release consolidates all functionality into the first stable version.
 
 ## [0.7.2] - 2025-01-11
 

@@ -1,33 +1,40 @@
 # Static Buffet Version Information
 
-## Current Version: 0.1.0-alpha
-**Release Date:** January 11, 2025  
-**Status:** Pre-release Alpha
+## Current Version: 1.0.0
+**Release Date:** August 14, 2025  
+**Status:** Stable Release
 
 ## Version History
 
-### 0.1.0-alpha (January 11, 2025)
-- Initial alpha release
-- Core VJ functionality implemented
-- Ten complete visual themes
-- Enhanced drag-and-drop system
-- Professional license badge system
-- Keyboard shortcuts and saved searches
-- Video preloading and performance optimizations
-- Complete theme integration across all components
+### 1.0.0 (August 14, 2025) - First Stable Release
+- **Fully Operational Video Playback**: Complete video streaming pipeline with Archive.org integration
+- **10 Professional Themes**: Test Card, Waffle House, EBN Hijack, Heavy Metal, NWO Hollywood, D-Generation X, Max Headroom, Mario, Dakota, Blondie
+- **Advanced Queue Management**: Drag-and-drop reordering, crossfades, trim points, loop controls
+- **Pop-out Player**: Independent video player window with full synchronization
+- **Real-time Search**: Archive.org API with licensing filters and metadata display
+- **Professional VJ Interface**: Floating panels, responsive design, keyboard shortcuts
+- **Export Capabilities**: JSON playlists and M3U generation with full attribution
+- **Audio-Reactive Features**: Web Audio API integration for beat-detected mixing
+- **Robust Error Handling**: Comprehensive error catching with user feedback
+- **Cross-Platform Compatibility**: Works on desktop and mobile browsers
+
+### Pre-v1.0 Development (0.1.0-alpha through 0.7.2)
+- Development versions with inconsistent numbering
+- Core functionality implementation and testing
+- Theme development and UI/UX refinement
+- Archive.org API integration development
 
 ## Version Schema
-Following semantic versioning with alpha designation:
-- Major.Minor.Patch-stage
-- 0.x.x-alpha: Pre-release development versions
-- 1.0.0: First stable release
-- Patch increments: Bug fixes and minor enhancements
-- Minor increments: New features and improvements
-- Major increments: Breaking changes or major architecture updates
+Following semantic versioning:
+- Major.Minor.Patch
+- 1.0.0: First stable release (this version)
+- Patch increments (1.0.x): Bug fixes and minor enhancements
+- Minor increments (1.x.0): New features and improvements
+- Major increments (2.0.0): Breaking changes or major architecture updates
 
 ## Upcoming Releases
-- 0.2.0-alpha: Database integration and user accounts
-- 0.3.0-alpha: Advanced effects and audio processing
-- 0.4.0-alpha: Live streaming and broadcast features
-- 1.0.0-beta: Feature-complete beta release
-- 1.0.0: Stable production release
+- 1.1.0: Database integration and user accounts
+- 1.2.0: Advanced effects and audio processing enhancements
+- 1.3.0: Live streaming and broadcast features
+- 1.4.0: Multi-channel mixing and advanced timeline
+- 2.0.0: Next major version with potential architecture updates

@@ -151,11 +151,13 @@ export function Player() {
         video.load();
         
         // Set new source and properties
+        console.log('🔗 Setting video src to:', currentVideo.videoUrl);
         video.src = currentVideo.videoUrl;
         video.volume = volume[0] / 100;
         video.muted = false;
         video.autoplay = false;
-        video.preload = 'metadata';
+        video.preload = 'auto'; // Changed from 'metadata' to 'auto' for better loading
+        video.crossOrigin = 'anonymous'; // Add CORS support
       }
       
       // Preload next video in queue
@@ -170,6 +172,8 @@ export function Player() {
           readyState: video.readyState,
           currentSrc: video.currentSrc
         });
+        setIsVideoLoading(false);
+        setVideoLoadError(false);
       };
       
       const handleLoadedData = () => {
@@ -191,6 +195,9 @@ export function Player() {
           src: video.src
         });
         
+        setIsVideoLoading(false);
+        setVideoLoadError(true);
+        
         // Network state meanings:
         // 0 = NETWORK_EMPTY, 1 = NETWORK_IDLE, 2 = NETWORK_LOADING, 3 = NETWORK_NO_SOURCE
         if (video.networkState === 3) {
@@ -202,16 +209,33 @@ export function Player() {
         if (video.error?.code === 4) {
           console.error('❌ MEDIA_ERR_SRC_NOT_SUPPORTED - Browser cannot play this video format');
         }
+        
+        // Show toast notification for user feedback
+        toast({
+          title: "Video Load Error",
+          description: `Failed to load video: ${video.error?.message || 'Unknown error'}`,
+          variant: "destructive"
+        });
       };
       
       const handleLoadStart = () => console.log('🔄 Video load started');
       const handleProgress = () => console.log('📊 Video loading progress...');
+      const handleSuspend = () => console.log('⏸️ Video loading suspended');
+      const handleStalled = () => console.log('🚫 Video loading stalled');
+      const handleWaiting = () => console.log('⏳ Video waiting for data');
+      const handleAbort = () => console.log('❌ Video loading aborted');
+      const handleEmptied = () => console.log('🗑️ Video element emptied');
       
       video.addEventListener('canplay', handleCanPlay);
       video.addEventListener('loadeddata', handleLoadedData);
       video.addEventListener('error', handleError);
       video.addEventListener('loadstart', handleLoadStart);
       video.addEventListener('progress', handleProgress);
+      video.addEventListener('suspend', handleSuspend);
+      video.addEventListener('stalled', handleStalled);
+      video.addEventListener('waiting', handleWaiting);
+      video.addEventListener('abort', handleAbort);
+      video.addEventListener('emptied', handleEmptied);
       
       // Load the video
       video.load();
@@ -222,6 +246,11 @@ export function Player() {
         video.removeEventListener('error', handleError);
         video.removeEventListener('loadstart', handleLoadStart);
         video.removeEventListener('progress', handleProgress);
+        video.removeEventListener('suspend', handleSuspend);
+        video.removeEventListener('stalled', handleStalled);
+        video.removeEventListener('waiting', handleWaiting);
+        video.removeEventListener('abort', handleAbort);
+        video.removeEventListener('emptied', handleEmptied);
       };
     }
   }, [currentVideo]);
@@ -607,7 +636,11 @@ export function Player() {
           src: videoRef.current.src,
           volume: videoRef.current.volume,
           muted: videoRef.current.muted,
-          readyState: videoRef.current.readyState
+          readyState: videoRef.current.readyState,
+          networkState: videoRef.current.networkState,
+          paused: videoRef.current.paused,
+          currentTime: videoRef.current.currentTime,
+          duration: videoRef.current.duration || 'unknown'
         });
         
         await videoRef.current.play();

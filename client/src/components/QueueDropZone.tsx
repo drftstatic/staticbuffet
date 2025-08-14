@@ -45,10 +45,10 @@ export function QueueDropZone({ className = '' }: QueueDropZoneProps) {
         const metadata = await getVideoMetadata(video.identifier);
         let videoUrl = metadata.streamUrl;
         if (!videoUrl && metadata.videoFile) {
-          videoUrl = `https://archive.org/download/${video.identifier}/${metadata.videoFile.name}`;
+          videoUrl = `/api/video/${video.identifier}/${encodeURIComponent(metadata.videoFile.name)}`;
         } else if (!videoUrl) {
-          videoUrl = `https://archive.org/download/${video.identifier}/${video.identifier}.mp4`;
-          console.warn(`⚠️ Using fallback URL for ${video.identifier}: ${videoUrl}`);
+          console.error(`❌ No streamUrl available for ${video.identifier}`);
+          throw new Error(`Video ${video.identifier} has no playable stream URL. Please try a different video.`);
         }
         
         addToQueue(video, videoUrl);

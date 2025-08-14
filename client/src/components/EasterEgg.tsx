@@ -20,7 +20,7 @@ export function EasterEgg({ isActive, onClose }: EasterEggProps) {
       licenseurl: 'https://creativecommons.org/publicdomain/mark/1.0/',
     };
     
-    const videoUrl = 'https://archive.org/download/TheVistaGroup-MarilynMansonGetYourGunnonBeavisandButthead/Marilyn%20Manson%20-%20Get%20Your%20Gunn%20on%20Beavis%20and%20Butthead%20VHS%20%E2%80%A2%2060%20FPS%201996.mp4';
+    const videoUrl = '/api/video/TheVistaGroup-MarilynMansonGetYourGunnonBeavisandButthead/Marilyn Manson - Get Your Gunn on Beavis and Butthead VHS • 60 FPS 1996.ia.mp4';
     
     // Add to front of queue (will be at index 0)
     addToQueue(easterEggVideo, videoUrl, true);
