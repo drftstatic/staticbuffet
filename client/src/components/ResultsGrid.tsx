@@ -85,19 +85,10 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
       
       let videoUrl = metadata.streamUrl;
       
-      // If no streamUrl from metadata, try to construct a better fallback
+      // If no streamUrl from metadata, this is a server-side issue that should be fixed
       if (!videoUrl) {
-        console.warn(`⚠️ No streamUrl from metadata for ${video.identifier}, constructing fallback`);
-        // Try common video file patterns as fallback
-        const commonFormats = [
-          `${video.identifier}.mp4`,
-          `${video.identifier}.ogv`,
-          `${video.identifier}_512kb.mp4`,
-          `${video.identifier}.mov`
-        ];
-        // Use the first common format as fallback, but mark it as potentially problematic
-        videoUrl = `https://archive.org/download/${video.identifier}/${commonFormats[0]}`;
-        console.warn(`🔧 Using fallback URL: ${videoUrl}`);
+        console.error(`❌ No streamUrl from metadata for ${video.identifier}. This video cannot be played.`);
+        throw new Error(`Video ${video.identifier} has no playable stream URL. Please try a different video.`);
       }
       
       console.log('🎥 Final video URL:', videoUrl);

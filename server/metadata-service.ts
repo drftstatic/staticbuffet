@@ -45,12 +45,22 @@ export class MetadataService {
         name.endsWith('.ogv') ||
         name.endsWith('.avi') ||
         name.endsWith('.mov') ||
+        name.endsWith('.m4v') ||
+        name.endsWith('.mkv') ||
+        name.endsWith('.wmv') ||
+        name.endsWith('.flv') ||
         format.includes('mp4') ||
         format.includes('mpeg4') ||
+        format.includes('mpeg2') ||
+        format.includes('mpeg') ||
         format.includes('h.264') ||
         format.includes('h264') ||
         format.includes('webm') ||
-        format.includes('ogg video')
+        format.includes('ogg video') ||
+        format.includes('cinepack') ||
+        format.includes('hires') ||
+        format.toLowerCase() === 'mpeg4' ||
+        format.toLowerCase() === 'mpeg2'
       );
     });
 

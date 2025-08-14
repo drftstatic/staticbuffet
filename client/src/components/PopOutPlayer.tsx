@@ -95,6 +95,19 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
     // Create the pop-out player HTML
     createPopOutPlayerContent(newWindow);
 
+    // Send current video immediately if one exists
+    if (currentVideo) {
+      setTimeout(() => {
+        newWindow.postMessage({
+          type: 'VIDEO_UPDATE',
+          videoUrl: currentVideo.videoUrl,
+          title: currentVideo.title,
+          queueIndex: currentQueueIndex,
+          queueLength: queueItems.length
+        }, '*');
+      }, 500); // Small delay to ensure DOM is ready
+    }
+
     toast({
       title: "Pop-out Player Opened",
       description: "Video player is now in a separate window.",
@@ -227,8 +240,9 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
 
     window.addEventListener('message', handleMessage);
     window.addEventListener('beforeunload', () => {
+      globalPopOutWindowOpen = false;
+      globalPopOutWindow = null;
       setIsPopOutOpen(false);
-      setPopOutWindow(null);
     });
   };
 
@@ -262,6 +276,32 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
       video.src = videoUrl;
       video.controls = true;
       video.autoplay = isPlaying;
+      video.crossOrigin = 'anonymous'; // Add CORS support like main player
+      video.preload = 'auto'; // Match main player settings
+      
+      console.log('🎬 Creating pop-out video element:', {
+        src: videoUrl,
+        controls: true,
+        autoplay: isPlaying
+      });
+      
+      // Add error handling to pop-out video
+      video.addEventListener('error', (e) => {
+        console.error('❌ Pop-out video error:', {
+          error: e,
+          errorCode: video.error?.code,
+          errorMessage: video.error?.message,
+          src: video.src
+        });
+      });
+      
+      video.addEventListener('loadstart', () => {
+        console.log('🔄 Pop-out video load started');
+      });
+      
+      video.addEventListener('canplay', () => {
+        console.log('✅ Pop-out video can play');
+      });
       
       videoContainer.appendChild(video);
     } else {
@@ -289,6 +329,13 @@ export function PopOutPlayer({ currentVideo }: PopOutPlayerProps) {
   // Send updates to pop-out window when video changes
   useEffect(() => {
     if (globalPopOutWindow && !globalPopOutWindow.closed && currentVideo) {
+      console.log('📺 Sending video update to pop-out:', {
+        videoUrl: currentVideo.videoUrl,
+        title: currentVideo.title,
+        queueIndex: currentQueueIndex,
+        queueLength: queueItems.length
+      });
+      
       globalPopOutWindow.postMessage({
         type: 'VIDEO_UPDATE',
         videoUrl: currentVideo.videoUrl,

@@ -30,10 +30,10 @@ export function DetailDrawer() {
     if (selectedVideo && metadata) {
       let videoUrl = metadata.streamUrl;
       if (!videoUrl && metadata.videoFile) {
-        videoUrl = `https://archive.org/download/${selectedVideo.identifier}/${metadata.videoFile.name}`;
+        videoUrl = `/api/video/${selectedVideo.identifier}/${encodeURIComponent(metadata.videoFile.name)}`;
       } else if (!videoUrl) {
-        videoUrl = `https://archive.org/download/${selectedVideo.identifier}/${selectedVideo.identifier}.mp4`;
-        console.warn(`⚠️ Using fallback URL for ${selectedVideo.identifier}: ${videoUrl}`);
+        console.error(`❌ No streamUrl available for ${selectedVideo.identifier}`);
+        throw new Error(`Video ${selectedVideo.identifier} has no playable stream URL. Please try a different video.`);
       }
       addToQueue(selectedVideo, videoUrl);
       setDetailDrawerOpen(false);
