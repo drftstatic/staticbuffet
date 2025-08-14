@@ -34,6 +34,22 @@ export default defineConfig({
     // Build to a top-level `dist` directory for compatibility with platforms like Vercel.
     outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
+    // Bundle optimization
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor bundle for better caching
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-slider'],
+          utils: ['clsx', 'tailwind-merge', 'date-fns']
+        }
+      }
+    },
+    // Performance optimizations
+    target: 'es2020',
+    minify: 'esbuild',
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000
   },
   server: {
     fs: {

@@ -93,8 +93,8 @@ export async function searchVideos(filters: SearchState) {
     params.set('allowRestrictedLicenses', filters.allowRestrictedLicenses.toString());
   }
   
-  // Set default rows if not specified
-  params.set('rows', '50');
+  // Set default rows if not specified (reduced for faster loading)
+  params.set('rows', '25');
 
   // Add client-side retry logic with exponential backoff
   let lastError;

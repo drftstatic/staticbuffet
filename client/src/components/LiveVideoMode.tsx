@@ -18,7 +18,7 @@ export function LiveVideoMode() {
   const [selectedCamera, setSelectedCamera] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { brandSkin, videoEffects, addToQueue } = useStore();
+  const { brandSkin, videoEffects, addToQueue, setLiveStream, liveStream } = useStore();
 
   // Get available cameras
   useEffect(() => {
@@ -70,6 +70,9 @@ export function LiveVideoMode() {
       streamRef.current = stream;
       videoRef.current.srcObject = stream;
       
+      // Store the stream in global state so Player can access it
+      setLiveStream(stream, true, selectedCamera);
+      
       await videoRef.current.play();
       setIsLiveMode(true);
       
@@ -113,6 +116,9 @@ export function LiveVideoMode() {
       videoRef.current.srcObject = null;
     }
     
+    // Clear the stream from global state
+    setLiveStream(null, false, '');
+    
     setIsLiveMode(false);
     
     toast({
@@ -152,8 +158,10 @@ export function LiveVideoMode() {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
+      // Clear the stream from global state on unmount
+      setLiveStream(null, false, '');
     };
-  }, []);
+  }, [setLiveStream]);
 
   return (
     <div className={`rounded-lg p-4 transition-all duration-300 ${
