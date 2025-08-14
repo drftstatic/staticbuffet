@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -32,6 +32,16 @@ export function TextGenerator() {
   const { toast } = useToast();
   const { textOverlay, setTextOverlay, setTextOverlayVisible, brandSkin } = useStore();
   const themeClasses = getThemeClasses(brandSkin);
+  
+  // Clean up any potential interference on unmount
+  useEffect(() => {
+    return () => {
+      // Ensure no focus issues remain
+      if (document.activeElement && document.activeElement !== document.body) {
+        (document.activeElement as HTMLElement).blur();
+      }
+    };
+  }, []);
   
   // Initialize with default settings if no overlay exists
   const textSettings = textOverlay || {
@@ -160,9 +170,16 @@ export function TextGenerator() {
       return;
     }
 
+    console.log('🎯 TextGenerator: Adding text overlay to program output:', {
+      text: textSettings.text,
+      settings: textSettings
+    });
+
     // Set the text overlay in the store and make it visible
     setTextOverlay(textSettings);
     setTextOverlayVisible(true);
+    
+    console.log('✅ TextGenerator: Text overlay state updated');
     
     toast({
       title: "Text Overlay Added",

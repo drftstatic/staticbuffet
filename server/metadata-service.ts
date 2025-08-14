@@ -1,6 +1,8 @@
-import { db } from './db';
-import { metadataCacheSchema, type MetadataCache } from '@shared/schema';
+import { db, isDatabaseAvailable } from './db';
+import { metadataCacheSchema, metadataCacheTable, type MetadataCache } from '@shared/schema';
+import { eq, lt } from 'drizzle-orm';
 import crypto from 'crypto';
+import { nanoid } from 'nanoid';
 
 const CACHE_TTL_HOURS = 48; // 48 hours cache TTL
 
@@ -156,10 +158,53 @@ export class MetadataService {
 
     // Check database cache
     try {
-      // TODO: Implement database caching for metadata.
-      // Since we don't have a database table yet, we'll return null
-      // In production, you'd query your database here
-      console.log(`📦 No database cache for ${identifier} (table not implemented yet)`);
+      const dbResult = await db
+        .select()
+        .from(metadataCacheTable)
+        .where(eq(metadataCacheTable.identifier, identifier))
+        .limit(1);
+
+      if (dbResult.length > 0) {
+        const cached = dbResult[0];
+        
+        // Check if cache has expired
+        if (new Date(cached.expiresAt) > new Date()) {
+          console.log(`🗄️ Database cache hit for ${identifier}`);
+          
+          // Update access statistics
+          await db
+            .update(metadataCacheTable)
+            .set({ 
+              accessCount: cached.accessCount + 1,
+              lastAccessed: new Date()
+            })
+            .where(eq(metadataCacheTable.id, cached.id));
+
+          // Convert to MetadataCache format
+          const cacheData: MetadataCache = {
+            id: cached.id,
+            identifier: cached.identifier,
+            metadata: cached.metadata as any,
+            files: cached.files as any,
+            selectedFile: cached.selectedFile as any,
+            streamUrl: cached.streamUrl,
+            cachedAt: cached.cachedAt.toISOString(),
+            expiresAt: cached.expiresAt.toISOString(),
+          };
+
+          // Add to memory cache for faster subsequent access
+          this.cacheStore.set(identifier, cacheData);
+          
+          return cacheData;
+        } else {
+          console.log(`⏰ Database cache expired for ${identifier}, removing`);
+          await db
+            .delete(metadataCacheTable)
+            .where(eq(metadataCacheTable.identifier, identifier));
+        }
+      }
+
+      console.log(`📦 No database cache for ${identifier}`);
       return null;
     } catch (error) {
       console.error('Error fetching from database cache:', error);
@@ -177,11 +222,56 @@ export class MetadataService {
 
     // Save to database
     try {
-      // TODO: Implement database caching for metadata.
-      // In production, you'd insert/update your database here
-      console.log(`💾 Would save ${identifier} to database (table not implemented yet)`);
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + CACHE_TTL_HOURS);
+
+      await db
+        .insert(metadataCacheTable)
+        .values({
+          id: nanoid(),
+          identifier: cache.identifier,
+          metadata: cache.metadata,
+          files: cache.files,
+          selectedFile: cache.selectedFile,
+          streamUrl: cache.streamUrl,
+          expiresAt: expiresAt,
+          accessCount: 1,
+        })
+        .onConflictDoUpdate({
+          target: metadataCacheTable.identifier,
+          set: {
+            metadata: cache.metadata,
+            files: cache.files,
+            selectedFile: cache.selectedFile,
+            streamUrl: cache.streamUrl,
+            expiresAt: expiresAt,
+            accessCount: 1,
+            lastAccessed: new Date(),
+          },
+        });
+
+      console.log(`💾 Saved ${identifier} to database cache`);
     } catch (error) {
       console.error('Error saving to database cache:', error);
+    }
+  }
+
+  /**
+   * Clean up expired cache entries from database
+   */
+  async cleanupExpiredCache(): Promise<void> {
+    if (isDatabaseAvailable && db) {
+      try {
+        const result = await db
+          .delete(metadataCacheTable)
+          .where(lt(metadataCacheTable.expiresAt, new Date()));
+        
+        console.log(`🧹 Cleaned up expired metadata cache entries from database`);
+      } catch (error) {
+        console.error('Error cleaning up expired metadata cache:', error);
+      }
+    } else {
+      console.log(`🧹 Skipping database cleanup - database not available`);
     }
   }
 

@@ -8,6 +8,8 @@ import { useEasterEgg } from "@/hooks/use-easter-egg";
 import { DragDropProvider } from "@/components/DragDropProvider";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import { AsciiModeIndicator } from "@/components/AsciiModeIndicator";
+import { CommandPalette } from "@/components/CommandPalette";
+import { useCommandPalette } from "@/hooks/use-command-palette";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 
@@ -22,6 +24,7 @@ function Router() {
 
 function App() {
   const { isEasterEggActive, closeEasterEgg } = useEasterEgg();
+  const { isOpen: isCommandPaletteOpen, close: closeCommandPalette } = useCommandPalette();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -32,6 +35,7 @@ function App() {
           <EasterEgg isActive={isEasterEggActive} onClose={closeEasterEgg} />
           <KeyboardShortcuts />
           <AsciiModeIndicator />
+          <CommandPalette isOpen={isCommandPaletteOpen} onClose={closeCommandPalette} />
         </DragDropProvider>
       </TooltipProvider>
     </QueryClientProvider>

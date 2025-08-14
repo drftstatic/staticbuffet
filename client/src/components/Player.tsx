@@ -3,7 +3,7 @@ import { useAdaptiveColors } from '@/hooks/use-adaptive-colors';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize, Scissors, Square, RotateCcw } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize, Scissors } from 'lucide-react';
 import { PopOutPlayer } from '@/components/PopOutPlayer';
 import { videoPreloader } from '@/lib/video-preloader';
 import { VideoPlayerSkeleton } from './SkeletonLoader';
@@ -30,9 +30,6 @@ export function Player() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isVideoLoading, setIsVideoLoading] = useState(false);
   const [videoLoadError, setVideoLoadError] = useState(false);
-  const [showTrimControls, setShowTrimControls] = useState(false);
-  const [trimInTime, setTrimInTime] = useState(0);
-  const [trimOutTime, setTrimOutTime] = useState(0);
 
   const { 
     queueItems, 
@@ -50,86 +47,31 @@ export function Player() {
     setTextOverlayVisible,
     updateQueueItem,
     liveStream,
-    getLiveStream
+    getLiveStream,
+    isPlaying: storeIsPlaying,
+    setPlaying
   } = useStore();
 
   const currentVideo = queueItems[currentQueueIndex];
   const { toast } = useToast();
   
+  // Track only the essential video properties that should trigger a reload
+  const currentVideoKey = currentVideo ? `${currentVideo.identifier}-${currentVideo.videoUrl}` : null;
+  const [lastLoadedVideoKey, setLastLoadedVideoKey] = useState<string | null>(null);
+  
   // Initialize adaptive colors
   const { analyzeCurrentFrame } = useAdaptiveColors(videoRef);
 
-  // Helper functions for time conversion
-  const timeToSeconds = (timeStr: string): number => {
-    const parts = timeStr.split(':').map(Number);
-    if (parts.length === 2) {
-      return parts[0] * 60 + parts[1]; // MM:SS
-    } else if (parts.length === 3) {
-      return parts[0] * 3600 + parts[1] * 60 + parts[2]; // HH:MM:SS
-    }
-    return 0;
-  };
-
-  const secondsToTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // Update trim times when video changes
-  useEffect(() => {
-    if (currentVideo) {
-      setTrimInTime(timeToSeconds(currentVideo.trimIn));
-      setTrimOutTime(timeToSeconds(currentVideo.trimOut));
-    }
-  }, [currentVideo?.id]);
-
-  // Trim control functions
-  const setTrimIn = () => {
-    const newTrimIn = Math.min(currentTime, trimOutTime - 1);
-    setTrimInTime(newTrimIn);
-    if (currentVideo) {
-      updateQueueItem(currentVideo.id, { trimIn: secondsToTime(newTrimIn) });
-      toast({
-        title: "Trim In Set",
-        description: `In point set to ${secondsToTime(newTrimIn)}`,
-      });
-    }
-  };
-
-  const setTrimOut = () => {
-    const newTrimOut = Math.max(currentTime, trimInTime + 1);
-    setTrimOutTime(newTrimOut);
-    if (currentVideo) {
-      updateQueueItem(currentVideo.id, { trimOut: secondsToTime(newTrimOut) });
-      toast({
-        title: "Trim Out Set",
-        description: `Out point set to ${secondsToTime(newTrimOut)}`,
-      });
-    }
-  };
-
-  const resetTrim = () => {
-    setTrimInTime(0);
-    setTrimOutTime(duration);
-    if (currentVideo) {
-      updateQueueItem(currentVideo.id, { 
-        trimIn: '00:00', 
-        trimOut: secondsToTime(duration) 
-      });
-      toast({
-        title: "Trim Reset",
-        description: "In/Out points reset to full duration",
-      });
-    }
-  };
 
   useEffect(() => {
-    if (videoRef.current && currentVideo) {
-      console.log('🎬 Loading video:', {
+    // Only reload video if the actual video (identifier + URL) has changed
+    if (videoRef.current && currentVideo && currentVideoKey !== lastLoadedVideoKey) {
+      console.log('🎬 Loading video (actual change detected):', {
         identifier: currentVideo.identifier,
         url: currentVideo.videoUrl,
-        title: currentVideo.title
+        title: currentVideo.title,
+        previousKey: lastLoadedVideoKey,
+        newKey: currentVideoKey
       });
       
       const video = videoRef.current;
@@ -194,10 +136,23 @@ export function Player() {
           videoWidth: video.videoWidth,
           videoHeight: video.videoHeight,
           readyState: video.readyState,
-          currentSrc: video.currentSrc
+          currentSrc: video.currentSrc,
+          shouldAutoResume: storeIsPlaying
         });
         setIsVideoLoading(false);
         setVideoLoadError(false);
+        
+        // Auto-resume playback if store indicates we should be playing
+        if (storeIsPlaying && video.paused) {
+          console.log('🎬 Auto-resuming playback for track change');
+          video.play().then(() => {
+            setIsPlaying(true);
+            console.log('✅ Auto-resume successful');
+          }).catch(err => {
+            console.error('❌ Auto-resume failed:', err);
+            setPlaying(false); // Update store if auto-resume fails
+          });
+        }
       };
       
       const handleLoadedData = () => {
@@ -264,6 +219,9 @@ export function Player() {
       // Load the video
       video.load();
       
+      // Mark this video as loaded
+      setLastLoadedVideoKey(currentVideoKey);
+      
       return () => {
         video.removeEventListener('canplay', handleCanPlay);
         video.removeEventListener('loadeddata', handleLoadedData);
@@ -276,8 +234,16 @@ export function Player() {
         video.removeEventListener('abort', handleAbort);
         video.removeEventListener('emptied', handleEmptied);
       };
+    } else if (currentVideo) {
+      // Video hasn't changed, just log that we're skipping reload
+      console.log('📝 Video metadata updated (no reload needed):', {
+        identifier: currentVideo.identifier,
+        loop: currentVideo.loop,
+        trimIn: currentVideo.trimIn,
+        trimOut: currentVideo.trimOut
+      });
     }
-  }, [currentVideo, liveStream, volume, getLiveStream]);
+  }, [currentVideo, currentVideoKey, lastLoadedVideoKey, liveStream, volume, getLiveStream]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -289,13 +255,26 @@ export function Player() {
     video.addEventListener('timeupdate', updateTime);
     video.addEventListener('loadedmetadata', updateDuration);
     const handleEnded = () => {
+      console.log('🎬 Video ended event fired');
       const currentItem = queueItems[currentQueueIndex];
+      console.log('🔍 Current item:', { 
+        id: currentItem?.id, 
+        title: currentItem?.title, 
+        loop: currentItem?.loop,
+        timelineLoop,
+        currentQueueIndex,
+        queueLength: queueItems.length
+      });
       
       // Check if current clip should loop
       if (currentItem?.loop) {
-        console.log('🔄 Looping current clip');
+        console.log('🔄 Looping current clip - resetting to start');
         video.currentTime = 0;
-        video.play();
+        video.play().then(() => {
+          console.log('✅ Loop playback started successfully');
+        }).catch(err => {
+          console.error('❌ Loop playback failed:', err);
+        });
         return;
       }
       
@@ -308,9 +287,12 @@ export function Player() {
       
       // Normal progression to next track
       if (currentQueueIndex < queueItems.length - 1) {
+        console.log('⏭️ Moving to next track');
         nextTrack();
       } else {
+        console.log('⏹️ End of queue - stopping playback');
         setIsPlaying(false);
+        setPlaying(false); // Update store
       }
     };
     
@@ -603,25 +585,14 @@ export function Player() {
         case 'KeyT':
           if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
-            setShowTrimControls(!showTrimControls);
+            const { floatingPanelStates, setFloatingPanelVisible, bringPanelToFront } = useStore.getState();
+            const isVisible = floatingPanelStates.effects?.visible;
+            setFloatingPanelVisible('effects', !isVisible);
+            if (!isVisible) bringPanelToFront('effects');
             toast({
-              title: showTrimControls ? "Trim Controls Hidden" : "Trim Controls Shown",
-              description: showTrimControls ? "Trim controls panel closed" : "Trim controls panel opened",
+              title: isVisible ? "Trim Controls Hidden" : "Trim Controls Shown",
+              description: isVisible ? "Trim controls panel closed" : "Trim controls panel opened",
             });
-          }
-          break;
-        case 'KeyI':
-          e.preventDefault();
-          setTrimIn();
-          break;
-        case 'KeyO':
-          e.preventDefault();
-          setTrimOut();
-          break;
-        case 'KeyR':
-          if (e.ctrlKey) {
-            e.preventDefault();
-            resetTrim();
           }
           break;
         case 'KeyP':
@@ -644,12 +615,28 @@ export function Player() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen, currentVideo, isPlaying]);
 
+  // Sync local state with store state
+  useEffect(() => {
+    setIsPlaying(storeIsPlaying);
+  }, [storeIsPlaying]);
+
   const togglePlay = async () => {
     if (!videoRef.current) return;
+
+    console.log('🎬 Player: togglePlay called:', {
+      currentlyPlaying: isPlaying,
+      storeIsPlaying,
+      hasTextOverlay: !!textOverlay,
+      textOverlayVisible: isTextOverlayVisible,
+      videoSrc: videoRef.current.src?.substring(0, 50) + '...',
+      videoReadyState: videoRef.current.readyState,
+      videoPaused: videoRef.current.paused
+    });
 
     if (isPlaying) {
       videoRef.current.pause();
       setIsPlaying(false);
+      setPlaying(false); // Update store
     } else {
       try {
         // Ensure video is properly configured
@@ -669,6 +656,7 @@ export function Player() {
         
         await videoRef.current.play();
         setIsPlaying(true);
+        setPlaying(true); // Update store
         
         console.log('✓ Video started playing successfully');
         
@@ -690,6 +678,7 @@ export function Player() {
           console.log('Retrying without audio effects...');
           await videoRef.current.play();
           setIsPlaying(true);
+          setPlaying(true); // Update store
           console.log('✓ Video playing without audio effects');
         } catch (retryError) {
           console.error('❌ Retry failed:', retryError);
@@ -1097,45 +1086,6 @@ export function Player() {
                   <span className="text-white text-sm w-12">{volume[0]}%</span>
                 </div>
 
-                {/* Trim Controls in Fullscreen */}
-                {showTrimControls && currentVideo && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-center space-x-4">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={setTrimIn}
-                        className="text-green-400 hover:bg-green-500/20"
-                      >
-                        <Square className="h-4 w-4 mr-1" />
-                        Set In ({secondsToTime(trimInTime)})
-                      </Button>
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={setTrimOut}
-                        className="text-red-400 hover:bg-red-500/20"
-                      >
-                        <Square className="h-4 w-4 mr-1" />
-                        Set Out ({secondsToTime(trimOutTime)})
-                      </Button>
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={resetTrim}
-                        className="text-white hover:bg-white/20"
-                      >
-                        <RotateCcw className="h-4 w-4 mr-1" />
-                        Reset
-                      </Button>
-                    </div>
-                    <div className="text-center text-gray-300 text-sm">
-                      Duration: {secondsToTime(Math.max(0, trimOutTime - trimInTime))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Keyboard Shortcuts Hint */}
                 <div className="text-center text-gray-400 text-sm">
@@ -1211,6 +1161,20 @@ export function Player() {
               
               <div className="border-l border-gray-300 dark:border-gray-600 mx-2 h-6"></div>
               
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const { floatingPanelStates, setFloatingPanelVisible, bringPanelToFront } = useStore.getState();
+                  const isVisible = floatingPanelStates.effects?.visible;
+                  setFloatingPanelVisible('effects', !isVisible);
+                  if (!isVisible) bringPanelToFront('effects');
+                }}
+                title="Toggle trim controls panel"
+              >
+                <Scissors className="h-4 w-4" />
+              </Button>
+              
               <PopOutPlayer currentVideo={currentVideo} />
             </div>
 
@@ -1227,102 +1191,8 @@ export function Player() {
             </div>
           </div>
           
-          {/* Trim Controls */}
-          {currentVideo && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Trim Controls</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowTrimControls(!showTrimControls)}
-                  title="Toggle trim controls"
-                >
-                  <Scissors className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              {showTrimControls && (
-                <div className="space-y-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border">
-                  {/* Trim Markers on Progress Bar */}
-                  <div className="relative">
-                    <Slider
-                      value={[currentTime]}
-                      max={duration || 100}
-                      step={1}
-                      onValueChange={handleSeek}
-                      className="w-full"
-                    />
-                    {/* In/Out Point Markers */}
-                    <div 
-                      className="absolute top-0 w-1 h-6 bg-green-500 pointer-events-none"
-                      style={{ left: `${(trimInTime / (duration || 100)) * 100}%` }}
-                      title={`In: ${secondsToTime(trimInTime)}`}
-                    />
-                    <div 
-                      className="absolute top-0 w-1 h-6 bg-red-500 pointer-events-none"
-                      style={{ left: `${(trimOutTime / (duration || 100)) * 100}%` }}
-                      title={`Out: ${secondsToTime(trimOutTime)}`}
-                    />
-                  </div>
-                  
-                  {/* Trim Time Display */}
-                  <div className="flex justify-between text-xs text-gray-600">
-                    <span className="text-green-600">In: {secondsToTime(trimInTime)}</span>
-                    <span className="text-gray-500">Current: {formatTime(currentTime)}</span>
-                    <span className="text-red-600">Out: {secondsToTime(trimOutTime)}</span>
-                  </div>
-                  
-                  {/* Trim Control Buttons */}
-                  <div className="flex items-center justify-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={setTrimIn}
-                      className="text-green-600 border-green-300 hover:bg-green-50"
-                      title="Set In Point at current time"
-                    >
-                      <Square className="h-3 w-3 mr-1" />
-                      Set In
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={setTrimOut}
-                      className="text-red-600 border-red-300 hover:bg-red-50"
-                      title="Set Out Point at current time"
-                    >
-                      <Square className="h-3 w-3 mr-1" />
-                      Set Out
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={resetTrim}
-                      title="Reset to full duration"
-                    >
-                      <RotateCcw className="h-3 w-3 mr-1" />
-                      Reset
-                    </Button>
-                  </div>
-                  
-                  {/* Trimmed Duration */}
-                  <div className="text-center text-xs text-gray-500">
-                    Trimmed duration: {secondsToTime(Math.max(0, trimOutTime - trimInTime))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </>
       )}
-
-      {/* Track Info */}
-      <div className="text-center text-sm text-gray-500">
-        Track {currentQueueIndex + 1} of {queueItems.length}
-      </div>
     </div>
   );
 }

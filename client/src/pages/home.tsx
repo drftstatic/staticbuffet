@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { SearchBar } from '@/components/SearchBar';
 import { Filters } from '@/components/Filters';
 import { DetailDrawer } from '@/components/DetailDrawer';
+import { ServiceStatus } from '@/components/ServiceStatus';
 import { EffectPresetNotification } from '@/components/EffectPresetNotification';
 import { BottomHUD } from '@/components/BottomHUD';
 import { StatusBar } from '@/components/StatusBar';
@@ -84,27 +85,37 @@ export default function Home() {
     }
   }, [error]);
 
-  // Preload default video on first visit
+  // Preload local video on first visit
   useEffect(() => {
     console.log('🔍 Checking queue length:', queueItems.length);
     // Only add if queue is empty to avoid duplicates
     if (queueItems.length === 0) {
       const defaultVideo: VideoResult = {
-        identifier: 'AttheEnd1946_2',
-        title: 'At the End of the Rainbow (Part II)',
-        creator: 'Handy (Jam) Organization',
-        year: '1946',
-        description: 'Sponsored film promoting ultraviolet light: its history, physics and health-giving properties.',
-        duration: '12:40',
+        identifier: 'static-buffet-load-video',
+        title: 'Static Buffet - Load Video',
+        creator: 'Static Buffet VJ Tool',
+        year: new Date().getFullYear().toString(),
+        description: 'Local video file for Static Buffet VJ application - ready for mixing and live performance.',
+        duration: '00:00', // Duration will be detected when loaded
         licenseurl: 'https://creativecommons.org/licenses/publicdomain/',
-        downloads: 28877,
-        date: '1946-01-01'
+        downloads: 1,
+        date: new Date().toISOString().split('T')[0]
       };
 
-      const videoUrl = '/api/video/AttheEnd1946_2/AttheEnd1946_2_edit.mp4';
+      const videoUrl = '/load_video.mp4';
       
-      console.log('🎬 Preloading default video: At the End of the Rainbow');
+      console.log('🎬 Preloading local video: Static Buffet Load Video');
       addToQueue(defaultVideo, videoUrl);
+      
+      // Enable loop for the default video
+      setTimeout(() => {
+        const queueItems = useStore.getState().queueItems;
+        if (queueItems.length > 0) {
+          const firstItem = queueItems[0];
+          useStore.getState().updateQueueItem(firstItem.id, { loop: true });
+          console.log('🔄 Enabled loop for default video');
+        }
+      }, 100);
     }
   }, []); // Empty dependency array to run only once on mount
 
@@ -187,7 +198,11 @@ export default function Home() {
             {/* Left Section - Search & Filters (Scalable with window) */}
             <div className="flex flex-col items-end space-y-1 min-w-0 flex-1 ml-auto">
               <div className="w-full">
-                <SearchBar onSearch={handleSearch} isLoading={isLoading} error={error} />
+                <SearchBar onSearch={handleSearch} isLoading={isLoading} error={error} onRetry={() => refetch()} />
+              </div>
+              {/* Service Status - Compact view */}
+              <div className="w-full flex justify-end">
+                <ServiceStatus compact className="mr-2" />
               </div>
               <div className="flex flex-wrap items-center justify-end gap-2 text-xs w-full">
                 <Filters onFiltersChange={handleFiltersChange} />
