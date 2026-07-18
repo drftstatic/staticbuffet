@@ -1,9 +1,9 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useRef, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import { ResultCard } from './ResultCard';
 import { useStore } from '@/lib/store';
-import { searchVideos, getVideoMetadata, cancelCurrentSearch } from '@/lib/archive-api';
+import { getVideoMetadata } from '@/lib/archive-api';
+import { useVideoSearch } from '@/hooks/use-video-search';
 import { type VideoResult } from '@/lib/types';
 import { SearchResultsSkeleton } from './SkeletonLoader';
 import { StaggerContainer, StaggerItem } from './AnimatedTransitions';
@@ -16,9 +16,6 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
   const {
     searchState,
     searchResults,
-    setSearchResults,
-    setTotalResults,
-    setLoading,
     addToQueue,
     isLoading,
     totalResults,
@@ -37,40 +34,7 @@ export function ResultsGrid({ onVideoSelect }: ResultsGridProps) {
     if (node) observerRef.current.observe(node);
   }, [isLoading, searchResults.length, totalResults]);
 
-  const { data: searchData, error, isLoading: isQueryLoading } = useQuery({
-    queryKey: ['/api/search', searchState],
-    enabled: !!searchState.query,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    queryFn: () => searchVideos(searchState),
-  });
-
-  // Cancel search on unmount
-  useEffect(() => {
-    return () => {
-      cancelCurrentSearch();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (searchData) {
-      const newResults = (searchData as any).docs || [];
-      if (searchState.page === 1) {
-        setSearchResults(newResults);
-      } else {
-        setSearchResults([...searchResults, ...newResults]);
-      }
-      setTotalResults((searchData as any).numFound || 0);
-      setLoading(false);
-    }
-  }, [searchData]);
-
-  useEffect(() => {
-    if (error) {
-      setLoading(false);
-      console.error('Search error:', error);
-    }
-  }, [error]);
+  const { error, isLoading: isQueryLoading } = useVideoSearch();
 
   const handleAddToQueue = async (video: VideoResult) => {
     try {
