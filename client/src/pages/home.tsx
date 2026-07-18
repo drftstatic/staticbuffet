@@ -95,9 +95,6 @@ export default function Home() {
   }, []);
 
 
-  // Responsive layout hook
-  const { isMobile } = useResponsiveLayout();
-
   return (
     <ResponsiveLayoutManager>
     <div className={`h-screen w-screen flex flex-col transition-all duration-500 overflow-hidden ${

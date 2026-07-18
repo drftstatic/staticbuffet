@@ -42,7 +42,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
   return (
     <div className="flex items-center space-x-3 text-xs">
       <div className="flex items-center space-x-1">
-        <Calendar className="h-3 w-3 text-gray-300" title="Year Range" />
+        <span title="Year Range"><Calendar className="h-3 w-3 text-gray-300" /></span>
         <Select 
           value={searchState.yearFrom || '1950'} 
           onValueChange={(value) => handleFilterChange('yearFrom', value)}
@@ -88,7 +88,7 @@ export function Filters({ onFiltersChange }: FiltersProps) {
       
 
       <div className="flex items-center space-x-1">
-        <Shield className="h-3 w-3 text-gray-300" title="License" />
+        <span title="License"><Shield className="h-3 w-3 text-gray-300" /></span>
         <Select 
           value={searchState.license || 'all'} 
           onValueChange={(value) => handleFilterChange('license', value)}

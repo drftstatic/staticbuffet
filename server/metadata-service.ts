@@ -157,6 +157,9 @@ export class MetadataService {
     }
 
     // Check database cache
+    if (!isDatabaseAvailable || !db) {
+      return null;
+    }
     try {
       const dbResult = await db
         .select()
@@ -221,6 +224,9 @@ export class MetadataService {
     console.log(`💾 Saved ${identifier} to memory cache`);
 
     // Save to database
+    if (!isDatabaseAvailable || !db) {
+      return;
+    }
     try {
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + CACHE_TTL_HOURS);
@@ -253,25 +259,6 @@ export class MetadataService {
       console.log(`💾 Saved ${identifier} to database cache`);
     } catch (error) {
       console.error('Error saving to database cache:', error);
-    }
-  }
-
-  /**
-   * Clean up expired cache entries from database
-   */
-  async cleanupExpiredCache(): Promise<void> {
-    if (isDatabaseAvailable && db) {
-      try {
-        const result = await db
-          .delete(metadataCacheTable)
-          .where(lt(metadataCacheTable.expiresAt, new Date()));
-        
-        console.log(`🧹 Cleaned up expired metadata cache entries from database`);
-      } catch (error) {
-        console.error('Error cleaning up expired metadata cache:', error);
-      }
-    } else {
-      console.log(`🧹 Skipping database cleanup - database not available`);
     }
   }
 
@@ -396,11 +383,9 @@ export class MetadataService {
   }
 
   /**
-   * Clean up expired cache entries
+   * Clean up expired cache entries (memory and database)
    */
   async cleanupExpiredCache(): Promise<void> {
-    const now = new Date();
-    
     // Clean memory cache
     const entries = Array.from(this.cacheStore.entries());
     for (const [identifier, cache] of entries) {
@@ -410,8 +395,18 @@ export class MetadataService {
       }
     }
 
-    // Clean database cache (when implemented)
-    // In production, you'd run a DELETE query for expired entries
+    // Clean database cache
+    if (isDatabaseAvailable && db) {
+      try {
+        await db
+          .delete(metadataCacheTable)
+          .where(lt(metadataCacheTable.expiresAt, new Date()));
+
+        console.log(`🧹 Cleaned up expired metadata cache entries from database`);
+      } catch (error) {
+        console.error('Error cleaning up expired metadata cache:', error);
+      }
+    }
   }
 }
 
