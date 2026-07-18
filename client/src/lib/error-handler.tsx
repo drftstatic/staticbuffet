@@ -1,4 +1,5 @@
 import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 
 export interface SearchErrorInfo {
   type: 'network' | 'api' | 'rate-limit' | 'validation' | 'service-unavailable' | 'unknown';
@@ -157,14 +158,18 @@ export function useSmartErrorToast() {
       description,
       variant: errorInfo.type === 'rate-limit' ? 'default' : 'destructive',
       duration: errorInfo.type === 'rate-limit' ? 8000 : 6000,
-      action: options.allowRetry && SearchErrorAnalyzer.shouldShowRetryButton(errorInfo) ? {
-        altText: "Retry search",
-        onClick: () => {
-          if (options.onRetry) {
-            setTimeout(options.onRetry, 1000); // Brief delay before retry
-          }
-        }
-      } : undefined
+      action: options.allowRetry && SearchErrorAnalyzer.shouldShowRetryButton(errorInfo) ? (
+        <ToastAction
+          altText="Retry search"
+          onClick={() => {
+            if (options.onRetry) {
+              setTimeout(options.onRetry, 1000); // Brief delay before retry
+            }
+          }}
+        >
+          Retry
+        </ToastAction>
+      ) : undefined
     });
 
     // Return error info for further handling if needed

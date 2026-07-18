@@ -223,7 +223,7 @@ export function ToolsPanel() {
 
       const emergencyMixSettings = {
         duration: 150,
-        segmentLength: [2, 5],
+        segmentLength: [2, 5] as [number, number],
         crossfadeDuration: 0.5,
         maxClips: 10,
       };
