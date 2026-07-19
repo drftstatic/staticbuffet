@@ -90,40 +90,6 @@ export interface AudioEffects {
 }
 
 
-export interface PanelPosition {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  zIndex: number;
-  isLocked: boolean;
-  isDocked: boolean;
-  isMinimized?: boolean;
-  visible?: boolean;
-}
-
-export interface FloatingPanelStates {
-  search: PanelPosition;
-  player: PanelPosition;
-  queue: PanelPosition;
-  effects: PanelPosition;
-  liveVideo: PanelPosition;
-  recordSet: PanelPosition;
-  loopControls: PanelPosition;
-  videoEffects: PanelPosition;
-  audioEffects: PanelPosition;
-  presetEffects: PanelPosition;
-  resultsGrid: PanelPosition;
-  mediaControls: PanelPosition;
-  popOutPlayer: PanelPosition;
-  emergencyMix: PanelPosition;
-  luckyDip: PanelPosition;
-  keyboardShortcuts: PanelPosition;
-  preview: PanelPosition;
-  geometry: PanelPosition;
-}
-
-
 export interface LiveStreamState {
   isActive: boolean;
   stream: MediaStream | null;
@@ -148,10 +114,6 @@ export interface AppState {
   timelineLoop: boolean; // Loop entire timeline
   videoEffects: VideoEffects;
   audioEffects: AudioEffects;
-  isResizableMode: boolean;
-  panelSizes: number[];
-  floatingPanelStates: FloatingPanelStates;
-  isFloatingMode: boolean;
   // Text overlay state
   textOverlay: TextSettings | null;
   isTextOverlayVisible: boolean;

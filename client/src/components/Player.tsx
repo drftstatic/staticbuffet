@@ -582,19 +582,6 @@ export function Player() {
           e.preventDefault();
           applyPreset('timewarp');
           break;
-        case 'KeyT':
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            const { floatingPanelStates, setFloatingPanelVisible, bringPanelToFront } = useStore.getState();
-            const isVisible = floatingPanelStates.effects?.visible;
-            setFloatingPanelVisible('effects', !isVisible);
-            if (!isVisible) bringPanelToFront('effects');
-            toast({
-              title: isVisible ? "Trim Controls Hidden" : "Trim Controls Shown",
-              description: isVisible ? "Trim controls panel closed" : "Trim controls panel opened",
-            });
-          }
-          break;
         case 'KeyP':
           if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
@@ -1160,20 +1147,6 @@ export function Player() {
               </Button>
               
               <div className="border-l border-gray-300 dark:border-gray-600 mx-2 h-6"></div>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const { floatingPanelStates, setFloatingPanelVisible, bringPanelToFront } = useStore.getState();
-                  const isVisible = floatingPanelStates.effects?.visible;
-                  setFloatingPanelVisible('effects', !isVisible);
-                  if (!isVisible) bringPanelToFront('effects');
-                }}
-                title="Toggle trim controls panel"
-              >
-                <Scissors className="h-4 w-4" />
-              </Button>
               
               <PopOutPlayer currentVideo={currentVideo} />
             </div>

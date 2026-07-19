@@ -3,7 +3,7 @@ import { Activity, HardDrive, Film, Settings, Tv, Layers, Monitor, Volume2 } fro
 import { getThemeClasses } from '@/lib/theme-utils';
 import { useState, useEffect } from 'react';
 export function StatusBar() {
-    const { brandSkin, queueItems, searchResults, videoEffects, isPlaying, floatingPanelStates } = useStore();
+    const { brandSkin, queueItems, searchResults, videoEffects, isPlaying } = useStore();
     const [fps, setFps] = useState(30);
     const [resolution, setResolution] = useState('1080p');
     const [audioLevel, setAudioLevel] = useState(0.6);
@@ -18,8 +18,6 @@ export function StatusBar() {
         return () => clearInterval(interval);
     }, []);
     const themeClasses = getThemeClasses(brandSkin);
-    // Count visible panels
-    const visiblePanels = Object.values(floatingPanelStates).filter(panel => panel.visible).length;
     // Get current FX status
     const fxActive = videoEffects.glitchIntensity > 0 ||
         videoEffects.chromaticAberration > 0 ||
@@ -63,7 +61,6 @@ export function StatusBar() {
       {/* Right Section - Workspace Info */}
       <div className="flex items-center space-x-1">
         <Layers size={10}/>
-        <span>{visiblePanels} panels</span>
       </div>
     </div>);
 }

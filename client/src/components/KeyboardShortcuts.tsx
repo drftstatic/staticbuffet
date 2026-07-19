@@ -61,48 +61,15 @@ const shortcutGroups: ShortcutGroup[] = [
             { keys: ['Esc'], description: 'Close dialogs and panels' },
         ],
     },
-    {
-        title: 'Hidden Features 🥚',
-        shortcuts: [
-            { keys: ['etc'], description: 'Unlock Geometry Panel (type anywhere)' },
-        ],
-    },
 ];
 export function KeyboardShortcuts() {
     const [isOpen, setIsOpen] = useState(false);
-    const [typingSequence, setTypingSequence] = useState<string>('');
-    const [lastTypingTime, setLastTypingTime] = useState(0);
-    const { brandSkin, setFloatingPanelVisible } = useStore();
+    const { brandSkin } = useStore();
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             // Don't trigger shortcuts when typing in inputs
             if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
                 return;
-            }
-            // Handle typing sequence for "etc" easter egg
-            const currentTime = Date.now();
-            if (currentTime - lastTypingTime > 2000) {
-                setTypingSequence(''); // Reset if too much time has passed
-            }
-            setLastTypingTime(currentTime);
-            // Only track single letter keys (no modifiers)
-            if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
-                const newSequence = typingSequence + event.key.toLowerCase();
-                setTypingSequence(newSequence);
-                // Check for "etc" sequence
-                if (newSequence.endsWith('etc')) {
-                    event.preventDefault();
-                    setFloatingPanelVisible('geometry', true);
-                    setTypingSequence(''); // Reset sequence
-                    toast({
-                        title: "🔓 Easter Egg Unlocked!",
-                        description: "Geometry Panel is now available",
-                    });
-                }
-                // Keep sequence manageable (last 10 chars)
-                if (newSequence.length > 10) {
-                    setTypingSequence(newSequence.slice(-10));
-                }
             }
             if (event.key === '?' && !event.shiftKey) {
                 event.preventDefault();
@@ -114,7 +81,7 @@ export function KeyboardShortcuts() {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [typingSequence, lastTypingTime]);
+    }, []);
     // Global keyboard shortcut handler
     useEffect(() => {
         const handleGlobalShortcuts = (event: KeyboardEvent) => {
