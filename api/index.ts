@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { createApp } from "../server/app";
 
 // Vercel serverless entry. The whole Express app is mounted as a single
@@ -6,7 +6,7 @@ import { createApp } from "../server/app";
 // across warm invocations.
 const appPromise = createApp();
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
   const app = await appPromise;
-  return (app as unknown as (req: VercelRequest, res: VercelResponse) => void)(req, res);
+  return app(req, res);
 }
