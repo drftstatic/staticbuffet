@@ -79,7 +79,7 @@ interface AppStore extends AppState {
 
 export const useStore = create<AppStore>((set, get) => ({
     // Initial state
-    brandSkin: 'testcard',
+    brandSkin: 'ebn',
     isResizableMode: true,
     panelSizes: [30, 40, 30],
     

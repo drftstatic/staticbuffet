@@ -8,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import { getVideoMetadata } from '@/lib/archive-api';
 import { type BrandSkin } from '@/lib/types';
 
-const BRAND_SKINS: BrandSkin[] = ['testcard', 'waffle', 'ebn', 'ozzy', 'hogan', 'dx', 'maxheadroom', 'mario', 'dakota', 'blondie', 'diner'];
 
 export interface CommandPaletteProps {
   isOpen: boolean;
@@ -187,26 +186,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         toast({ title: 'Searching audio content' });
       },
       group: 'Quick Search',
-    },
-
-    // Theme & UI
-    {
-      id: 'toggle-theme',
-      title: 'Cycle Brand Skin',
-      description: 'Switch to the next theme',
-      icon: <Palette className="w-4 h-4" />,
-      keywords: ['theme', 'skin', 'brand', 'toggle', 'switch', 'cycle'],
-      action: () => {
-        const nextSkin = BRAND_SKINS[(BRAND_SKINS.indexOf(brandSkin) + 1) % BRAND_SKINS.length];
-        setBrandSkin(nextSkin);
-        onClose();
-        toast({
-          title: 'Theme changed',
-          description: `Switched to ${nextSkin} theme`
-        });
-      },
-      group: 'Appearance',
-      badge: brandSkin,
     },
 
     // Export & Tools
