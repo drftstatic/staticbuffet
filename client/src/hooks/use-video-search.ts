@@ -3,11 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useStore } from '@/lib/store';
 import { searchVideos } from '@/lib/archive-api';
 
-// Single owner of the search query. Every component that needs search data uses
-// this hook with the same query key, so React Query dedupes to one request and
-// one component tree can't cancel another's fetch.
-export function useVideoSearch() {
+interface UseVideoSearchOptions {
+  syncToStore?: boolean;
+}
+
+// Every observer uses the same query key, so React Query dedupes requests. Only
+// one observer should sync the shared query back into Zustand; otherwise each
+// mounted ResultsGrid appends the same page again.
+export function useVideoSearch({ syncToStore = false }: UseVideoSearchOptions = {}) {
   const { searchState, setSearchResults, setTotalResults, setLoading } = useStore();
+  const requestedPage = searchState.page || 1;
 
   const query = useQuery({
     queryKey: [
@@ -34,27 +39,35 @@ export function useVideoSearch() {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  const { data, error } = query;
+  const { data, error, isFetching } = query;
+
+  // Keep store-backed loading UI in step with React Query for the full request.
+  useEffect(() => {
+    if (!syncToStore) return;
+    setLoading(isFetching);
+  }, [isFetching, setLoading, syncToStore]);
 
   // Sync results into the store: replace on page 1, append on later pages
   useEffect(() => {
-    if (!data) return;
+    if (!syncToStore || !data) return;
     const docs = (data as any).docs || [];
-    if ((searchState.page || 1) > 1) {
-      setSearchResults([...useStore.getState().searchResults, ...docs]);
+    if (requestedPage > 1) {
+      const resultsByIdentifier = new Map(
+        useStore.getState().searchResults.map((video) => [video.identifier, video]),
+      );
+      docs.forEach((video: any) => resultsByIdentifier.set(video.identifier, video));
+      setSearchResults(Array.from(resultsByIdentifier.values()));
     } else {
       setSearchResults(docs);
     }
     setTotalResults((data as any).numFound || 0);
-    setLoading(false);
-  }, [data]);
+  }, [data, requestedPage, setSearchResults, setTotalResults, syncToStore]);
 
   useEffect(() => {
-    if (error) {
-      setLoading(false);
+    if (syncToStore && error) {
       console.error('Search error:', error);
     }
-  }, [error]);
+  }, [error, syncToStore]);
 
   return query;
 }
