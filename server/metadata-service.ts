@@ -1,8 +1,5 @@
-import { db, isDatabaseAvailable } from './db.js';
-import { metadataCacheSchema, metadataCacheTable, type MetadataCache } from '../shared/schema.js';
-import { eq, lt } from 'drizzle-orm';
+import { type MetadataCache } from '../shared/schema.js';
 import crypto from 'crypto';
-import { nanoid } from 'nanoid';
 
 const CACHE_TTL_HOURS = 48; // 48 hours cache TTL
 
@@ -146,120 +143,23 @@ export class MetadataService {
   }
 
   /**
-   * Get cached metadata from memory or database
+   * Get cached metadata from memory
    */
   async getCachedMetadata(identifier: string): Promise<MetadataCache | null> {
-    // Check memory cache first
     const memCache = this.cacheStore.get(identifier);
     if (memCache && this.isCacheValid(memCache)) {
       console.log(`📦 Memory cache hit for ${identifier}`);
       return memCache;
     }
-
-    // Check database cache
-    if (!isDatabaseAvailable || !db) {
-      return null;
-    }
-    try {
-      const dbResult = await db
-        .select()
-        .from(metadataCacheTable)
-        .where(eq(metadataCacheTable.identifier, identifier))
-        .limit(1);
-
-      if (dbResult.length > 0) {
-        const cached = dbResult[0];
-        
-        // Check if cache has expired
-        if (new Date(cached.expiresAt) > new Date()) {
-          console.log(`🗄️ Database cache hit for ${identifier}`);
-          
-          // Update access statistics
-          await db
-            .update(metadataCacheTable)
-            .set({ 
-              accessCount: cached.accessCount + 1,
-              lastAccessed: new Date()
-            })
-            .where(eq(metadataCacheTable.id, cached.id));
-
-          // Convert to MetadataCache format
-          const cacheData: MetadataCache = {
-            id: cached.id,
-            identifier: cached.identifier,
-            metadata: cached.metadata as any,
-            files: cached.files as any,
-            selectedFile: cached.selectedFile as any,
-            streamUrl: cached.streamUrl,
-            cachedAt: cached.cachedAt.toISOString(),
-            expiresAt: cached.expiresAt.toISOString(),
-          };
-
-          // Add to memory cache for faster subsequent access
-          this.cacheStore.set(identifier, cacheData);
-          
-          return cacheData;
-        } else {
-          console.log(`⏰ Database cache expired for ${identifier}, removing`);
-          await db
-            .delete(metadataCacheTable)
-            .where(eq(metadataCacheTable.identifier, identifier));
-        }
-      }
-
-      console.log(`📦 No database cache for ${identifier}`);
-      return null;
-    } catch (error) {
-      console.error('Error fetching from database cache:', error);
-      return null;
-    }
+    return null;
   }
 
   /**
-   * Save metadata to cache (memory and database)
+   * Save metadata to memory cache
    */
   async saveToCache(identifier: string, cache: MetadataCache): Promise<void> {
-    // Save to memory cache
     this.cacheStore.set(identifier, cache);
     console.log(`💾 Saved ${identifier} to memory cache`);
-
-    // Save to database
-    if (!isDatabaseAvailable || !db) {
-      return;
-    }
-    try {
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + CACHE_TTL_HOURS);
-
-      await db
-        .insert(metadataCacheTable)
-        .values({
-          id: nanoid(),
-          identifier: cache.identifier,
-          metadata: cache.metadata,
-          files: cache.files,
-          selectedFile: cache.selectedFile,
-          streamUrl: cache.streamUrl,
-          expiresAt: expiresAt,
-          accessCount: 1,
-        })
-        .onConflictDoUpdate({
-          target: metadataCacheTable.identifier,
-          set: {
-            metadata: cache.metadata,
-            files: cache.files,
-            selectedFile: cache.selectedFile,
-            streamUrl: cache.streamUrl,
-            expiresAt: expiresAt,
-            accessCount: 1,
-            lastAccessed: new Date(),
-          },
-        });
-
-      console.log(`💾 Saved ${identifier} to database cache`);
-    } catch (error) {
-      console.error('Error saving to database cache:', error);
-    }
   }
 
   /**
@@ -383,28 +283,14 @@ export class MetadataService {
   }
 
   /**
-   * Clean up expired cache entries (memory and database)
+   * Clean up expired cache entries
    */
   async cleanupExpiredCache(): Promise<void> {
-    // Clean memory cache
     const entries = Array.from(this.cacheStore.entries());
     for (const [identifier, cache] of entries) {
       if (!this.isCacheValid(cache)) {
         this.cacheStore.delete(identifier);
         console.log(`🗑️ Removed expired cache for ${identifier}`);
-      }
-    }
-
-    // Clean database cache
-    if (isDatabaseAvailable && db) {
-      try {
-        await db
-          .delete(metadataCacheTable)
-          .where(lt(metadataCacheTable.expiresAt, new Date()));
-
-        console.log(`🧹 Cleaned up expired metadata cache entries from database`);
-      } catch (error) {
-        console.error('Error cleaning up expired metadata cache:', error);
       }
     }
   }

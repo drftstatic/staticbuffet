@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { pgTable, text, timestamp, integer, json, boolean, index } from "drizzle-orm/pg-core";
 
 // Archive.org video metadata schema
 export const videoSchema = z.object({
@@ -131,71 +130,3 @@ export const metadataCacheSchema = z.object({
 });
 
 export type MetadataCache = z.infer<typeof metadataCacheSchema>;
-
-// Database Tables
-export const metadataCacheTable = pgTable('metadata_cache', {
-  id: text('id').primaryKey(),
-  identifier: text('identifier').notNull().unique(),
-  metadata: json('metadata').notNull(),
-  files: json('files').notNull(),
-  selectedFile: json('selected_file').notNull(),
-  streamUrl: text('stream_url').notNull(),
-  cachedAt: timestamp('cached_at').defaultNow().notNull(),
-  expiresAt: timestamp('expires_at').notNull(),
-  accessCount: integer('access_count').default(0).notNull(),
-  lastAccessed: timestamp('last_accessed').defaultNow(),
-}, (table) => ({
-  identifierIdx: index('metadata_cache_identifier_idx').on(table.identifier),
-  expiresAtIdx: index('metadata_cache_expires_at_idx').on(table.expiresAt),
-}));
-
-export const searchCacheTable = pgTable('search_cache', {
-  id: text('id').primaryKey(),
-  queryHash: text('query_hash').notNull().unique(),
-  query: text('query').notNull(),
-  filters: json('filters').notNull(),
-  results: json('results').notNull(),
-  totalResults: integer('total_results').notNull(),
-  cachedAt: timestamp('cached_at').defaultNow().notNull(),
-  expiresAt: timestamp('expires_at').notNull(),
-  hitCount: integer('hit_count').default(1).notNull(),
-  lastAccessed: timestamp('last_accessed').defaultNow(),
-}, (table) => ({
-  queryHashIdx: index('search_cache_query_hash_idx').on(table.queryHash),
-  expiresAtIdx: index('search_cache_expires_at_idx').on(table.expiresAt),
-}));
-
-export const edlSessionTable = pgTable('edl_sessions', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  startTime: timestamp('start_time').notNull(),
-  endTime: timestamp('end_time'),
-  totalDuration: text('total_duration'),
-  venue: text('venue'),
-  description: text('description'),
-  metadata: json('metadata'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-}, (table) => ({
-  nameIdx: index('edl_sessions_name_idx').on(table.name),
-  startTimeIdx: index('edl_sessions_start_time_idx').on(table.startTime),
-}));
-
-export const edlEventTable = pgTable('edl_events', {
-  id: text('id').primaryKey(),
-  sessionId: text('session_id').notNull().references(() => edlSessionTable.id, { onDelete: 'cascade' }),
-  timestamp: timestamp('timestamp').notNull(),
-  eventType: text('event_type').notNull(),
-  clipId: text('clip_id').notNull(),
-  clipTitle: text('clip_title').notNull(),
-  timecode: text('timecode').notNull(),
-  trimIn: text('trim_in').notNull(),
-  trimOut: text('trim_out').notNull(),
-  parameters: json('parameters'),
-  notes: text('notes'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => ({
-  sessionIdIdx: index('edl_events_session_id_idx').on(table.sessionId),
-  timestampIdx: index('edl_events_timestamp_idx').on(table.timestamp),
-  eventTypeIdx: index('edl_events_event_type_idx').on(table.eventType),
-}));

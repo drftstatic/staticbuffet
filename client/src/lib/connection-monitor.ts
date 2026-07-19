@@ -92,7 +92,7 @@ class ConnectionMonitor {
     if ('PerformanceObserver' in window) {
       const observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          if (entry.name.includes('/api/video/') || entry.name.includes('/api/cached-video/')) {
+          if (entry.name.includes('/api/video/')) {
             const resourceEntry = entry as PerformanceResourceTiming;
             const loadTime = resourceEntry.responseEnd - resourceEntry.requestStart;
             loadTimes.push(loadTime);
