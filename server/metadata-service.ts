@@ -1,5 +1,5 @@
-import { db, isDatabaseAvailable } from './db';
-import { metadataCacheSchema, metadataCacheTable, type MetadataCache } from '@shared/schema';
+import { db, isDatabaseAvailable } from './db.js';
+import { metadataCacheSchema, metadataCacheTable, type MetadataCache } from '../shared/schema.js';
 import { eq, lt } from 'drizzle-orm';
 import crypto from 'crypto';
 import { nanoid } from 'nanoid';

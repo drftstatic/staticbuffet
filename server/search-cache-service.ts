@@ -1,5 +1,5 @@
-import { db, isDatabaseAvailable } from './db';
-import { searchCacheTable, type SearchFilters } from '@shared/schema';
+import { db, isDatabaseAvailable } from './db.js';
+import { searchCacheTable, type SearchFilters } from '../shared/schema.js';
 import { eq, lt } from 'drizzle-orm';
 import crypto from 'crypto';
 import { nanoid } from 'nanoid';

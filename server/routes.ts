@@ -1,10 +1,9 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
-import { searchFiltersSchema } from "@shared/schema";
+import { searchFiltersSchema } from "../shared/schema.js";
 import rateLimit from "express-rate-limit";
-import { metadataService } from "./metadata-service";
-import { transcodeService } from "./transcode-service";
-import { searchCacheService } from "./search-cache-service";
+import { metadataService } from "./metadata-service.js";
+import { transcodeService } from "./transcode-service.js";
+import { searchCacheService } from "./search-cache-service.js";
 import { promises as fs } from 'fs';
 import path from 'path';
 import express from 'express';
@@ -18,19 +17,20 @@ const apiLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<void> {
   
   // Serve static files from public directory
   app.use(express.static(path.join(process.cwd(), 'public')));
   
   // Setup periodic cache cleanup (every 2 hours)
-  setInterval(async () => {
+  const cacheCleanupTimer = setInterval(async () => {
     console.log('🧹 Running scheduled cache cleanup...');
     await Promise.all([
       searchCacheService.cleanupExpiredCache(),
       metadataService.cleanupExpiredCache(),
     ]);
   }, 2 * 60 * 60 * 1000); // 2 hours
+  cacheCleanupTimer.unref();
   
   // Search Archive.org with filters
   app.get("/api/search", apiLimiter, async (req, res) => {
@@ -155,7 +155,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (let attempt = 1; attempt <= 3; attempt++) {
         try {
           console.log(`🔍 Search attempt ${attempt}/3 for query: "${filters.query}"`);
-          console.log(`📡 API URL: ${searchUrl.toString()}`);
           
           const response = await fetch(searchUrl.toString(), {
             headers: {
@@ -165,13 +164,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           if (!response.ok) {
-            const errorText = await response.text();
+            const errorText = (await response.text()).slice(0, 500);
             console.error(`❌ Archive.org API error: ${response.status} ${response.statusText}`, errorText);
             throw new Error(`Archive.org API error: ${response.status} ${response.statusText}. Response: ${errorText}`);
           }
           
           const responseText = await response.text();
-          console.log(`📥 Raw response: ${responseText.substring(0, 500)}...`);
           
           try {
             data = JSON.parse(responseText);
@@ -182,7 +180,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Check if we got valid data
           if (!data.response) {
-            console.error(`❌ Invalid response structure:`, data);
+            const responseKeys = data && typeof data === "object" ? Object.keys(data) : [];
+            console.error(`❌ Invalid response structure (keys: ${responseKeys.join(", ") || "none"})`);
             throw new Error('Invalid response structure from Archive.org API');
           }
           
@@ -205,10 +204,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!data) {
         throw new Error(`Search failed after 3 attempts. Last error: ${lastError instanceof Error ? lastError.message : lastError}`);
       }
-      
-      // Log the first few docs for debugging
-      console.log("Full API URL:", searchUrl.toString());
-      console.log("Sample docs from Archive.org:", JSON.stringify(data.response?.docs?.slice(0, 1), null, 2));
       
       // Filter and enrich docs with proper video data
       const filteredDocs = (data.response?.docs || [])
@@ -751,7 +746,4 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to get cache stats" });
     }
   });
-
-  const httpServer = createServer(app);
-  return httpServer;
 }

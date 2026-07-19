@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { createServer } from "http";
-import { createApp } from "./app";
-import { setupVite, serveStatic, log } from "./vite";
+import { createApp } from "./app.js";
+import { setupVite, serveStatic, log } from "./vite.js";
 
 // Local / self-hosted entry point. On Vercel the app is served by
 // api/index.ts instead, which imports the same createApp() factory.

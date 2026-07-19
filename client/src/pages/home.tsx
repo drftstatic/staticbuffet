@@ -42,8 +42,10 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
 
-  // Search is owned by useVideoSearch; it dedupes with ResultsGrid and syncs the store
-  const { isLoading, error, refetch } = useVideoSearch();
+  // Home is the single observer that syncs the shared query into the store.
+  // ResultsGrid observers still receive the deduped query state without
+  // appending the same result page more than once.
+  const { isLoading, error, refetch } = useVideoSearch({ syncToStore: true });
 
   // Preload local video on first visit
   useEffect(() => {

@@ -37,11 +37,16 @@ export default defineConfig({
     // Bundle optimization
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Separate vendor bundle for better caching
-          vendor: ['react', 'react-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-slider'],
-          utils: ['clsx', 'tailwind-merge', 'date-fns']
+        manualChunks(id) {
+          if (id.includes("/node_modules/react/") || id.includes("/node_modules/react-dom/") || id.includes("/node_modules/scheduler/")) {
+            return "vendor";
+          }
+          if (id.includes("/node_modules/@radix-ui/")) {
+            return "ui";
+          }
+          if (id.includes("/node_modules/clsx/") || id.includes("/node_modules/tailwind-merge/") || id.includes("/node_modules/date-fns/")) {
+            return "utils";
+          }
         }
       }
     },
