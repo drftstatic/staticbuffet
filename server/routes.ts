@@ -155,7 +155,6 @@ export async function registerRoutes(app: Express): Promise<void> {
       for (let attempt = 1; attempt <= 3; attempt++) {
         try {
           console.log(`🔍 Search attempt ${attempt}/3 for query: "${filters.query}"`);
-          console.log(`📡 API URL: ${searchUrl.toString()}`);
           
           const response = await fetch(searchUrl.toString(), {
             headers: {
@@ -165,13 +164,12 @@ export async function registerRoutes(app: Express): Promise<void> {
           });
           
           if (!response.ok) {
-            const errorText = await response.text();
+            const errorText = (await response.text()).slice(0, 500);
             console.error(`❌ Archive.org API error: ${response.status} ${response.statusText}`, errorText);
             throw new Error(`Archive.org API error: ${response.status} ${response.statusText}. Response: ${errorText}`);
           }
           
           const responseText = await response.text();
-          console.log(`📥 Raw response: ${responseText.substring(0, 500)}...`);
           
           try {
             data = JSON.parse(responseText);
@@ -182,7 +180,8 @@ export async function registerRoutes(app: Express): Promise<void> {
           
           // Check if we got valid data
           if (!data.response) {
-            console.error(`❌ Invalid response structure:`, data);
+            const responseKeys = data && typeof data === "object" ? Object.keys(data) : [];
+            console.error(`❌ Invalid response structure (keys: ${responseKeys.join(", ") || "none"})`);
             throw new Error('Invalid response structure from Archive.org API');
           }
           
@@ -205,10 +204,6 @@ export async function registerRoutes(app: Express): Promise<void> {
       if (!data) {
         throw new Error(`Search failed after 3 attempts. Last error: ${lastError instanceof Error ? lastError.message : lastError}`);
       }
-      
-      // Log the first few docs for debugging
-      console.log("Full API URL:", searchUrl.toString());
-      console.log("Sample docs from Archive.org:", JSON.stringify(data.response?.docs?.slice(0, 1), null, 2));
       
       // Filter and enrich docs with proper video data
       const filteredDocs = (data.response?.docs || [])
