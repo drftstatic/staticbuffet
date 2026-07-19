@@ -42,18 +42,26 @@ export function useVideoSearch({ syncToStore = false }: UseVideoSearchOptions = 
   const { data, error, isFetching } = query;
 
   // Keep store-backed loading UI in step with React Query for the full request.
+  // Reset on teardown so the global flag can't stay stuck at true if the
+  // syncing observer unmounts while a request is in flight.
   useEffect(() => {
     if (!syncToStore) return;
     setLoading(isFetching);
+    return () => setLoading(false);
   }, [isFetching, setLoading, syncToStore]);
 
-  // Sync results into the store: replace on page 1, append on later pages
+  // Sync results into the store: replace on page 1, append on later pages.
+  // The server only returns docs with identifiers, but cached or hand-edited
+  // payloads may not honor that, so drop identifier-less entries before keying.
   useEffect(() => {
     if (!syncToStore || !data) return;
-    const docs = (data as any).docs || [];
+    const docs = (((data as any).docs || []) as any[]).filter((video) => video?.identifier);
     if (requestedPage > 1) {
       const resultsByIdentifier = new Map(
-        useStore.getState().searchResults.map((video) => [video.identifier, video]),
+        useStore
+          .getState()
+          .searchResults.filter((video) => video?.identifier)
+          .map((video) => [video.identifier, video]),
       );
       docs.forEach((video: any) => resultsByIdentifier.set(video.identifier, video));
       setSearchResults(Array.from(resultsByIdentifier.values()));
