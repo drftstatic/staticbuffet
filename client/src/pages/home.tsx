@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Tv, Info, Move, HelpCircle } from 'lucide-react';
+import { Tv, Move, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SearchBar } from '@/components/SearchBar';
 import { Filters } from '@/components/Filters';
@@ -8,7 +8,6 @@ import { ServiceStatus } from '@/components/ServiceStatus';
 import { EffectPresetNotification } from '@/components/EffectPresetNotification';
 import { BottomHUD } from '@/components/BottomHUD';
 import { StatusBar } from '@/components/StatusBar';
-import { StreamlinedWelcome } from '@/components/StreamlinedWelcome';
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { FloatingPanelsManager } from '@/components/FloatingPanelsManager';
 import { DevicePrompt } from '@/components/DevicePrompt';
@@ -19,11 +18,6 @@ import { useStore } from '@/lib/store';
 import { getTextClasses, getThemeClasses } from '@/lib/theme-utils';
 import { useVideoSearch } from '@/hooks/use-video-search';
 import { type VideoResult } from '@/lib/types';
-import { FirstRunTour } from '@/components/FirstRunTour';
-import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
-
-import { useResponsiveLayout } from '@/hooks/use-responsive-layout';
-import { FadeTransition, SlideTransition, ThemeTransition } from '@/components/AnimatedTransitions';
 
 export default function Home() {
   const {
@@ -94,7 +88,6 @@ export default function Home() {
 
 
   return (
-    <ResponsiveLayoutManager>
     <div className={`h-screen w-screen flex flex-col transition-all duration-500 overflow-hidden ${
         brandSkin === 'testcard'
         ? 'testcard-gradient testcard-grid'
@@ -209,18 +202,6 @@ export default function Home() {
               {/* Controls */}
               <div className="flex items-center space-x-2 pt-1">
                 <ThemeSelector />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    // Show welcome modal
-                    (window as any).showStaticBuffetWelcome?.();
-                  }}
-                  className={`p-2 ${getThemeClasses(brandSkin).hover}`}
-                  title="Welcome Guide"
-                >
-                  <Info size={16} className={getThemeClasses(brandSkin).accent} />
-                </Button>
                 <AboutDialog>
                   <Button
                     variant="ghost"
@@ -276,12 +257,6 @@ export default function Home() {
         <DevicePrompt />
       </div>
 
-      {/* Streamlined Modals - consolidated */}
-      <StreamlinedWelcome />
-      <FirstRunTour />
-      
-      {/* Mario Pipe Effect */}
     </div>
-    </ResponsiveLayoutManager>
   );
 }
