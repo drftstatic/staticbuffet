@@ -75,12 +75,28 @@ A VJ-focused web application for instantly searching, previewing, and queuing fr
 ### 📋 Version 1.0 Status
 This is the first stable release of Static Buffet. All previous versions (0.1.0-alpha through 0.7.2) were pre-release development versions with inconsistent numbering. Version 1.0.0 represents a fully functional, production-ready VJ application.
 
-### Production Build
+### Production Build (self-hosted)
+
+Runs the full Express server, including the disk-backed video cache and transcoding:
 
 ```bash
 npm run build
 npm start
 ```
+
+## \ud83d\ude80 Deploying to Vercel
+
+The app deploys to Vercel as a static frontend plus a serverless function:
+
+- **Frontend**: `npm run build:vercel` (`vite build`) outputs to `dist/`, served by Vercel's CDN.
+- **API**: the Express app is mounted as a single serverless function at [`api/index.ts`](api/index.ts); `vercel.json` rewrites `/api/*` to it.
+
+Configure environment variables (e.g. `DATABASE_URL`) in the Vercel dashboard rather than `.env`. Import the repo into Vercel and it builds with no extra settings.
+
+**Serverless limitations** \u2014 because Vercel functions are stateless and short-lived:
+
+- **Search and video proxying work.** Video plays through `/api/video/...`, which streams directly from Archive.org without touching disk. Very long videos may hit the function's max duration; short-to-medium clips are fine.
+- **The disk video cache, transcoding, and HLS routes do not work** (no persistent filesystem). They are opt-in extras, not on the default playback path. For those features, self-host the server instead (`npm run build && npm start`).
 
 ## \ud83c\udfb5 Audio-Reactive Features
 
