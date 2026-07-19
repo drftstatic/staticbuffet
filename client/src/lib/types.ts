@@ -132,7 +132,6 @@ export interface LiveStreamState {
 
 export interface AppState {
   brandSkin: BrandSkin;
-  isHulksterMode: boolean;
   adaptiveColorsEnabled: boolean;
   adaptiveIntensity: number;
   currentVideoPalette: any | null;

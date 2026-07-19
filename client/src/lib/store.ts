@@ -71,10 +71,6 @@ interface AppStore extends AppState {
   setPanelSizes: (sizes: number[]) => void;
   
   // Easter Egg actions
-  isAsciiMode: boolean;
-  setAsciiMode: (enabled: boolean) => void;
-  isBlondieGeometryMode: boolean;
-  setBlondieGeometryMode: (enabled: boolean) => void;
   
   // Live stream actions
   setLiveStream: (stream: MediaStream | null, isActive: boolean, selectedCameraId?: string) => void;
@@ -84,9 +80,6 @@ interface AppStore extends AppState {
 export const useStore = create<AppStore>((set, get) => ({
     // Initial state
     brandSkin: 'testcard',
-    isAsciiMode: false,
-    isBlondieGeometryMode: false,
-    isHulksterMode: false,
     isResizableMode: true,
     panelSizes: [30, 40, 30],
     
@@ -591,7 +584,6 @@ export const useStore = create<AppStore>((set, get) => ({
   setBrandSkin: (skin) => set({ brandSkin: skin }),
   
   // Easter Egg actions
-  setAsciiMode: (enabled) => set({ isAsciiMode: enabled }),
 
   // Search actions
   setSearchState: (updates) => set((state) => ({
@@ -770,9 +762,6 @@ export const useStore = create<AppStore>((set, get) => ({
   setResizableMode: (mode: boolean) => set({ isResizableMode: mode }),
   setPanelSizes: (sizes: number[]) => set({ panelSizes: sizes }),
   
-  // Blondie Geometry Mode implementation
-  setBlondieGeometryMode: (enabled) => set({ isBlondieGeometryMode: enabled }),
-
   // Floating panel actions
   setFloatingMode: (enabled) => set({ isFloatingMode: enabled }),
   

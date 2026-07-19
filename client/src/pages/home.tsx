@@ -33,10 +33,6 @@ export default function Home() {
     setDetailDrawerOpen,
     queueItems,
     addToQueue,
-    
-    // Effects modes
-    isAsciiMode,
-    isBlondieGeometryMode
   } = useStore();
 
   const [isDragging, setIsDragging] = useState(false);
@@ -100,9 +96,7 @@ export default function Home() {
   return (
     <ResponsiveLayoutManager>
     <div className={`h-screen w-screen flex flex-col transition-all duration-500 overflow-hidden ${
-        isAsciiMode 
-        ? 'ascii-terminal-mode bg-black text-green-400 font-mono'
-        : brandSkin === 'testcard'
+        brandSkin === 'testcard'
         ? 'testcard-gradient testcard-grid'
         : brandSkin === 'waffle'
         ? 'waffle-gradient waffle-texture'
@@ -120,8 +114,6 @@ export default function Home() {
         ? 'maxheadroom-gradient terminal-flicker'
         : brandSkin === 'dakota'
         ? 'dakota-gradient'
-        : brandSkin === 'blondie' && isBlondieGeometryMode
-        ? 'blondie-gradient blondie-geometry'
         : brandSkin === 'blondie'
         ? 'blondie-gradient'
         : 'brand-testcard'
@@ -187,8 +179,7 @@ export default function Home() {
               <div className="flex flex-col items-end space-y-0.5">
                 <div className="flex items-center space-x-2">
                   <h1 className={`font-bold text-lg min-w-[200px] text-right ${getTextClasses(brandSkin, 'primary')}`}>
-                    {brandSkin === 'blondie' && isBlondieGeometryMode ? 'PARALLEL BUFFET' :
-                    brandSkin === 'testcard' ? 'STATIC BUFFET' :
+                    {brandSkin === 'testcard' ? 'STATIC BUFFET' :
                     brandSkin === 'waffle' ? 'SYRUP BUFFET' :
                     brandSkin === 'ebn' ? 'HIJACK BUFFET' :
                     brandSkin === 'ozzy' ? 'METAL BUFFET' :

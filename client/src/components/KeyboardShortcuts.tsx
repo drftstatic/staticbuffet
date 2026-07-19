@@ -78,7 +78,7 @@ export function KeyboardShortcuts() {
   const [isOpen, setIsOpen] = useState(false);
   const [typingSequence, setTypingSequence] = useState<string>('');
   const [lastTypingTime, setLastTypingTime] = useState(0);
-  const { brandSkin, isAsciiMode, setAsciiMode, setFloatingPanelVisible } = useStore();
+  const { brandSkin, setFloatingPanelVisible } = useStore();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -123,22 +123,12 @@ export function KeyboardShortcuts() {
 
       if (event.key === 'Escape') {
         setIsOpen(false);
-        // Also exit ASCII mode on Escape
-        if (isAsciiMode) {
-          setAsciiMode(false);
-        }
-      }
-
-      // ASCII Terminal Mode: Ctrl+Shift+A (or Cmd+Shift+A on Mac)
-      if (event.key === 'a' && (event.ctrlKey || event.metaKey) && event.shiftKey) {
-        event.preventDefault();
-        setAsciiMode(!isAsciiMode);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [typingSequence, lastTypingTime, isAsciiMode]);
+  }, [typingSequence, lastTypingTime]);
 
   // Global keyboard shortcut handler
   useEffect(() => {
