@@ -5,12 +5,19 @@ import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
 
-// Check if we have a real database URL (not the temporary one)
-const hasRealDatabase = process.env.DATABASE_URL && 
-  !process.env.DATABASE_URL.includes('temp:temp@localhost');
+// This driver is @neondatabase/serverless, which speaks Postgres over a
+// WebSocket. Only a postgres:// URL is usable; anything else (e.g. the
+// sqlite:./local.db placeholder that used to ship in .env) would make the
+// driver try to open wss://<garbage-host> and throw ENOTFOUND. Treat those
+// as "no database" and fall back to the in-memory caches.
+const dbUrl = process.env.DATABASE_URL;
+const isPostgresUrl = !!dbUrl && /^postgres(ql)?:\/\//.test(dbUrl);
+const hasRealDatabase = isPostgresUrl && !dbUrl!.includes('temp:temp@localhost');
 
-if (!process.env.DATABASE_URL) {
+if (!dbUrl) {
   console.warn('⚠️ No DATABASE_URL provided - running without database features');
+} else if (!hasRealDatabase) {
+  console.warn('⚠️ DATABASE_URL is not a postgres:// URL - running without database features');
 }
 
 // Only create database connection if we have a real database
