@@ -1,5 +1,4 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
 import { searchFiltersSchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
 import { metadataService } from "./metadata-service";
@@ -18,19 +17,20 @@ const apiLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<void> {
   
   // Serve static files from public directory
   app.use(express.static(path.join(process.cwd(), 'public')));
   
   // Setup periodic cache cleanup (every 2 hours)
-  setInterval(async () => {
+  const cacheCleanupTimer = setInterval(async () => {
     console.log('🧹 Running scheduled cache cleanup...');
     await Promise.all([
       searchCacheService.cleanupExpiredCache(),
       metadataService.cleanupExpiredCache(),
     ]);
   }, 2 * 60 * 60 * 1000); // 2 hours
+  cacheCleanupTimer.unref();
   
   // Search Archive.org with filters
   app.get("/api/search", apiLimiter, async (req, res) => {
@@ -751,7 +751,4 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to get cache stats" });
     }
   });
-
-  const httpServer = createServer(app);
-  return httpServer;
 }
