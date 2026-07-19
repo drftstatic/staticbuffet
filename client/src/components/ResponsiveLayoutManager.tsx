@@ -8,7 +8,7 @@ interface ResponsiveLayoutManagerProps {
 
 export function ResponsiveLayoutManager({ children }: ResponsiveLayoutManagerProps) {
   const { currentLayout, panelConfig, isTransitioning } = useResponsiveLayout();
-  const { setResizableMode, panelStates } = useStore();
+  const { setResizableMode } = useStore();
 
   // Automatically adjust resizable mode based on layout
   useEffect(() => {

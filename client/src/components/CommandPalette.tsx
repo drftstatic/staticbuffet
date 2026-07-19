@@ -5,6 +5,10 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Badge } from '@/components/ui/badge';
 import { useStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { getVideoMetadata } from '@/lib/archive-api';
+import { type BrandSkin } from '@/lib/types';
+
+const BRAND_SKINS: BrandSkin[] = ['testcard', 'waffle', 'ebn', 'ozzy', 'hogan', 'dx', 'maxheadroom', 'mario', 'dakota', 'blondie', 'diner'];
 
 export interface CommandPaletteProps {
   isOpen: boolean;
@@ -24,9 +28,9 @@ interface CommandAction {
 }
 
 export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
-  const { 
-    setSearchQuery, 
-    searchState, 
+  const {
+    setSearchState,
+    searchState,
     queueItems, 
     clearQueue, 
     setDetailDrawerOpen, 
@@ -68,7 +72,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       icon: <Search className="w-4 h-4" />,
       keywords: ['clear', 'reset', 'empty', 'search'],
       action: () => {
-        setSearchQuery('');
+        setSearchState({ query: '', page: 1 });
         onClose();
         toast({ title: 'Search cleared' });
       },
@@ -120,10 +124,18 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       description: selectedVideo ? `Add "${selectedVideo.title}" to queue` : 'No video selected',
       icon: <Plus className="w-4 h-4" />,
       keywords: ['add', 'queue', 'current', 'video', 'plus'],
-      action: () => {
+      action: async () => {
         if (selectedVideo) {
-          addToQueue(selectedVideo);
-          toast({ title: 'Added to queue', description: selectedVideo.title });
+          try {
+            const metadata = await getVideoMetadata(selectedVideo.identifier);
+            if (!metadata.streamUrl) {
+              throw new Error('No playable stream URL');
+            }
+            addToQueue(selectedVideo, metadata.streamUrl);
+            toast({ title: 'Added to queue', description: selectedVideo.title });
+          } catch {
+            toast({ title: 'Could not add video', description: 'No playable stream found', variant: 'destructive' });
+          }
         } else {
           toast({ title: 'No video selected', variant: 'destructive' });
         }
@@ -157,7 +169,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       icon: <Video className="w-4 h-4" />,
       keywords: ['public', 'domain', 'free', 'creative', 'commons'],
       action: () => {
-        setSearchQuery('collection:(prelinger OR communitytexts OR opensource_movies)');
+        setSearchState({ query: 'collection:(prelinger OR communitytexts OR opensource_movies)', page: 1 });
         onClose();
         toast({ title: 'Searching public domain videos' });
       },
@@ -170,7 +182,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       icon: <Music className="w-4 h-4" />,
       keywords: ['music', 'audio', 'sound', 'songs'],
       action: () => {
-        setSearchQuery('mediatype:audio');
+        setSearchState({ query: 'mediatype:audio', page: 1 });
         onClose();
         toast({ title: 'Searching audio content' });
       },
@@ -180,21 +192,21 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     // Theme & UI
     {
       id: 'toggle-theme',
-      title: 'Toggle Brand Skin',
-      description: `Switch to ${brandSkin === 'trashteam' ? 'NULLTONE.TV' : 'Trash Team'} theme`,
+      title: 'Cycle Brand Skin',
+      description: 'Switch to the next theme',
       icon: <Palette className="w-4 h-4" />,
-      keywords: ['theme', 'skin', 'brand', 'toggle', 'switch'],
+      keywords: ['theme', 'skin', 'brand', 'toggle', 'switch', 'cycle'],
       action: () => {
-        const newSkin = brandSkin === 'trashteam' ? 'nulltone' : 'trashteam';
-        setBrandSkin(newSkin);
+        const nextSkin = BRAND_SKINS[(BRAND_SKINS.indexOf(brandSkin) + 1) % BRAND_SKINS.length];
+        setBrandSkin(nextSkin);
         onClose();
-        toast({ 
-          title: 'Theme changed', 
-          description: `Switched to ${newSkin === 'trashteam' ? 'Trash Team' : 'NULLTONE.TV'} theme` 
+        toast({
+          title: 'Theme changed',
+          description: `Switched to ${nextSkin} theme`
         });
       },
       group: 'Appearance',
-      badge: brandSkin === 'trashteam' ? 'Trash Team' : 'NULLTONE.TV',
+      badge: brandSkin,
     },
 
     // Export & Tools
@@ -276,7 +288,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       group: 'Tools',
       badge: searchResults.length > 0 ? `${searchResults.length} results` : 'No results',
     },
-  ], [queueItems, selectedVideo, searchResults, brandSkin, onClose, setSearchQuery, clearQueue, addToQueue, setDetailDrawerOpen, setBrandSkin, toast]);
+  ], [queueItems, selectedVideo, searchResults, brandSkin, onClose, setSearchState, clearQueue, addToQueue, setDetailDrawerOpen, setBrandSkin, toast]);
 
   // Filter commands based on search
   const filteredCommands = useMemo(() => {

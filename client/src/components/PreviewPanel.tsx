@@ -136,7 +136,7 @@ export function PreviewPanel() {
 
       {isExpanded && (
         <PreviewWindow
-          videoUrl={previewVideo?.videoUrl}
+          videoUrl={previewVideo?.videoUrl ?? undefined}
           video={previewVideo}
           className="w-full"
         />

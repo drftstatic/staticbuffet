@@ -2,31 +2,7 @@ import { type SearchFilters, type Video } from "@shared/schema";
 import { type SearchState } from "./types";
 import { metadataCache } from './metadata-cache';
 
-// Global abort controller for cancelling requests
-let currentSearchController: AbortController | null = null;
-let searchDebounceTimer: NodeJS.Timeout | null = null;
-
-// Debounced search function
-export function searchVideosDebounced(filters: SearchState, delay: number = 300): Promise<any> {
-  return new Promise((resolve, reject) => {
-    // Clear existing timer
-    if (searchDebounceTimer) {
-      clearTimeout(searchDebounceTimer);
-    }
-    
-    // Set new timer
-    searchDebounceTimer = setTimeout(async () => {
-      try {
-        const result = await searchVideos(filters);
-        resolve(result);
-      } catch (error) {
-        reject(error);
-      }
-    }, delay);
-  });
-}
-
-export async function searchVideos(filters: SearchState) {
+export async function searchVideos(filters: SearchState, signal?: AbortSignal) {
   console.log('searchVideos called with filters:', filters);
   
   // Validate and clean query
@@ -48,14 +24,6 @@ export async function searchVideos(filters: SearchState) {
     throw new Error('Search query contains only invalid characters');
   }
   
-  // Cancel any existing search
-  if (currentSearchController) {
-    currentSearchController.abort();
-  }
-
-  // Create new abort controller
-  currentSearchController = new AbortController();
-
   // Check cache first
   const cacheKey = JSON.stringify(filters);
   const cached = metadataCache.get(cacheKey, filters.page || 1);
@@ -96,11 +64,6 @@ export async function searchVideos(filters: SearchState) {
   // Set default rows if not specified (reduced for faster loading)
   params.set('rows', '25');
 
-  // Pre-cache popular queries when user is idle
-  if (cleanQuery.length > 0) {
-    queuePopularQueryPrecache(cleanQuery);
-  }
-
   // Enhanced client-side retry logic with intelligent backoff
   let lastError;
   let result;
@@ -113,8 +76,16 @@ export async function searchVideos(filters: SearchState) {
       // Add timeout to prevent hanging requests
       const timeoutMs = 15000 + (attempt * 5000); // Progressive timeout: 15s, 20s, 25s
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-      
+      let timedOut = false;
+      const timeoutId = setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+      }, timeoutMs);
+      // Propagate caller cancellation (e.g. React Query) into this attempt's fetch
+      const onCallerAbort = () => controller.abort();
+      signal?.addEventListener('abort', onCallerAbort);
+      if (signal?.aborted) controller.abort();
+
       try {
         const response = await fetch(`/api/search?${params.toString()}`, {
           signal: controller.signal,
@@ -124,9 +95,7 @@ export async function searchVideos(filters: SearchState) {
             'X-Client-Version': '2.0'
           },
         });
-        
-        clearTimeout(timeoutId);
-        
+
         if (!response.ok) {
           let errorData: any = {};
           try {
@@ -170,15 +139,21 @@ export async function searchVideos(filters: SearchState) {
         break; // Success, exit retry loop
         
       } catch (fetchError) {
-        clearTimeout(timeoutId);
+        // Convert a timeout abort into a retryable error; let real cancellation propagate
+        if (fetchError instanceof Error && fetchError.name === 'AbortError' && timedOut) {
+          throw new Error(`Search request timeout after ${timeoutMs}ms`);
+        }
         throw fetchError;
+      } finally {
+        clearTimeout(timeoutId);
+        signal?.removeEventListener('abort', onCallerAbort);
       }
-      
+
     } catch (error) {
       lastError = error;
-      
-      // Don't retry if the request was aborted by user (not timeout)
-      if (error instanceof Error && error.name === 'AbortError' && !error.message.includes('timeout')) {
+
+      // Caller cancelled (not a timeout) - stop immediately, React Query ignores cancellations
+      if (error instanceof Error && error.name === 'AbortError') {
         throw error;
       }
       
@@ -318,14 +293,6 @@ export function generateThumbnailUrl(identifier: string): string {
   return `https://archive.org/services/img/${identifier}`;
 }
 
-// Cancel current search
-export function cancelCurrentSearch(): void {
-  if (currentSearchController) {
-    currentSearchController.abort();
-    currentSearchController = null;
-  }
-}
-
 // Poll job status until completion
 export async function pollJobStatus(
   jobId: string, 
@@ -414,93 +381,3 @@ export async function preloadThumbnail(identifier: string, signal?: AbortSignal)
   });
 }
 
-// Popular search queries for pre-caching
-const POPULAR_QUERIES = [
-  'nature documentary',
-  'vintage commercial',
-  'educational film',
-  'newsreel',
-  'cartoon animation',
-  'music performance',
-  'travel footage',
-  'science experiment',
-  'historical events',
-  'space exploration'
-];
-
-// Pre-cache popular queries to improve search performance
-let precacheTimer: NodeJS.Timeout | null = null;
-let precacheIndex = 0;
-
-export function queuePopularQueryPrecache(userQuery: string): void {
-  // Clear existing precache timer
-  if (precacheTimer) {
-    clearTimeout(precacheTimer);
-  }
-  
-  // Wait 5 seconds after user stops typing to start precaching
-  precacheTimer = setTimeout(() => {
-    precachePopularQueries(userQuery);
-  }, 5000);
-}
-
-async function precachePopularQueries(excludeQuery?: string): Promise<void> {
-  try {
-    // Find queries similar to user's search or use popular ones
-    const querySet = new Set(POPULAR_QUERIES);
-    
-    // Add variations of the user's query
-    if (excludeQuery && excludeQuery.length > 3) {
-      const words = excludeQuery.toLowerCase().split(' ');
-      if (words.length === 1) {
-        // Add common combinations with single words
-        querySet.add(`${words[0]} documentary`);
-        querySet.add(`vintage ${words[0]}`);
-        querySet.add(`${words[0]} history`);
-      }
-    }
-    
-    const queries = Array.from(querySet).filter(q => q !== excludeQuery);
-    
-    // Precache 3 queries maximum to avoid overwhelming Archive.org
-    for (let i = 0; i < Math.min(3, queries.length); i++) {
-      const queryIndex = (precacheIndex + i) % queries.length;
-      const query = queries[queryIndex];
-      
-      // Check if already cached
-      const cacheKey = JSON.stringify({ query, page: 1 });
-      const cached = metadataCache.get(cacheKey, 1);
-      
-      if (!cached) {
-        console.log(`🔮 Pre-caching popular query: "${query}"`);
-        
-        try {
-          // Use a minimal search to warm the cache
-          await searchVideos({
-            query,
-            page: 1,
-            yearFrom: '',
-            yearTo: '',
-            duration: 'all',
-            license: 'all',
-            sort: 'relevance',
-            sources: [],
-            allowRestrictedLicenses: false
-          });
-          
-          // Small delay between precache requests
-          await new Promise(resolve => setTimeout(resolve, 2000));
-        } catch (error) {
-          // Don't log precache errors as they're not user-facing
-          console.debug(`Precache failed for "${query}":`, error);
-        }
-      }
-    }
-    
-    // Update index for next precache cycle
-    precacheIndex = (precacheIndex + 3) % queries.length;
-    
-  } catch (error) {
-    console.debug('Precache operation failed:', error);
-  }
-}

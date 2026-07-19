@@ -134,9 +134,9 @@ export function LicenseGuardrail({ onLicenseChange }: LicenseGuardrailProps) {
     <div className="flex items-center space-x-2">
       <div className="flex items-center space-x-1">
         {searchState.allowRestrictedLicenses ? (
-          <ShieldOff size={16} className="text-orange-400" title="License Guardrail Off - Restricted licenses allowed" />
+          <span title="License Guardrail Off - Restricted licenses allowed"><ShieldOff size={16} className="text-orange-400" /></span>
         ) : (
-          <Shield size={16} className={theme.text} title="License Guardrail On - Safe licenses only" />
+          <span title="License Guardrail On - Safe licenses only"><Shield size={16} className={theme.text} /></span>
         )}
         <Switch
           id="license-guardrail"

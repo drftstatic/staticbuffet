@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Tv, Info, Move, HelpCircle } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { SearchBar } from '@/components/SearchBar';
 import { Filters } from '@/components/Filters';
@@ -18,7 +17,7 @@ import { ToolsPanel } from '@/components/ToolsPanel';
 import { AboutDialog } from '@/components/AboutDialog';
 import { useStore } from '@/lib/store';
 import { getTextClasses, getThemeClasses } from '@/lib/theme-utils';
-import { searchVideos } from '@/lib/archive-api';
+import { useVideoSearch } from '@/hooks/use-video-search';
 import { type VideoResult } from '@/lib/types';
 import { FirstRunTour } from '@/components/FirstRunTour';
 import { ResponsiveLayoutManager } from '@/components/ResponsiveLayoutManager';
@@ -33,8 +32,6 @@ export default function Home() {
     setSelectedVideo,
     setDetailDrawerOpen,
     queueItems,
-    setSearchResults,
-    setTotalResults,
     addToQueue,
     
     // Effects modes
@@ -45,45 +42,8 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
 
-  // Search functionality with improved reliability
-  const { data: searchData, isLoading, error, refetch } = useQuery({
-    queryKey: ['search', searchState.query, searchState.yearFrom, searchState.yearTo, searchState.duration, searchState.license, searchState.sort, searchState.page, searchState.sources],
-    queryFn: () => searchVideos(searchState),
-    enabled: !!searchState.query && searchState.query.trim().length > 0,
-    staleTime: 2 * 60 * 1000, // 2 minutes (reduced from 5)
-    gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
-    retry: (failureCount, error) => {
-      // Don't retry on specific errors
-      if (error instanceof Error) {
-        if (error.message.includes('Rate limited') || 
-            error.message.includes('AbortError') ||
-            error.message.includes('empty')) {
-          return false;
-        }
-      }
-      // Retry up to 2 times for other errors
-      return failureCount < 2;
-    },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff, max 30s
-  });
-
-  const searchResults = searchData ? (searchData as any).docs || [] : [];
-  const totalResults = searchData ? (searchData as any).numFound || 0 : 0;
-
-  // Update store with search results and handle errors
-  useEffect(() => {
-    if (searchResults.length > 0) {
-      setSearchResults(searchResults);
-      setTotalResults(totalResults);
-    }
-  }, [searchResults, totalResults, setSearchResults, setTotalResults]);
-
-  // Log search errors for debugging
-  useEffect(() => {
-    if (error) {
-      console.error('Search error:', error);
-    }
-  }, [error]);
+  // Search is owned by useVideoSearch; it dedupes with ResultsGrid and syncs the store
+  const { isLoading, error, refetch } = useVideoSearch();
 
   // Preload local video on first visit
   useEffect(() => {
@@ -134,9 +94,6 @@ export default function Home() {
     // Filters change handled by React Query
   }, []);
 
-
-  // Responsive layout hook
-  const { isMobile } = useResponsiveLayout();
 
   return (
     <ResponsiveLayoutManager>

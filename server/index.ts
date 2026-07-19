@@ -3,7 +3,9 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
-app.set('trust proxy', true); // Fix for X-Forwarded-For header warning
+// Trust only the first proxy hop; 'true' would let clients spoof
+// X-Forwarded-For and bypass IP-based rate limiting
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

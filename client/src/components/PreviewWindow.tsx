@@ -41,7 +41,7 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
       setIsVideoLoading(true);
       setVideoLoadError(false);
       
-      const video = videoRef.current;
+      const videoEl = videoRef.current;
       
       const handleLoadStart = () => {
         setIsVideoLoading(true);
@@ -50,39 +50,39 @@ export function PreviewWindow({ videoUrl, video, className = '' }: PreviewWindow
 
       const handleLoadedData = () => {
         setIsVideoLoading(false);
-        setDuration(video.duration || 0);
+        setDuration(videoEl.duration || 0);
       };
 
       const handleError = (e: any) => {
         console.error('❌ PreviewWindow: Video load error:', {
           error: e,
           videoUrl: videoUrl?.substring(0, 100) + '...',
-          errorCode: video.error?.code,
-          errorMessage: video.error?.message,
-          networkState: video.networkState,
-          readyState: video.readyState
+          errorCode: videoEl.error?.code,
+          errorMessage: videoEl.error?.message,
+          networkState: videoEl.networkState,
+          readyState: videoEl.readyState
         });
         setIsVideoLoading(false);
         setVideoLoadError(true);
       };
 
       const handleTimeUpdate = () => {
-        setCurrentTime(video.currentTime);
+        setCurrentTime(videoEl.currentTime);
       };
 
-      video.addEventListener('loadstart', handleLoadStart);
-      video.addEventListener('loadeddata', handleLoadedData);
-      video.addEventListener('error', handleError);
-      video.addEventListener('timeupdate', handleTimeUpdate);
+      videoEl.addEventListener('loadstart', handleLoadStart);
+      videoEl.addEventListener('loadeddata', handleLoadedData);
+      videoEl.addEventListener('error', handleError);
+      videoEl.addEventListener('timeupdate', handleTimeUpdate);
       
-      video.src = videoUrl;
-      video.load();
+      videoEl.src = videoUrl;
+      videoEl.load();
 
       return () => {
-        video.removeEventListener('loadstart', handleLoadStart);
-        video.removeEventListener('loadeddata', handleLoadedData);
-        video.removeEventListener('error', handleError);
-        video.removeEventListener('timeupdate', handleTimeUpdate);
+        videoEl.removeEventListener('loadstart', handleLoadStart);
+        videoEl.removeEventListener('loadeddata', handleLoadedData);
+        videoEl.removeEventListener('error', handleError);
+        videoEl.removeEventListener('timeupdate', handleTimeUpdate);
       };
     } else if (isStaticImage) {
       // For static content, immediately set as loaded
