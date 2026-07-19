@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { createApp } from "../server/app";
+import { createApp } from "../server/app.js";
 
 // Vercel serverless entry. The whole Express app is mounted as a single
 // function; vercel.json rewrites /api/* here. Build the app once and reuse it

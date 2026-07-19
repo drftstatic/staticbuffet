@@ -1,9 +1,9 @@
 import type { Express } from "express";
-import { searchFiltersSchema } from "@shared/schema";
+import { searchFiltersSchema } from "../shared/schema.js";
 import rateLimit from "express-rate-limit";
-import { metadataService } from "./metadata-service";
-import { transcodeService } from "./transcode-service";
-import { searchCacheService } from "./search-cache-service";
+import { metadataService } from "./metadata-service.js";
+import { transcodeService } from "./transcode-service.js";
+import { searchCacheService } from "./search-cache-service.js";
 import { promises as fs } from 'fs';
 import path from 'path';
 import express from 'express';

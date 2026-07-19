@@ -1,5 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
+import { registerRoutes } from "./routes.js";
 
 // Lightweight request logger. Kept here (not imported from ./vite) so this
 // module can be bundled into a serverless function without pulling in Vite.
