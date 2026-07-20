@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Play, Pause, Square, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
+import { setRecorder } from '@/lib/program-output';
 import { useToast } from '@/hooks/use-toast';
 import { ScaleTransition, PulseTransition } from './AnimatedTransitions';
 import { LuckyDip } from '@/components/LuckyDip';
@@ -11,8 +12,6 @@ export function MediaControls() {
     const { toast } = useToast();
     const [isPlaying, setIsPlaying] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
-    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-    const recordedChunksRef = useRef<Blob[]>([]);
     const getThemeClasses = () => {
         {
             return 'text-lime-400 hover:bg-lime-900/50';
@@ -62,65 +61,29 @@ export function MediaControls() {
     };
     const handleRecord = async () => {
         if (isRecording) {
-            // Stop recording
-            if (mediaRecorderRef.current) {
-                mediaRecorderRef.current.stop();
-                setIsRecording(false);
-                toast({
-                    title: "Recording Stopped",
-                    description: "Screen recording has been stopped.",
-                });
-            }
+            setRecorder.stop();
+            setIsRecording(false);
+            toast({
+                title: "Set recorded",
+                description: "Your set is downloading as a WebM file.",
+            });
+        }
+        else if (setRecorder.start()) {
+            setIsRecording(true);
+            toast({
+                title: "Recording set",
+                description: "Capturing the program output (video + audio). Click again to stop.",
+            });
         }
         else {
-            // Start recording
-            try {
-                const stream = await navigator.mediaDevices.getDisplayMedia({
-                    video: true,
-                    audio: true
-                });
-                const mediaRecorder = new MediaRecorder(stream, {
-                    mimeType: 'video/webm;codecs=vp9'
-                });
-                recordedChunksRef.current = [];
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunksRef.current.push(event.data);
-                    }
-                };
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunksRef.current, {
-                        type: 'video/webm'
-                    });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `static-buffet-recording-${Date.now()}.webm`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    // Clean up stream
-                    stream.getTracks().forEach(track => track.stop());
-                };
-                mediaRecorderRef.current = mediaRecorder;
-                mediaRecorder.start();
-                setIsRecording(true);
-                toast({
-                    title: "Recording Started",
-                    description: "Screen recording has begun. Click record again to stop.",
-                });
-            }
-            catch (error) {
-                console.error('Error starting screen recording:', error);
-                toast({
-                    title: "Recording Failed",
-                    description: "Could not start screen recording. Permission may be denied.",
-                    variant: "destructive",
-                });
-            }
+            toast({
+                title: "Nothing to record",
+                description: "Load a video first so the program output is live.",
+                variant: "destructive",
+            });
         }
     };
+
     const handleLuckyDipResults = (results: any) => {
         // Results are already set by LuckyDip component
         console.log('Lucky Dip found', results.length, 'clips');

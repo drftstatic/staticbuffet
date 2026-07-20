@@ -6,8 +6,8 @@ import { useStore } from '@/lib/store';
 import { Compositor } from '@/engine/compositor';
 import { runCrossfade, parseTimecode, type TransitionHandle } from '@/engine/deck-transition';
 import { beatClock } from '@/lib/clock';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize, Scissors } from 'lucide-react';
-import { PopOutPlayer } from '@/components/PopOutPlayer';
+import { programOutput, openOutputWindow, isOutputWindowOpen } from '@/lib/program-output';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize, ExternalLink } from 'lucide-react';
 import { videoPreloader } from '@/lib/video-preloader';
 import { VideoPlayerSkeleton } from './SkeletonLoader';
 import { useToast } from '@/hooks/use-toast';
@@ -397,6 +397,10 @@ export function Player() {
       distortionNode.connect(delayNode);
       delayNode.connect(gainNode);
       gainNode.connect(audioContext.destination);
+      // Program-audio tap for the output window and set recorder
+      const audioDest = audioContext.createMediaStreamDestination();
+      gainNode.connect(audioDest);
+      programOutput.audioDest = audioDest;
 
       // Store references
       audioContextRef.current = audioContext;
@@ -506,10 +510,12 @@ export function Player() {
     compositor.setParams({ ...useStore.getState().videoEffects, gamma: useStore.getState().videoEffects.gamma / 100 });
     compositor.start();
     compositorRef.current = compositor;
+    programOutput.canvas = canvasRef.current;
     return () => {
       transitionRef.current?.cancel();
       transitionRef.current = null;
       compositorRef.current = null;
+      programOutput.canvas = null;
       compositor.destroy();
     };
   }, [!!currentVideo]);
@@ -518,6 +524,14 @@ export function Player() {
   useEffect(() => {
     compositorRef.current?.setParams({ ...videoEffects, gamma: videoEffects.gamma / 100 });
   }, [videoEffects]);
+
+  // Drive the rack chain from the store
+  const rackEffects = useStore((s) => s.rackEffects);
+  useEffect(() => {
+    compositorRef.current?.setRack(
+      Object.entries(rackEffects).map(([id, intensity]) => ({ id, intensity: intensity / 100 }))
+    );
+  }, [rackEffects]);
 
   // Update audio effects when settings change
   useEffect(() => {
@@ -653,7 +667,7 @@ export function Player() {
         case 'KeyP':
           if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
-            // Trigger pop-out player (handled by PopOutPlayer component)
+            // Open the program output window
             const popOutButton = document.querySelector('[data-testid="button-pop-out-player"]') as HTMLButtonElement;
             if (popOutButton) {
               popOutButton.click();
@@ -1142,7 +1156,23 @@ export function Player() {
               
               <div className="border-l border-gray-300 dark:border-gray-600 mx-2 h-6"></div>
               
-              <PopOutPlayer currentVideo={currentVideo} />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (!openOutputWindow()) {
+                    toast({
+                      title: "Output unavailable",
+                      description: "Load a video first, then open the output window.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                title="Open program output window (Ctrl+P)"
+                data-testid="button-pop-out-player"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* Volume Control */}

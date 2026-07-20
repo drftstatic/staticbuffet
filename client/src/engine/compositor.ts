@@ -13,6 +13,7 @@
 
 import { createProgram, createQuad, createTarget, createVideoTexture, destroyTarget, QUAD_VS, type Target } from './gl';
 import { IDENTITY_PARAMS, type AudioLevels, type EngineParams } from './params';
+import { RACK_EFFECTS } from './effects';
 
 const MIX_FS = `#version 300 es
 precision highp float;
@@ -250,6 +251,8 @@ export class Compositor {
   private audio: AudioLevels = { bass: 0, mid: 0, treble: 0 };
   private audioReactive = false;
   private clockProvider: (() => { phase: number; confidence: number }) | null = null;
+  private rack: { id: string; intensity: number }[] = [];
+  private rackPrograms = new Map<string, WebGLProgram>();
   private raf = 0;
   private startTime = performance.now();
   private running = false;
@@ -286,6 +289,9 @@ export class Compositor {
     this.audio = levels;
     this.audioReactive = reactive;
   }
+  /** Active rack effects in chain order; intensity 0 entries are skipped. */
+  setRack(rack: { id: string; intensity: number }[]) { this.rack = rack; }
+
   /** Host hands in a beat-clock reader; sampled once per rendered frame. */
   setClockProvider(fn: (() => { phase: number; confidence: number }) | null) {
     this.clockProvider = fn;
@@ -321,6 +327,22 @@ export class Compositor {
     gl.deleteProgram(this.progFx);
     gl.deleteProgram(this.progFeedback);
     gl.deleteProgram(this.progBlit);
+    for (const prog of this.rackPrograms.values()) gl.deleteProgram(prog);
+  }
+
+  private rackProgram(id: string): WebGLProgram | null {
+    let prog = this.rackPrograms.get(id);
+    if (prog) return prog;
+    const def = RACK_EFFECTS.find(e => e.id === id);
+    if (!def) return null;
+    try {
+      prog = createProgram(this.gl, QUAD_VS, def.fs);
+    } catch (err) {
+      console.error(`Rack effect '${id}' failed to compile:`, err);
+      return null;
+    }
+    this.rackPrograms.set(id, prog);
+    return prog;
   }
 
   private u(prog: WebGLProgram, name: string): WebGLUniformLocation | null {
@@ -435,14 +457,35 @@ export class Compositor {
     gl.uniform1f(this.u(this.progFx, 'uVignette'), p.vignette / 100);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    // --- Pass 3: FEEDBACK t1 + history -> feedback[i], then blit to screen
+    // --- Rack chain: ping-pong between t1 and t0 for each active effect
+    let rackSrc = t1;
+    let rackDst = t0;
+    for (const entry of this.rack) {
+      if (entry.intensity <= 0.001) continue;
+      const prog = this.rackProgram(entry.id);
+      if (!prog) continue;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, rackDst.fbo);
+      gl.useProgram(prog);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, rackSrc.tex);
+      gl.uniform1i(this.u(prog, 'uTex'), 0);
+      gl.uniform1f(this.u(prog, 'uIntensity'), Math.min(1, entry.intensity));
+      gl.uniform1f(this.u(prog, 'uBeatPhase'), clock && clock.confidence > 0.3 ? clock.phase : 0);
+      gl.uniform1f(this.u(prog, 'uTime'), time);
+      gl.uniform2f(this.u(prog, 'uResolution'), w, h);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      const tmp = rackSrc; rackSrc = rackDst; rackDst = tmp;
+    }
+    const rackOut = rackSrc;
+
+    // --- Pass 3: FEEDBACK rackOut + history -> feedback[i], then blit to screen
     const fb = this.feedback!;
     const write = fb[this.feedbackIndex];
     const read = fb[1 - this.feedbackIndex];
     gl.bindFramebuffer(gl.FRAMEBUFFER, write.fbo);
     gl.useProgram(this.progFeedback);
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, t1.tex);
+    gl.bindTexture(gl.TEXTURE_2D, rackOut.tex);
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, read.tex);
     gl.uniform1i(this.u(this.progFeedback, 'uCurrent'), 0);

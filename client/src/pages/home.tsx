@@ -19,6 +19,7 @@ import { VideoEffectsPanel } from '@/components/VideoEffectsPanel';
 import { PresetEffectsPanel } from '@/components/PresetEffectsPanel';
 import { GeometryPanel } from '@/components/GeometryPanel';
 import { EmergencyMix } from '@/components/EmergencyMix';
+import { RackPanel } from '@/components/RackPanel';
 import {
   Accordion,
   AccordionContent,
@@ -149,6 +150,14 @@ export default function Home() {
           </div>
           <div className={`flex-shrink-0 max-h-[45%] overflow-y-auto border-t ${theme.border}`}>
             <Accordion type="multiple" className="w-full">
+              <AccordionItem value="rack" className="border-b-0">
+                <AccordionTrigger className={`px-3 py-2 text-xs uppercase tracking-wider ${getTextClasses(brandSkin, 'secondary')}`}>
+                  Rack
+                </AccordionTrigger>
+                <AccordionContent>
+                  <RackPanel />
+                </AccordionContent>
+              </AccordionItem>
               <AccordionItem value="effects" className="border-b-0">
                 <AccordionTrigger className={`px-3 py-2 text-xs uppercase tracking-wider ${getTextClasses(brandSkin, 'secondary')}`}>
                   Effects

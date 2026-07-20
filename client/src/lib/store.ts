@@ -30,6 +30,9 @@ interface AppStore extends AppState {
   previousTrack: () => void;
   quantize: boolean;
   setQuantize: (on: boolean) => void;
+  rackEffects: Record<string, number>;
+  setRackEffect: (id: string, intensity: number) => void;
+  resetRackEffects: () => void;
   
   // Audio reactive
   setAudioReactive: (reactive: boolean) => void;
@@ -103,6 +106,7 @@ export const useStore = create<AppStore>((set, get) => ({
     // Initial state
     brandSkin: 'ebn',
     quantize: false,
+  rackEffects: {},
     
   
   // Adaptive colors state
@@ -292,6 +296,11 @@ export const useStore = create<AppStore>((set, get) => ({
   },
 
   setQuantize: (on) => set({ quantize: on }),
+
+  setRackEffect: (id, intensity) => set((state) => ({
+    rackEffects: { ...state.rackEffects, [id]: intensity },
+  })),
+  resetRackEffects: () => set({ rackEffects: {} }),
 
   // Audio reactive
   setAudioReactive: (reactive) => set({ isAudioReactive: reactive }),

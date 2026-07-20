@@ -10,6 +10,9 @@ if (import.meta.env.DEV) {
   import('./lib/clock').then(({ beatClock }) => {
     (window as any).__beatClock = beatClock;
   });
+  import('./lib/program-output').then((mod) => {
+    (window as any).__programOutput = mod;
+  });
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
