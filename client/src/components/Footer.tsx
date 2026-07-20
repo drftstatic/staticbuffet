@@ -1,81 +1,68 @@
 import { useEffect, useState, useRef } from 'react';
 import { Tv } from 'lucide-react';
 import { useStore } from '@/lib/store';
-
 export function Footer() {
-  const { brandSkin, queueItems, isPlaying } = useStore();
-  const [fps, setFps] = useState(60);
-  const [memoryInfo, setMemoryInfo] = useState<any>(null);
-  const fpsCounterRef = useRef<{ frameCount: number; lastTime: number }>({
-    frameCount: 0,
-    lastTime: performance.now()
-  });
-
-  // FPS counter with more stable implementation
-  useEffect(() => {
-    let animationFrame: number;
-    
-    const updateFPS = () => {
-      const now = performance.now();
-      const delta = now - fpsCounterRef.current.lastTime;
-      
-      if (delta >= 1000) {
-        setFps(Math.round((fpsCounterRef.current.frameCount * 1000) / delta));
-        fpsCounterRef.current.frameCount = 0;
-        fpsCounterRef.current.lastTime = now;
-      } else {
-        fpsCounterRef.current.frameCount++;
-      }
-      
-      animationFrame = requestAnimationFrame(updateFPS);
+    const { brandSkin, queueItems, isPlaying } = useStore();
+    const [fps, setFps] = useState(60);
+    const [memoryInfo, setMemoryInfo] = useState<any>(null);
+    const fpsCounterRef = useRef<{
+        frameCount: number;
+        lastTime: number;
+    }>({
+        frameCount: 0,
+        lastTime: performance.now()
+    });
+    // FPS counter with more stable implementation
+    useEffect(() => {
+        let animationFrame: number;
+        const updateFPS = () => {
+            const now = performance.now();
+            const delta = now - fpsCounterRef.current.lastTime;
+            if (delta >= 1000) {
+                setFps(Math.round((fpsCounterRef.current.frameCount * 1000) / delta));
+                fpsCounterRef.current.frameCount = 0;
+                fpsCounterRef.current.lastTime = now;
+            }
+            else {
+                fpsCounterRef.current.frameCount++;
+            }
+            animationFrame = requestAnimationFrame(updateFPS);
+        };
+        animationFrame = requestAnimationFrame(updateFPS);
+        return () => {
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+        };
+    }, []);
+    // Memory info (if available)
+    useEffect(() => {
+        if ('memory' in performance) {
+            setMemoryInfo((performance as any).memory);
+        }
+        const interval = setInterval(() => {
+            if ('memory' in performance) {
+                setMemoryInfo((performance as any).memory);
+            }
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+    const formatBytes = (bytes: number) => {
+        if (bytes === 0)
+            return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
     };
-    
-    animationFrame = requestAnimationFrame(updateFPS);
-    
-    return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
+    const buildInfo = {
+        version: '0.1.0-alpha',
+        build: '2025.01.11',
+        engine: 'FS9000',
+        audio: 'web.A.ap1',
+        video: 'htmlcsskewl.run'
     };
-  }, []);
-
-  // Memory info (if available)
-  useEffect(() => {
-    if ('memory' in performance) {
-      setMemoryInfo((performance as any).memory);
-    }
-    
-    const interval = setInterval(() => {
-      if ('memory' in performance) {
-        setMemoryInfo((performance as any).memory);
-      }
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  };
-
-  const buildInfo = {
-    version: '0.1.0-alpha',
-    build: '2025.01.11',
-    engine: 'FS9000',
-    audio: 'web.A.ap1',
-    video: 'htmlcsskewl.run'
-  };
-
-  return (
-    <footer className={`border-t-2 px-4 py-2 font-mono text-xs ${
-      brandSkin === 'waffle' 
-        ? 'bg-yellow-50/80 border-yellow-400/50 text-amber-800' 
-        : 'bg-purple-950/80 border-yellow-400/50 text-yellow-300'
-    }`}>
+    return (<footer className={`border-t-2 px-4 py-2 font-mono text-xs ${'bg-purple-950/80 border-yellow-400/50 text-yellow-300'}`}>
       <div className="flex items-center justify-between">
         {/* Left side - Build info */}
         <div className="flex items-center space-x-4">
@@ -93,14 +80,12 @@ export function Footer() {
             </span>
           </div>
           
-          {memoryInfo && (
-            <div className="flex items-center space-x-1">
+          {memoryInfo && (<div className="flex items-center space-x-1">
               <span>RAM:</span>
               <span className="font-bold">
                 {formatBytes(memoryInfo.usedJSHeapSize)}
               </span>
-            </div>
-          )}
+            </div>)}
           
           <div className="flex items-center space-x-1">
             <span>QUEUE:</span>
@@ -120,18 +105,12 @@ export function Footer() {
           <span className="text-right">AUDIO: {buildInfo.audio}</span>
           <span>VIDEO: {buildInfo.video}</span>
           <span className="text-xs opacity-70 text-center">
-            Trash Team × <a 
-              href="https://twitter.com/nulltonetv" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
+            Trash Team × <a href="https://twitter.com/nulltonetv" target="_blank" rel="noopener noreferrer" className="hover:underline">
               Nulltone.TV
             </a>
           </span>
-          <Tv size={14} className="opacity-70" />
+          <Tv size={14} className="opacity-70"/>
         </div>
       </div>
-    </footer>
-  );
+    </footer>);
 }

@@ -8,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import { getVideoMetadata } from '@/lib/archive-api';
 import { type BrandSkin } from '@/lib/types';
 
-const BRAND_SKINS: BrandSkin[] = ['testcard', 'waffle', 'ebn', 'ozzy', 'hogan', 'dx', 'maxheadroom', 'mario', 'dakota', 'blondie', 'diner'];
 
 export interface CommandPaletteProps {
   isOpen: boolean;
@@ -189,26 +188,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       group: 'Quick Search',
     },
 
-    // Theme & UI
-    {
-      id: 'toggle-theme',
-      title: 'Cycle Brand Skin',
-      description: 'Switch to the next theme',
-      icon: <Palette className="w-4 h-4" />,
-      keywords: ['theme', 'skin', 'brand', 'toggle', 'switch', 'cycle'],
-      action: () => {
-        const nextSkin = BRAND_SKINS[(BRAND_SKINS.indexOf(brandSkin) + 1) % BRAND_SKINS.length];
-        setBrandSkin(nextSkin);
-        onClose();
-        toast({
-          title: 'Theme changed',
-          description: `Switched to ${nextSkin} theme`
-        });
-      },
-      group: 'Appearance',
-      badge: brandSkin,
-    },
-
     // Export & Tools
     {
       id: 'export-queue',
@@ -247,28 +226,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       },
       group: 'Export',
       badge: queueItems.length > 0 ? `${queueItems.length} items` : 'Empty',
-    },
-    {
-      id: 'cache-stats',
-      title: 'View Cache Statistics',
-      description: 'Check performance and cache hit rates',
-      icon: <Settings className="w-4 h-4" />,
-      keywords: ['cache', 'stats', 'performance', 'monitor'],
-      action: async () => {
-        try {
-          const response = await fetch('/api/cache-stats');
-          const stats = await response.json();
-          console.log('Cache Statistics:', stats);
-          toast({ 
-            title: 'Cache Statistics', 
-            description: `Search: ${stats.searchCache?.memoryEntries || 0} in memory, Transcode: ${stats.transcode?.totalFiles || 0} files` 
-          });
-        } catch (error) {
-          toast({ title: 'Failed to fetch cache stats', variant: 'destructive' });
-        }
-        onClose();
-      },
-      group: 'Tools',
     },
     {
       id: 'emergency-mix',
