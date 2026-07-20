@@ -120,6 +120,8 @@ export const useStore = create<AppStore>((set, get) => ({
     vignette: 0,
     sharpen: 0,
     noise: 0,
+    trails: 0,
+    warp: 0,
   },
   audioEffects: {
     gain: 100,
@@ -292,6 +294,8 @@ export const useStore = create<AppStore>((set, get) => ({
       vignette: 0,
       sharpen: 0,
       noise: 0,
+      trails: 0,
+      warp: 0,
       skewX: 0,
       skewY: 0,
       translateX: 0,

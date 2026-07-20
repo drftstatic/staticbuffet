@@ -66,6 +66,8 @@ export interface VideoEffects {
   vignette: number;
   sharpen: number;
   noise: number;
+  trails: number;
+  warp: number;
   // Geometry effects
   skewX?: number;
   skewY?: number;
