@@ -68,6 +68,7 @@ uniform sampler2D uTex;
 uniform vec2 uResolution;
 uniform float uTime;
 uniform float uBeat;           // 0..1 audio energy (0 when reactive off)
+uniform float uBeatPhase;      // 0..1 position within the current beat (0 = on the beat)
 
 uniform float uBrightness;     // 1 = identity
 uniform float uContrast;       // 1 = identity
@@ -118,7 +119,8 @@ void main() {
   if (uGlitch > 0.001) {
     float slice = floor(uv.y * 24.0);
     float jump = hash(vec2(slice, floor(uTime * 12.0)));
-    float amt = step(1.0 - uGlitch * 0.6, jump) * (jump - 0.5) * 0.2 * (1.0 + uBeat);
+    float beatPulse = uBeatPhase > 0.0 ? (1.0 - uBeatPhase) * (1.0 - uBeatPhase) : 0.0;
+    float amt = step(1.0 - uGlitch * 0.6, jump) * (jump - 0.5) * 0.2 * (1.0 + uBeat + beatPulse);
     uv.x = fract(uv.x + amt * uGlitch);
   }
 
@@ -247,6 +249,7 @@ export class Compositor {
   private crossfade = 0;
   private audio: AudioLevels = { bass: 0, mid: 0, treble: 0 };
   private audioReactive = false;
+  private clockProvider: (() => { phase: number; confidence: number }) | null = null;
   private raf = 0;
   private startTime = performance.now();
   private running = false;
@@ -282,6 +285,10 @@ export class Compositor {
   setAudioLevels(levels: AudioLevels, reactive: boolean) {
     this.audio = levels;
     this.audioReactive = reactive;
+  }
+  /** Host hands in a beat-clock reader; sampled once per rendered frame. */
+  setClockProvider(fn: (() => { phase: number; confidence: number }) | null) {
+    this.clockProvider = fn;
   }
 
   start() {
@@ -404,6 +411,8 @@ export class Compositor {
     gl.uniform2f(this.u(this.progFx, 'uResolution'), w, h);
     gl.uniform1f(this.u(this.progFx, 'uTime'), time);
     gl.uniform1f(this.u(this.progFx, 'uBeat'), beat);
+    const clock = this.clockProvider ? this.clockProvider() : null;
+    gl.uniform1f(this.u(this.progFx, 'uBeatPhase'), clock && clock.confidence > 0.3 ? clock.phase : 0);
     gl.uniform1f(this.u(this.progFx, 'uBrightness'), (p.brightness / 100) * (1 + beat * 0.3));
     gl.uniform1f(this.u(this.progFx, 'uContrast'), p.contrast / 100);
     gl.uniform1f(this.u(this.progFx, 'uSaturation'), (p.saturation / 100) * (1 + (this.audioReactive ? this.audio.mid * 0.5 : 0)));

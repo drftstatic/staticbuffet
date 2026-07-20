@@ -7,6 +7,9 @@ if (import.meta.env.DEV) {
   import('./lib/store').then(({ useStore }) => {
     (window as any).__store = useStore;
   });
+  import('./lib/clock').then(({ beatClock }) => {
+    (window as any).__beatClock = beatClock;
+  });
 }
 
 createRoot(document.getElementById("root")!).render(<App />);

@@ -5,6 +5,7 @@ import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
 import { Compositor } from '@/engine/compositor';
 import { runCrossfade, parseTimecode, type TransitionHandle } from '@/engine/deck-transition';
+import { beatClock } from '@/lib/clock';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize, Scissors } from 'lucide-react';
 import { PopOutPlayer } from '@/components/PopOutPlayer';
 import { videoPreloader } from '@/lib/video-preloader';
@@ -468,6 +469,7 @@ export function Player() {
           const trebleNorm = treble / 255;
           
           compositorRef.current?.setAudioLevels({ bass: bassNorm, mid: midNorm, treble: trebleNorm }, true);
+          beatClock.update(bassNorm, performance.now());
 
           animationFrame = requestAnimationFrame(draw);
         };
@@ -497,6 +499,10 @@ export function Player() {
     const compositor = new Compositor(canvasRef.current);
     compositor.setVideoA(videoRef.current);
     if (deckBRef.current) compositor.setVideoB(deckBRef.current);
+    compositor.setClockProvider(() => ({
+      phase: beatClock.phase(performance.now()),
+      confidence: beatClock.confidence,
+    }));
     compositor.setParams({ ...useStore.getState().videoEffects, gamma: useStore.getState().videoEffects.gamma / 100 });
     compositor.start();
     compositorRef.current = compositor;

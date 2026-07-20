@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { beatClock } from './clock';
 import { type BrandSkin, type AppState, type VideoResult, type QueueItem, type SearchState, type VideoEffects, type AudioEffects, type TextSettings } from './types';
 
 interface AppStore extends AppState {
@@ -27,6 +28,8 @@ interface AppStore extends AppState {
   setCurrentQueueIndex: (index: number) => void;
   nextTrack: () => void;
   previousTrack: () => void;
+  quantize: boolean;
+  setQuantize: (on: boolean) => void;
   
   // Audio reactive
   setAudioReactive: (reactive: boolean) => void;
@@ -60,9 +63,46 @@ interface AppStore extends AppState {
   getLiveStream: () => MediaStream | null;
 }
 
+// When quantize is on and the clock is confident, delay a trigger to the
+// next beat boundary so cuts land on the music. One pending trigger max —
+// re-triggering replaces the queued action rather than stacking advances.
+// Dual-path trigger: an rAF loop lands the cut frame-accurately while the
+// page is rendering, and a setTimeout backstop guarantees it still fires if
+// rendering is paused (occluded window, throttled tab). First past the
+// target wins; re-triggering replaces the pending cut instead of stacking.
+let pendingRaf = 0;
+let pendingTimer: ReturnType<typeof setTimeout> | null = null;
+function clearPendingTrigger() {
+  if (pendingRaf) cancelAnimationFrame(pendingRaf);
+  if (pendingTimer) clearTimeout(pendingTimer);
+  pendingRaf = 0;
+  pendingTimer = null;
+}
+function scheduleQuantized(action: () => void) {
+  const { quantize } = useStore.getState();
+  const wait = quantize ? beatClock.msToNextBeat(performance.now()) : 0;
+  clearPendingTrigger();
+  if (wait <= 30) {
+    action();
+    return;
+  }
+  const target = performance.now() + wait;
+  const fire = () => {
+    clearPendingTrigger();
+    action();
+  };
+  const tick = () => {
+    if (performance.now() >= target - 8) fire();
+    else pendingRaf = requestAnimationFrame(tick);
+  };
+  pendingRaf = requestAnimationFrame(tick);
+  pendingTimer = setTimeout(fire, wait);
+}
+
 export const useStore = create<AppStore>((set, get) => ({
     // Initial state
     brandSkin: 'ebn',
+    quantize: false,
     
   
   // Adaptive colors state
@@ -233,27 +273,25 @@ export const useStore = create<AppStore>((set, get) => ({
   setPlaying: (playing) => set({ isPlaying: playing }),
   setCurrentQueueIndex: (index) => set({ currentQueueIndex: index }),
   
-  nextTrack: () => set((state) => {
-    const nextIndex = (state.currentQueueIndex + 1) % state.queueItems.length;
-    console.log('🎵 Next track:', { from: state.currentQueueIndex, to: nextIndex, wasPlaying: state.isPlaying });
-    return { 
-      currentQueueIndex: nextIndex,
-      // Preserve playing state when changing tracks
-      isPlaying: state.isPlaying
-    };
-  }),
+  nextTrack: () => {
+    const advance = () => set((state) => ({
+      currentQueueIndex: (state.currentQueueIndex + 1) % state.queueItems.length,
+      isPlaying: state.isPlaying,
+    }));
+    scheduleQuantized(advance);
+  },
   
-  previousTrack: () => set((state) => {
-    const prevIndex = state.currentQueueIndex === 0 
-      ? state.queueItems.length - 1 
-      : state.currentQueueIndex - 1;
-    console.log('🎵 Previous track:', { from: state.currentQueueIndex, to: prevIndex, wasPlaying: state.isPlaying });
-    return { 
-      currentQueueIndex: prevIndex,
-      // Preserve playing state when changing tracks  
-      isPlaying: state.isPlaying
-    };
-  }),
+  previousTrack: () => {
+    const advance = () => set((state) => ({
+      currentQueueIndex: state.currentQueueIndex === 0
+        ? state.queueItems.length - 1
+        : state.currentQueueIndex - 1,
+      isPlaying: state.isPlaying,
+    }));
+    scheduleQuantized(advance);
+  },
+
+  setQuantize: (on) => set({ quantize: on }),
 
   // Audio reactive
   setAudioReactive: (reactive) => set({ isAudioReactive: reactive }),

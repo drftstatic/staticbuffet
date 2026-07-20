@@ -1,4 +1,5 @@
 import { useStore } from '@/lib/store';
+import { BeatMeter } from './BeatMeter';
 import { Activity, HardDrive, Film, Settings, Tv, Layers, Monitor, Volume2 } from 'lucide-react';
 import { getThemeClasses } from '@/lib/theme-utils';
 import { useState, useEffect } from 'react';
@@ -26,6 +27,7 @@ export function StatusBar() {
     return (<div className={`fixed bottom-0 left-0 right-0 h-6 ${themeClasses.bgSecondary} ${themeClasses.border} border-t z-50 flex items-center justify-between px-3 text-xs ${themeClasses.textSecondary}`} data-testid="status-bar">
       {/* Left Section - Content Stats */}
       <div className="flex items-center space-x-4">
+        <BeatMeter />
         <div className="flex items-center space-x-1">
           <Film size={10}/>
           <span>{searchResults.length} results</span>
