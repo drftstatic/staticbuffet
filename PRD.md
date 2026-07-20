@@ -75,9 +75,10 @@ Ten themes, theme-specific title puns, TTS soundboards, triple-click easter eggs
 ### Non-goals (v2)
 - **Not Resolume.** No layer stacks beyond A/B + overlay, no projection mapping, no DMX.
 - **No user accounts, no cloud saves.** Sets are local JSON files/localStorage. (The dead passport/session stack gets deleted, not finished.)
-- **No mobile performance mode.** Desktop Chromium is the performance target; Firefox/Safari get graceful fallback for browsing/preview.
+- **No mobile performance mode.** Desktop Chromium is the performance target; Firefox/Safari get graceful fallback for browsing/preview. (iPad arrives later via its own shell — see §5.5.)
 - **No generative-AI video in the core loop.** AI is a roadmap-tier assistant (curation, set-building), never a dependency for performing.
-- **No native NDI/Syphon.** Document the OBS-browser-source bridge instead.
+- **No native NDI/Syphon in the browser.** The OBS-browser-source bridge covers the tab; real Syphon/Spout/NDI output arrives with the Electron shell (§5.5, Phase 1.5).
+- **No full native rewrite.** Web tech end to end; platforms are shells around one portable engine (§5.5).
 
 ---
 
@@ -123,7 +124,21 @@ One WebGL2 compositor canvas; WebGPU later as a fast path, never a requirement.
 - **Record my set**: `MediaRecorder` on the output stream → downloadable video. Every session becomes shareable content — this is how tools like this spread.
 - **OBS bridge documented**: add the app as a browser source for streaming/NDI-world interop.
 
-### 5.5 The backend (slim to purpose)
+### 5.5 Platform strategy (browser → Electron → iPad)
+
+**The engine is the portable core; platforms are shells around it.** The WebGL compositor, ISF effects, and beat clock are identical work in a browser tab, an Electron window, or an iPad WebView — so "go native" and "build the engine" are sequential, not competing. The one architectural requirement this imposes *now*: the engine lives in a clean module with no DOM assumptions beyond "give me a canvas."
+
+- **Phase 1 builds web-first.** Fastest iteration loop, and the zero-install URL stays alive — research shows URL-shareable demos are how tools like this spread (Hydra, LumaDeck). The browser version remains the free front door permanently.
+- **Phase 1.5 wraps in Electron — specifically Electron, not Tauri.** Tauri uses the system WebView (WKWebView on macOS = Safari engine), which kills Web MIDI and weakens WebCodecs/`captureStream` — exactly the Chromium-first bets this PRD makes. Electron ships Chromium, so everything Phase 1 builds runs unchanged. The shell earns its existence by delivering only what a browser physically cannot:
+  - **Syphon/Spout/NDI output** via native Node modules — the table-stakes pro I/O feature.
+  - **The offline set cache, resurrected**: the Express server runs in-process with a real filesystem, so "download my whole set before the gig, play from local disk" becomes a gig-reliability feature no tab can offer. (The disk-cache/transcode services deleted in Phase 0 return here, deliberately, on a platform that supports them.)
+  - Multi-display fullscreen without permission prompts, MIDI without permission gates, app icon/dock identity.
+- **A full native rewrite (Swift/Metal) is rejected.** It discards the entire codebase for 6–12 months of solo re-implementation before reaching parity — the Resolume-envy trap named in §4.
+- **iPad comes through a third shell, not Electron** (Electron does not run on iPadOS): a Capacitor wrapper over the same engine core, App Store distributable, with a native CoreMIDI bridge plugin giving iPad better controller support than Safari alone. Sequenced after desktop, once the touch UI is worth designing on its own terms.
+
+One engine, three shells: browser (free front door), Electron (the pro instrument), Capacitor (the touch surface).
+
+### 5.6 The backend (slim to purpose)
 
 - **Hot path only**: Archive.org search proxy + streaming proxy with rate limiting. That's the product.
 - **Delete the Postgres/Drizzle layer.** Its only job is caching Archive.org responses — an in-memory LRU with TTL (or Vercel edge caching) does this without a database, a connection string, or migrations.
@@ -176,11 +191,17 @@ The cut list, one theme, fixed layout, slim server. App does *less*, feels drama
 **Phase 1 — The Engine (3–5 weeks equiv.)**
 WebGL2 compositor; deck A as texture; ISF rack with intensity contract; feedback pass; beat clock + default routings; crossfader with deck B; quantized triggering. `captureStream` output window + set recording. *This is the moment it stops feeling like 2003.*
 
+**Phase 1.5 — The Shell (1–2 weeks equiv.)**
+Electron wrapper around the finished engine: Syphon/Spout (NDI as a follow-on) output, in-process Express with the offline set cache, one-click projector fullscreen, auto-update, signed/notarized builds. The browser version keeps shipping from the same repo — the shell adds, never replaces. Wrapping waits for the engine deliberately: a native-feeling app that still plays CSS-filtered video is lipstick on the 2003.
+
 **Phase 2 — The Instrument (2–4 weeks equiv.)**
 MIDI learn + controller presets; cue points + chop; hover-scrub; set bundles; scene morphing (lerp between saved effect states over N beats — the one-knob contract makes every state lerp-able); Emergency Mix on the new engine.
 
 **Phase 3 — The Amplifiers (ongoing)**
 Text-to-set AI curation; vibe tagging; WebCodecs frame-accurate loops for short clips; WebGPU fast path; shot-detection chop; optional cloud restyling — each only if the core still holds 60 fps.
+
+**Phase 4 — The Touch Surface (when desktop is stable)**
+Capacitor shell for iPad over the same engine core: touch-first trigger UI, CoreMIDI bridge plugin, App Store distribution.
 
 Each phase ends shippable. No long-lived rewrite branch — the compositor lands behind the existing player, then replaces it.
 
