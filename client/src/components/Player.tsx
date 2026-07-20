@@ -3,6 +3,8 @@ import { useAdaptiveColors } from '@/hooks/use-adaptive-colors';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
+import { Compositor } from '@/engine/compositor';
+import { runCrossfade, parseTimecode, type TransitionHandle } from '@/engine/deck-transition';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize, Scissors } from 'lucide-react';
 import { PopOutPlayer } from '@/components/PopOutPlayer';
 import { videoPreloader } from '@/lib/video-preloader';
@@ -13,6 +15,9 @@ import { TextOverlay } from '@/components/TextOverlay';
 export function Player() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const compositorRef = useRef<Compositor | null>(null);
+  const deckBRef = useRef<HTMLVideoElement>(null);
+  const transitionRef = useRef<TransitionHandle | null>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
@@ -75,6 +80,7 @@ export function Player() {
       });
       
       const video = videoRef.current;
+      let isCrossfading = false;
       setIsVideoLoading(true);
       setVideoLoadError(false);
       
@@ -94,6 +100,39 @@ export function Player() {
           setVideoLoadError(true);
           setIsVideoLoading(false);
         }
+      } else if (
+        // GPU crossfade path: only when a previous clip is actually on air
+        (isCrossfading = Boolean(
+          lastLoadedVideoKey !== null &&
+          !video.paused &&
+          video.src &&
+          compositorRef.current &&
+          deckBRef.current
+        ))
+      ) {
+        transitionRef.current?.cancel();
+        const fadeDuration = currentVideo.crossfade ? 1.5 : 0.35;
+        console.log(`🎚️ Crossfading to next clip over ${fadeDuration}s`);
+        transitionRef.current = runCrossfade({
+          deckA: video,
+          deckB: deckBRef.current!,
+          url: currentVideo.videoUrl,
+          startAt: parseTimecode(currentVideo.trimIn),
+          duration: fadeDuration,
+          volume: volume[0] / 100,
+          setCrossfade: (v) => compositorRef.current?.setCrossfade(v),
+          onDone: () => {
+            transitionRef.current = null;
+            setIsVideoLoading(false);
+            setIsPlaying(true);
+          },
+          onError: (err) => {
+            transitionRef.current = null;
+            console.warn('Crossfade fell back to hard cut:', err);
+            setIsVideoLoading(false);
+          },
+        });
+        setIsVideoLoading(false);
       } else {
         // Normal video file handling
         // Check if we have a preloaded video
@@ -216,8 +255,11 @@ export function Player() {
       video.addEventListener('abort', handleAbort);
       video.addEventListener('emptied', handleEmptied);
       
-      // Load the video
-      video.load();
+      // Load the video (skip during a crossfade — deck A must keep playing
+      // the outgoing clip until the transition hands the new one back)
+      if (!isCrossfading) {
+        video.load();
+      }
       
       // Mark this video as loaded
       setLastLoadedVideoKey(currentVideoKey);
@@ -425,11 +467,7 @@ export function Player() {
           const midNorm = mid / 255;
           const trebleNorm = treble / 255;
           
-          // Apply reactive effects (this could be enhanced further)
-          if (videoRef.current) {
-            const reactiveFilter = `brightness(${1 + bassNorm * 0.3}) saturate(${1 + midNorm * 0.5}) hue-rotate(${trebleNorm * 30}deg)`;
-            videoRef.current.style.filter = reactiveFilter;
-          }
+          compositorRef.current?.setAudioLevels({ bass: bassNorm, mid: midNorm, treble: trebleNorm }, true);
 
           animationFrame = requestAnimationFrame(draw);
         };
@@ -448,8 +486,32 @@ export function Player() {
       if (animationFrame) {
         cancelAnimationFrame(animationFrame);
       }
+      compositorRef.current?.setAudioLevels({ bass: 0, mid: 0, treble: 0 }, false);
     };
   }, [isAudioReactive, isPlaying]);
+
+  // --- WebGL engine lifecycle: canvas + video exist only while a video is
+  // loaded, so (re)create the compositor whenever that flips.
+  useEffect(() => {
+    if (!canvasRef.current || !videoRef.current) return;
+    const compositor = new Compositor(canvasRef.current);
+    compositor.setVideoA(videoRef.current);
+    if (deckBRef.current) compositor.setVideoB(deckBRef.current);
+    compositor.setParams({ ...useStore.getState().videoEffects, gamma: useStore.getState().videoEffects.gamma / 100 });
+    compositor.start();
+    compositorRef.current = compositor;
+    return () => {
+      transitionRef.current?.cancel();
+      transitionRef.current = null;
+      compositorRef.current = null;
+      compositor.destroy();
+    };
+  }, [!!currentVideo]);
+
+  // Drive engine parameters from the effects store
+  useEffect(() => {
+    compositorRef.current?.setParams({ ...videoEffects, gamma: videoEffects.gamma / 100 });
+  }, [videoEffects]);
 
   // Update audio effects when settings change
   useEffect(() => {
@@ -702,32 +764,6 @@ export function Player() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  // Generate CSS filter string from video effects
-  const generateFilterString = () => {
-    const filters = [
-      `brightness(${videoEffects.brightness}%)`,
-      `contrast(${videoEffects.contrast}%)`,
-      `saturate(${videoEffects.saturation}%)`,
-      `hue-rotate(${videoEffects.hue}deg)`,
-      `blur(${videoEffects.blur}px)`,
-      `opacity(${videoEffects.opacity}%)`,
-      `grayscale(${videoEffects.grayscale}%)`,
-      `invert(${videoEffects.invert}%)`,
-      `sepia(${videoEffects.sepia}%)`
-    ];
-    return filters.join(' ');
-  };
-
-  // Generate transform string from video effects
-  const generateTransformString = () => {
-    const transforms = [
-      `rotate(${videoEffects.rotate}deg)`,
-      `scaleX(${videoEffects.scaleX / 100})`,
-      `scaleY(${videoEffects.scaleY / 100})`
-    ];
-    return transforms.join(' ');
-  };
-
   const toggleFullscreen = async () => {
     if (!playerContainerRef.current) {
       console.warn('No player container reference for fullscreen');
@@ -914,77 +950,29 @@ export function Player() {
         }`}
         onDoubleClick={toggleFullscreen}
       >
+        {/* Hidden media source: the engine samples this element as a GPU
+            texture every frame. Kept in-DOM and sized so decode continues. */}
         <video
           ref={videoRef}
-          className="w-full h-full object-contain"
+          className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
           controls={false}
           preload="metadata"
           playsInline
-          style={{ 
-            display: isAudioReactive ? 'none' : 'block',
-            filter: generateFilterString(),
-            transform: generateTransformString(),
-            willChange: 'filter, transform',
-            maxHeight: '100%',
-            maxWidth: '100%'
-          }}
+          muted={false}
         />
+        {/* Transition deck: hidden video the crossfade engine mixes in */}
+        <video
+          ref={deckBRef}
+          className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
+          controls={false}
+          preload="auto"
+          playsInline
+        />
+        {/* Program output: the WebGL compositor canvas */}
         <canvas
           ref={canvasRef}
-          width={640}
-          height={360}
-          className="w-full h-full object-contain"
-          style={{ 
-            display: isAudioReactive ? 'block' : 'none',
-            filter: generateFilterString(),
-            transform: generateTransformString()
-          }}
+          className="w-full h-full"
         />
-        
-        {/* VJ Effects Overlays */}
-        {videoEffects.scanlines && (
-          <div 
-            className="absolute inset-0 opacity-30 pointer-events-none"
-            style={{
-              background: `repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 255, 0, 0.1) 2px,
-                rgba(0, 255, 0, 0.1) 4px
-              )`
-            }}
-          />
-        )}
-        
-        {videoEffects.glitchIntensity > 0 && (
-          <div 
-            className="absolute inset-0 pointer-events-none mix-blend-difference"
-            style={{
-              background: `linear-gradient(90deg, 
-                rgba(255, 0, 0, ${videoEffects.glitchIntensity / 400}) 0%, 
-                transparent 33%, 
-                rgba(0, 255, 0, ${videoEffects.glitchIntensity / 400}) 66%, 
-                transparent 100%
-              )`,
-              animation: videoEffects.glitchIntensity > 50 ? 'glitch 0.1s infinite' : 'none'
-            }}
-          />
-        )}
-        
-        {videoEffects.chromaticAberration > 0 && (
-          <div 
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              mixBlendMode: 'screen',
-              background: `radial-gradient(circle, 
-                rgba(255, 0, 0, ${videoEffects.chromaticAberration / 300}) 0%, 
-                transparent 50%, 
-                rgba(0, 0, 255, ${videoEffects.chromaticAberration / 300}) 100%
-              )`
-            }}
-          />
-        )}
         
         {/* Text Overlay */}
         <TextOverlay 

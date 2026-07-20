@@ -49,6 +49,8 @@ export function VideoEffectsPanel() {
       vignette: 0,
       sharpen: 0,
       noise: 0,
+      trails: 0,
+      warp: 0,
     });
   };
 
@@ -390,6 +392,36 @@ export function VideoEffectsPanel() {
             <Slider
               value={[videoEffects.chromaticAberration]}
               onValueChange={([value]) => updateVideoEffect('chromaticAberration', value)}
+              min={0}
+              max={100}
+              step={1}
+              className="mt-1"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <Label className="text-xs font-medium">Trails</Label>
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{videoEffects.trails}%</span>
+            </div>
+            <Slider
+              value={[videoEffects.trails]}
+              onValueChange={([value]) => updateVideoEffect('trails', value)}
+              min={0}
+              max={100}
+              step={1}
+              className="mt-1"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <Label className="text-xs font-medium">Warp</Label>
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{videoEffects.warp}%</span>
+            </div>
+            <Slider
+              value={[videoEffects.warp]}
+              onValueChange={([value]) => updateVideoEffect('warp', value)}
               min={0}
               max={100}
               step={1}
