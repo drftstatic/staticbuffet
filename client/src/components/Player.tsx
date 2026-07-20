@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useStore } from '@/lib/store';
 import { Compositor } from '@/engine/compositor';
+import { runCrossfade, parseTimecode, type TransitionHandle } from '@/engine/deck-transition';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Maximize, Minimize, Scissors } from 'lucide-react';
 import { PopOutPlayer } from '@/components/PopOutPlayer';
 import { videoPreloader } from '@/lib/video-preloader';
@@ -15,6 +16,8 @@ export function Player() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const compositorRef = useRef<Compositor | null>(null);
+  const deckBRef = useRef<HTMLVideoElement>(null);
+  const transitionRef = useRef<TransitionHandle | null>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
@@ -77,6 +80,7 @@ export function Player() {
       });
       
       const video = videoRef.current;
+      let isCrossfading = false;
       setIsVideoLoading(true);
       setVideoLoadError(false);
       
@@ -96,6 +100,39 @@ export function Player() {
           setVideoLoadError(true);
           setIsVideoLoading(false);
         }
+      } else if (
+        // GPU crossfade path: only when a previous clip is actually on air
+        (isCrossfading = Boolean(
+          lastLoadedVideoKey !== null &&
+          !video.paused &&
+          video.src &&
+          compositorRef.current &&
+          deckBRef.current
+        ))
+      ) {
+        transitionRef.current?.cancel();
+        const fadeDuration = currentVideo.crossfade ? 1.5 : 0.35;
+        console.log(`🎚️ Crossfading to next clip over ${fadeDuration}s`);
+        transitionRef.current = runCrossfade({
+          deckA: video,
+          deckB: deckBRef.current!,
+          url: currentVideo.videoUrl,
+          startAt: parseTimecode(currentVideo.trimIn),
+          duration: fadeDuration,
+          volume: volume[0] / 100,
+          setCrossfade: (v) => compositorRef.current?.setCrossfade(v),
+          onDone: () => {
+            transitionRef.current = null;
+            setIsVideoLoading(false);
+            setIsPlaying(true);
+          },
+          onError: (err) => {
+            transitionRef.current = null;
+            console.warn('Crossfade fell back to hard cut:', err);
+            setIsVideoLoading(false);
+          },
+        });
+        setIsVideoLoading(false);
       } else {
         // Normal video file handling
         // Check if we have a preloaded video
@@ -218,8 +255,11 @@ export function Player() {
       video.addEventListener('abort', handleAbort);
       video.addEventListener('emptied', handleEmptied);
       
-      // Load the video
-      video.load();
+      // Load the video (skip during a crossfade — deck A must keep playing
+      // the outgoing clip until the transition hands the new one back)
+      if (!isCrossfading) {
+        video.load();
+      }
       
       // Mark this video as loaded
       setLastLoadedVideoKey(currentVideoKey);
@@ -456,10 +496,13 @@ export function Player() {
     if (!canvasRef.current || !videoRef.current) return;
     const compositor = new Compositor(canvasRef.current);
     compositor.setVideoA(videoRef.current);
+    if (deckBRef.current) compositor.setVideoB(deckBRef.current);
     compositor.setParams({ ...useStore.getState().videoEffects, gamma: useStore.getState().videoEffects.gamma / 100 });
     compositor.start();
     compositorRef.current = compositor;
     return () => {
+      transitionRef.current?.cancel();
+      transitionRef.current = null;
       compositorRef.current = null;
       compositor.destroy();
     };
@@ -916,6 +959,14 @@ export function Player() {
           preload="metadata"
           playsInline
           muted={false}
+        />
+        {/* Transition deck: hidden video the crossfade engine mixes in */}
+        <video
+          ref={deckBRef}
+          className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
+          controls={false}
+          preload="auto"
+          playsInline
         />
         {/* Program output: the WebGL compositor canvas */}
         <canvas
